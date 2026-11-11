@@ -5834,8 +5834,12 @@ function renderTeam0(){
     {/* v651: el mismo sprite que en la Pokédex (Rojo Fuego / Verde Hoja), en vez del retrato; variocolor si es shiny */
      const i=document.createElement('img');i.alt=base[u.id].name;i.style.cssText='width:104px;height:104px;image-rendering:pixelated;object-fit:contain';
      const normal=spriteURL(u.id);
-     if(u.shiny){const urls=SPRITE_MIRRORS.map(m=>m+SPRITE_PATH+'firered-leafgreen/shiny/'+u.id+'.png');let k=0;i.onerror=()=>{k++;if(k<urls.length)i.src=urls[k];else{i.onerror=null;i.src=normal}};i.src=urls[0]}else i.src=normal;
-     art.append(i)}
+     if(u.shiny){ // v651: nunca se ve una imagen rota: primero el variocolor ya cargado (o el de SpriteCollab incrustado) y el de Rojo Fuego se carga aparte
+      const id=u.id,ok=window.__shinyFR&&window.__shinyFR[id];
+      if(ok){i.src=ok;art.append(i)}
+      else{const ph=pmdOk(id+1000)?pmdAnimCanvas(id+1000,92,true):null;if(ph)art.append(ph);else{i.src=normal;art.append(i)}
+       loadShinyFR(id).then(src=>{if(!src||!art.isConnected)return;i.src=src;if(ph)ph.replaceWith(i);else if(!i.isConnected)art.append(i)})}
+     }else{i.src=normal;art.append(i)}}
     top.append(art);
     {const info=document.createElement('div');info.className='fichaInfo';const hpP=Math.round(100*u.hp/Math.max(1,u.maxHp)),xpP=Math.round(100*Math.min(1,u.xp/Math.max(1,xpRequired(u.level,u.id))));
      info.innerHTML='<div class="fichaTypes">'+base[u.id].types.map(t=>typeTag(t,24)).join('')+'</div>'+
@@ -5868,6 +5872,12 @@ function renderTeam0(){
         const bar=document.createElement('div');bar.className='reserveSwap';
         deployed.forEach((current,i)=>{const b=document.createElement('button');b.className='miniBtn';b.textContent=(i+1)+'. '+base[current.id].name;b.disabled=!canPrepare();b.onclick=()=>swapParty(u,current);bar.append(b)});d.append(bar);
     }
+}
+// v651: carga en segundo plano del sprite variocolor de Rojo Fuego (prueba ambos espejos y lo recuerda; null si no hay conexión)
+function loadShinyFR(id){window.__shinyFR=window.__shinyFR||{};window.__shinyP=window.__shinyP||{};if(window.__shinyFR[id])return Promise.resolve(window.__shinyFR[id]);if(window.__shinyP[id])return window.__shinyP[id];
+ const urls=SPRITE_MIRRORS.map(m=>m+SPRITE_PATH+'firered-leafgreen/shiny/'+id+'.png');
+ return window.__shinyP[id]=new Promise(res=>{let k=0;const tryNext=()=>{if(k>=urls.length){delete window.__shinyP[id];res(null);return}const im=new Image();im.crossOrigin='anonymous';const url=urls[k++];let done=false;const t=setTimeout(()=>{if(!done){done=true;tryNext()}},4000);
+   im.onload=()=>{if(done)return;done=true;clearTimeout(t);window.__shinyFR[id]=url;res(url)};im.onerror=()=>{if(done)return;done=true;clearTimeout(t);tryNext()};im.src=url};tryNext()});
 }
 function askRelease(u){
  if(!canPrepare()||!(reserves.includes(u)||storageBox.includes(u))||partyAll().length+storageBox.length<=1)return;
