@@ -7156,6 +7156,8 @@ window.__r3status=function(time){
   d.style.left=((v.x*.5+.5)*rc.width+(rc.left-wr.left))+'px';d.style.top=((-v.y*.5+.5)*rc.height+(rc.top-wr.top))+'px';
   d.style.opacity=alpha;d.style.borderColor=e.color}
  return true};
+window.__r3screen=function(x,y,h){try{if(!R3||!R3.cam||!R3.cv||!R3.wrap)return null;const T=R3.T,rc=R3.cv.getBoundingClientRect(),wr=R3.wrap.getBoundingClientRect();
+ const v=new T.Vector3(x+.5,(R3.elev&&R3.elev.has(x+','+y)?R3.eh:0)+(h||0),y+.5).project(R3.cam);return {x:(v.x*.5+.5)*rc.width+(rc.left-wr.left),y:(-v.y*.5+.5)*rc.height+(rc.top-wr.top)}}catch(e){return null}};
 window.__r3active=function(){try{return !!(R3&&R3.cam&&R3.cv&&R3.wrap&&!R3.cv.hidden&&getComputedStyle(R3.cv).display!=='none')}catch(e){return false}};
 
 ;(()=>{
@@ -7274,6 +7276,7 @@ window.__showHelp=openHelp;
 window.__showHelpOnce=()=>{let s=false,g=true;try{s=localStorage.getItem('ptHelpSeen');g=!!localStorage.getItem('pt_gestureHint_v1')}catch(e){}if(s)return;
  // v650: en el móvil, primero el tutorial de gestos y después las instrucciones de combate
  if(!g&&window.__r3d&&matchMedia('(pointer:coarse)').matches){window.__helpAfterGestures=true;return}
+ if(matchMedia('(pointer:coarse)').matches)return; // v651: en el móvil se aprende jugando (tutorial guiado en el primer combate); Cómo jugar sigue en ☰ y en ?
  openHelp()};
 {const w=document.querySelector('.canvaswrap');if(w){const f=document.createElement('button');f.type='button';f.className='helpFab';f.textContent='?';f.title='Cómo jugar';f.setAttribute('aria-label','Cómo jugar');f.addEventListener('pointerdown',e=>e.stopPropagation());f.addEventListener('click',e=>{e.stopPropagation();openHelp()});w.append(f)}}
 ov.querySelector('#helpClose').onclick=close;
@@ -7287,17 +7290,95 @@ const ta=document.querySelector('.titleActions');if(ta){const o=document.getElem
 ;(()=>{
 const st=document.createElement('style');st.textContent=`
 #tutBar{position:absolute;left:50%;top:56px;transform:translateX(-50%);z-index:45;width:min(88%,540px);pointer-events:none;background:linear-gradient(180deg,rgba(40,28,8,.95),rgba(24,16,4,.95));border:2px solid #ffd58a;border-radius:12px;box-shadow:0 4px 18px #000a;color:#fff3d6;padding:9px 13px;font-size:clamp(11px,1.6vw,14px);line-height:1.4;text-align:center}
-#tutBar[hidden]{display:none}body.hasEC #tutBar{left:12px;transform:none;width:calc(100% - 300px);text-align:left}#tutBar b{color:#ffd58a}#tutBar small{display:block;opacity:.75;margin-top:2px;font-size:.82em}
+#tutBar[hidden]{display:none}
+.mcCoach{bottom:64px}
+.mcCoach.mcTop{bottom:auto;top:52px}
+.mcMark{position:absolute;z-index:540;pointer-events:none;transform:translate(-50%,-100%)}
+.mcMark[hidden]{display:none}
+.mcMark span{display:block;font-size:34px;line-height:1;filter:drop-shadow(0 3px 4px rgba(0,0,0,.6));animation:mcTap 1s ease-in-out infinite}
+.mcMark i{position:absolute;left:50%;top:100%;width:44px;height:22px;margin-left:-22px;margin-top:-6px;border-radius:50%;border:3px solid #f7d88f;box-shadow:0 0 12px #f7d88f;animation:mcRing 1s ease-out infinite}
+.mcMark.tile{transform:translate(-50%,-100%)}
+@keyframes mcTap{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes mcRing{0%{opacity:1;transform:scale(.5)}100%{opacity:0;transform:scale(1.5)}}
+.mcPulseBtn{position:relative;z-index:2;outline:3px solid #f7d88f!important;outline-offset:2px;animation:mcBtn 1s ease-in-out infinite}
+@keyframes mcBtn{0%,100%{box-shadow:0 0 0 0 rgba(247,216,143,.85)}50%{box-shadow:0 0 0 9px rgba(247,216,143,0)}}body.hasEC #tutBar{left:12px;transform:none;width:calc(100% - 300px);text-align:left}#tutBar b{color:#ffd58a}#tutBar small{display:block;opacity:.75;margin-top:2px;font-size:.82em}
 `;document.head.appendChild(st);
 let bar=null,active=false,seenPlayerTurns=0,lastPhase='';
 window.__tutStart=()=>{active=true;seenPlayerTurns=0;lastPhase=''};
+// v651 · móvil: tutorial guiado "aprender haciendo" en el primer combate (Pueblo Paleta). En vez de texto largo,
+// una tarjeta corta dice qué tocar y un dedo animado lo señala en el tablero o en el menú. Avanza solo cuando lo haces.
+const isMobT=()=>matchMedia('(pointer:coarse)').matches;
+const MC_KEY='pt_mobTut_v1';let mc=null,mcMark=null,mcRAF=0,mcPulse=null,mcStep=-1,mcDoneAt=0,mcTarget=null,mcAim=false,mcHit=false;
+const mcSeen=()=>{try{return !!localStorage.getItem(MC_KEY)}catch(e){return false}};
+const mcSave=()=>{try{localStorage.setItem(MC_KEY,'1')}catch(e){}};
+const mcClearPulse=()=>{if(mcPulse){mcPulse.classList.remove('gcPulse','mcPulseBtn');mcPulse=null}};
+const mcHide=()=>{if(mc)mc.hidden=true;if(mcMark)mcMark.hidden=true;mcTarget=null;mcClearPulse();cancelAnimationFrame(mcRAF);mcRAF=0};
+const mcLoop=()=>{mcRAF=0;if(!mcMark||!mcTarget||!window.__r3screen){if(mcMark)mcMark.hidden=true;return}
+ const p=window.__r3screen(mcTarget.x,mcTarget.y,mcTarget.h||0);if(!p){mcMark.hidden=true;return}
+ mcMark.hidden=false;mcMark.style.left=p.x+'px';mcMark.style.top=p.y+'px';mcMark.className='mcMark'+(mcTarget.tile?' tile':'');mcRAF=requestAnimationFrame(mcLoop)};
+const mcPoint=t=>{mcTarget=t;if(!mcRAF)mcRAF=requestAnimationFrame(mcLoop)};
+const mcPulseBtn=b=>{if(mcPulse===b)return;mcClearPulse();if(b){b.classList.add('mcPulseBtn');mcPulse=b}};
+function mcShow(step,ico,title,sub,opts){
+ const wrap=document.querySelector('.canvaswrap');if(!wrap)return;
+ if(!mc){mc=document.createElement('div');mc.className='gCoach mcCoach';mc.setAttribute('role','status');mc.setAttribute('aria-live','polite');wrap.append(mc)}
+ if(!mcMark){mcMark=document.createElement('div');mcMark.className='mcMark';mcMark.hidden=true;mcMark.innerHTML='<i></i><span>👇</span>';wrap.append(mcMark)}
+ if(mc.parentNode!==wrap)wrap.append(mc);if(mcMark.parentNode!==wrap)wrap.append(mcMark);
+ const dots=step>=0?'<div class="gcDots">'+[0,1,2,3,4].map(k=>'<i class="'+(k<step?'ok':k===step?'on':'')+'"></i>').join('')+'</div>':'';
+ const key=step+'|'+title+'|'+sub;
+ if(mc.dataset.k!==key){mc.dataset.k=key;
+  mc.innerHTML='<div class="gcBox'+(opts&&opts.ok?' gcOk':'')+'"><div class="gcIco">'+ico+'</div><div class="gcTxt"><b>'+title+'</b>'+(sub?'<small>'+sub+'</small>':'')+dots+'</div>'+(opts&&opts.noSkip?'':'<button type="button" class="gcSkip">Saltar</button>')+'</div>';
+  const sk=mc.querySelector('.gcSkip');if(sk){sk.addEventListener('pointerdown',e=>e.stopPropagation());sk.onclick=e=>{e.stopPropagation();mcSave();active=false;mcHide()}}}
+ mc.hidden=false;mcStep=step;
+ {const bm=$('battleMenu');mc.classList.toggle('mcTop',!!(bm&&!bm.hidden))} // con el menú de batalla abierto (abajo en el móvil), la tarjeta sube arriba
+}
+function mobCoach(){
+ if(document.querySelector('.gCoach:not(.mcCoach)')){mcHide();return}          // primero termina el tutorial de gestos
+ if(!$('modal').hidden||!$('managerOverlay').hidden||(typeof cinematicBusy!=='undefined'&&cinematicBusy)){mcHide();return}
+ const me=units.filter(u=>u.side==='player'&&u.hp>0),foes=units.filter(u=>u.side==='enemy'&&u.hp>0);
+ const nm=u=>base[u.id].name;
+ mcTarget=null;
+ if(phase==='enemy'){mcClearPulse();mcShow(-1,'🕒','Turno del rival','Mira cómo se mueve y ataca. Luego vuelve tu turno.',{noSkip:true});mcPoint(null);if(mcMark)mcMark.hidden=true;return}
+ if(phase!=='player'||locked){mcHide();return}
+ if(mcAim&&skill===null){mcAim=false;mcHit=true} // acaba de atacar
+ // 1 · elegir Pokémon
+ if(!selected){const u=me.find(q=>!q.acted);mcClearPulse();
+  if(!u){mcShow(-1,'▶','Termina tu fase','Toca ☰ y luego «Terminar fase».');return}
+  mcShow(0,'👆',(seenPlayerTurns>=2?'Tu turno otra vez: toca a ':'Toca a ')+nm(u),'Es tu Pokémon. Tócalo para elegirlo.');mcPoint({x:u.x,y:u.y,h:1.6});return}
+ if(selected.side!=='player'){mcClearPulse();mcShow(0,'👆','Ese es el rival','Toca a tu Pokémon para empezar.');const u=me.find(q=>!q.acted);if(u)mcPoint({x:u.x,y:u.y,h:1.6});return}
+ // 4/5 · apuntar el ataque
+ if(skill!==null){mcClearPulse();const m=moveDB[selected.moves[skill].key];
+  const tg=foes.filter(v=>canAim(selected,m,v.x,v.y));
+  if(tg.length){mcAim=true;mcShow(4,'🎯','Toca al rival','Tu ataque llega hasta él. ¡Tócalo para atacar!');mcPoint({x:tg[0].x,y:tg[0].y,h:1.6})}
+  else mcShow(4,'📏','No llega','El rival está lejos. Toca ✕ y elige «⌛ Esperar» para acercarte el próximo turno.');return}
+ // 3 · menú de acciones / ataques
+ if(actionMenu){const bm=$('battleMenu'),btns=bm?[...bm.querySelectorAll(':scope>button:not(.bmClose)')]:[];
+  if(actionMenu==='actions'){
+   const canHit=foes.some(v=>selected.moves.some(mp=>mp.pp>0&&moveDB[mp.key].power>0&&canAim(selected,moveDB[mp.key],v.x,v.y)));
+   if(canHit){mcShow(2,'⚔','Toca «Habilidades»','Ahí están los ataques de '+nm(selected)+'.');mcPulseBtn(btns[0])}
+   else{mcShow(2,'⌛','Toca «Esperar»','El rival aún está lejos. Esperar termina el turno de '+nm(selected)+'.');mcPulseBtn(btns[2])}
+   return}
+  if(actionMenu==='moves'){let k=selected.moves.findIndex(mp=>mp.pp>0&&moveDB[mp.key].power>0&&foes.some(v=>canAim(selected,moveDB[mp.key],v.x,v.y)));if(k<0)k=selected.moves.findIndex(mp=>mp.pp>0&&moveDB[mp.key].power>0);
+   mcShow(3,'💥','Elige un ataque',k>=0?'Prueba con «'+moveDB[selected.moves[k].key].name+'».':'Elige uno de la lista.');mcPulseBtn(btns[k>=0?k:0]);return}
+ }
+ mcClearPulse();
+ // 2 · moverse
+ if(!selected.moved){
+  let best=null,bd=1e9;try{for(const sp of reachableSpots(selected)){const d=Math.min(...foes.map(v=>Math.abs(v.x-sp.x)+Math.abs(v.y-sp.y)));if(d>=1&&(d<bd||d===bd&&sp.cost<best.cost)){bd=d;best=sp}}}catch(e){}
+  mcShow(1,'👣','Toca una casilla azul','Ahí se moverá '+nm(selected)+'. Acércate al rival.');
+  if(best&&!(best.x===selected.x&&best.y===selected.y))mcPoint({x:best.x,y:best.y,h:.05,tile:true});else mcPoint({x:selected.x,y:selected.y,h:1.6});return}
+ mcShow(2,'📋','Elige qué hacer','Usa el menú que apareció junto a tu Pokémon.');
+}
+setInterval(()=>{if(active&&isMobT()&&!mcSeen())try{window.__tutHint()}catch(e){}},400);
 window.__tutHint=function(){
  const wrap=document.querySelector('.canvaswrap');if(!wrap)return;
  if(!bar){bar=document.createElement('div');bar.id='tutBar';bar.hidden=true;wrap.appendChild(bar)}
- if(!active||!currentEncounter||currentEncounter.id&&currentEncounter.id!=='pallet'){bar.hidden=true;if(active&&phase==='win')active=false;return}
- if(phase==='win'){active=false;bar.hidden=true;return}
+ const mob=isMobT();
+ const finish=()=>{active=false;bar.hidden=true;if(mob&&mc&&!mc.hidden&&!mcDoneAt&&!mcSeen()){mcSave();mcDoneAt=1;mcShow(-1,'✨','¡Ya sabes jugar!','Elige, muévete y ataca. Más opciones y ayuda en ☰.',{ok:true,noSkip:true});if(mcMark)mcMark.hidden=true;mcClearPulse();setTimeout(mcHide,3800)}else if(!mcDoneAt)mcHide()};
+ if(!active||!currentEncounter||currentEncounter.id&&currentEncounter.id!=='pallet'){if(active&&phase==='win')finish();else{bar.hidden=true;if(!mcDoneAt)mcHide()}return}
+ if(phase==='win'){finish();return}
  if(phase==='player'&&lastPhase!=='player')seenPlayerTurns++;lastPhase=phase;
- if(seenPlayerTurns>=3){active=false;bar.hidden=true;return}
+ if(seenPlayerTurns>=(mob?5:3)||(mob&&mcHit&&!locked&&(typeof cinematicBusy==='undefined'||!cinematicBusy))){finish();return}
+ if(mob){bar.hidden=true;if(mcSeen()&&!mcDoneAt){mcHide();return}mobCoach();return}
  let t='';
  if(phase==='enemy')t='🕒 <b>Turno del rival.</b> Observa cómo se mueve y ataca; luego vuelve tu turno.';
  else if(skill!==null)t='🎯 <b>Elige a quién atacar:</b> haz clic en el enemigo que esté a tu alcance. <small>Esc para volver atrás.</small>';
