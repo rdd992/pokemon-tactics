@@ -2373,7 +2373,7 @@ function applyEffect(u,v,m){
  if(m.effect==='poison'||m.effect==='poison20'||m.effect==='poison30'||m.effect==='poison40'){
   // Los tipos Veneno y Acero son inmunes al envenenamiento
   if(base[v.id].types.some(t=>t==='poison'||t==='steel'))return m.effect==='poison'?' No se ve afectado por el veneno.':'';
-  const chance=m.effect==='poison20'?.2:m.effect==='poison30'?.3:m.effect==='poison40'?.4:1;
+  const chance=v._critHit&&m.power?1:m.effect==='poison20'?.2:m.effect==='poison30'?.3:m.effect==='poison40'?.4:1; // v651: golpe crítico ⇒ envenena seguro (salvo tipos Veneno/Acero, ya excluidos arriba)
   if(v.poisoned)return m.effect==='poison'?' Ya estaba envenenado.':'';
   if(Math.random()<chance){v.poisoned=true;v.src_poison=u;return ' ☠️ ¡Envenenado!'}return '';
  }
@@ -2628,7 +2628,7 @@ async function perform(u,index,x,y){
         }else{
         const immunity=effect(m.type,base[v.id].types)===0;
         if(m.power){
-            const crit=!immunity && Math.random()<(u.critUp?(m.hcrit?1/3:1/4):(m.hcrit?1/8:1/16));if(crit)playSfx('critical');
+            const crit=!immunity && Math.random()<(u.critUp?(m.hcrit?1/3:1/4):(m.hcrit?1/8:1/16));if(crit)playSfx('critical');v._critHit=crit; // v651: un crítico asegura el envenenamiento del golpe
             let points=0,nHits=1;const _hb=v.hp;
             if(m.multi){const r=Math.random();nHits=m.multi[0]===m.multi[1]?m.multi[0]:(r<.375?2:r<.75?3:r<.875?4:5);
                 for(let h=0;h<nHits&&v.hp>0;h++){const p=damage(u,v,m,true,crit&&h===0);points+=p;v.hp=Math.max(0,v.hp-p);if(v.hp===0)nHits=h+1}}
@@ -2644,7 +2644,7 @@ async function perform(u,index,x,y){
             hitCount++;const noEff=m.power===0&&(grassPowderImmune(m,v)||(m.effect==='poison'&&base[v.id].types.some(t=>t==='poison'||t==='steel'))||(m.effect==='seed'&&base[v.id].types.includes('grass'))||(m.effect==='paralysis'&&(base[v.id].types.includes('electric')||(m.type==='grass'&&base[v.id].types.includes('grass')))));events.push({attacker:u,target:v,move:m,from:u.hp,to:u.hp,defBefore:before,defAfter:before,damage:0,critical:false,miss:false,status:true,noEffect:noEff,foe:v!==u?v:(opponent(u).find(o=>o.hp>0)||null)});const result=noEff?'':applyEffect(u,v,m);lines.push(noEff?'🚫 El ataque no afecta a '+base[v.id].name+'.':base[v.id].name+result);if(result&&!result.includes('Ya estaba')&&!result.includes('falló'))appliedStatuses.push({unit:v,effect:m.effect});
         }
         if(m.effect==='atkUp10'&&m.power&&!immunity&&u.hp>0&&Math.random()<.1){u.atkDown=Math.max(-3,Math.min(0,u.atkDown||0)-1);startTemporaryEffect(u,'atkDown');lines.push(' ⚔ ¡'+base[u.id].name+' sube su Ataque! (×1,5 durante 2 turnos)');appliedStatuses.push({unit:u,effect:'atkUp'})}
-        if(v.hp>0&&m.power&&!immunity&&(m.effect&&m.effect!=='drain'&&m.effect!=='atkUp10')){const extra=applyEffect(u,v,m);if(extra){lines.push(extra);appliedStatuses.push({unit:v,effect:m.effect})}}
+        if(v.hp>0&&m.power&&!immunity&&(m.effect&&m.effect!=='drain'&&m.effect!=='atkUp10')){const extra=applyEffect(u,v,m);v._critHit=false;if(extra){lines.push(extra);appliedStatuses.push({unit:v,effect:m.effect})}}
         }
         // En un RPG tactico el contraataque depende del alcance, no de que el golpe inicial acierte.
         // Un defensor vivo puede responder una vez por ronda si dispone de un ataque ofensivo con PP.
