@@ -389,6 +389,9 @@ select,input{background:rgba(255,255,255,.08)!important;border:1px solid var(--l
 .canvaswrap:fullscreen,.canvaswrap.fakeFS{box-shadow:none!important;border-radius:0!important;background-color:#05070f}
 .canvaswrap.fakeFS{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;margin:0!important;z-index:2147483000}
 .canvaswrap.fakeFS{height:100dvh!important}
+/* v651: móvil = solo la pantalla de juego; la página de atrás no existe ni se desplaza */
+html:has(body.mobGame),body.mobGame{overflow:hidden!important;height:100%;overscroll-behavior:none}
+body.mobGame>.shell,body.mobGame>.credit,body.mobGame>p.credit{display:none!important}
 .canvaswrap:fullscreen::backdrop{background:#05070f}
 .canvaswrap:fullscreen #map3d,.canvaswrap.fakeFS #map3d{width:100%;height:100%}
 .canvaswrap:fullscreen .cinematic,.canvaswrap.fakeFS .cinematic{inset:auto!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%);width:min(100vw,calc(100vh*1.2))!important;height:min(100vh,calc(100vw/1.2))!important}
@@ -6379,13 +6382,18 @@ function r3init(){
  const FS_IN='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',FS_OUT='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
  const fsb=document.createElement('button');fsb.type='button';fsb.className='fsBtn';fsb.innerHTML=FS_IN;fsb.title='Pantalla completa (F)';fsb.setAttribute('aria-label','Pantalla completa');
  const isFS=()=>document.fullscreenElement===wrap||wrap.classList.contains('fakeFS');
+ // v651: en el móvil solo se usa la pantalla de juego: el tablero ocupa siempre toda la pantalla y el resto de menús queda en ☰
+ const MOB=()=>matchMedia('(pointer:coarse)').matches&&Math.min(innerWidth,innerHeight)<=820;
+ const nativeFS=()=>!!(document.fullscreenElement||document.webkitFullscreenElement);
  const FSOV=['modal','shopOverlay','dexOverlay','managerOverlay','campaignOverlay','titleOverlay','helpOv'],fsHomeOv=new Map();
  const moveOv=on=>{for(const id of FSOV){const el=document.getElementById(id);if(!el)continue;if(on){if(el.parentNode!==wrap){fsHomeOv.set(id,{p:el.parentNode,n:el.nextSibling});wrap.appendChild(el)}}else{const h=fsHomeOv.get(id);if(h&&el.parentNode===wrap){h.p.insertBefore(el,h.n&&h.n.parentNode===h.p?h.n:null)}fsHomeOv.delete(id)}}};
- const sync=()=>{const on=isFS();moveOv(on);fsb.innerHTML=on?FS_OUT:FS_IN;fsb.setAttribute('aria-label',on?'Salir de pantalla completa':'Pantalla completa');fsb.title=on?'Salir de pantalla completa (F)':'Pantalla completa (F)';document.body.classList.toggle('inFS',on)};
+ const sync=()=>{const on=isFS();moveOv(on);const ic=MOB()?nativeFS():on;fsb.innerHTML=ic?FS_OUT:FS_IN;fsb.setAttribute('aria-label',ic?'Salir de pantalla completa':'Pantalla completa');fsb.title=ic?'Salir de pantalla completa (F)':'Pantalla completa (F)';document.body.classList.toggle('inFS',on);document.body.classList.toggle('mobGame',on&&MOB())};
  let fsHome=null,fsDocReq=false;
  const enterFake=()=>{if(wrap.classList.contains('fakeFS'))return;fsHome={p:wrap.parentNode,n:wrap.nextSibling};document.body.appendChild(wrap);wrap.classList.add('fakeFS');sync()};
  const leaveFake=()=>{if(!wrap.classList.contains('fakeFS'))return;fsDocReq=false;if(document.fullscreenElement&&document.exitFullscreen)try{document.exitFullscreen()}catch(e){}wrap.classList.remove('fakeFS');if(fsHome&&fsHome.p)fsHome.p.insertBefore(wrap,fsHome.n&&fsHome.n.parentNode===fsHome.p?fsHome.n:null);fsHome=null;sync()};
  const toggleFS=()=>{
+  if(MOB()){ // en el móvil el tablero ya ocupa la pantalla: el botón solo pone o quita la pantalla completa del navegador
+   enterFake();if(nativeFS()){try{(document.exitFullscreen||document.webkitExitFullscreen).call(document)}catch(e){}}else{fsDocReq=true;const de=document.documentElement,rd=de.requestFullscreen||de.webkitRequestFullscreen;try{const r=rd&&rd.call(de,{navigationUI:'hide'});r&&r.catch&&r.catch(()=>{})}catch(e){}}setTimeout(sync,300);return}
   if(isFS()){if(document.fullscreenElement)document.exitFullscreen&&document.exitFullscreen();leaveFake();sync();return}
   // Táctil (Android/iOS): el tablero ocupa la pantalla con CSS (fakeFS) y la pantalla completa nativa se pide sobre toda la página.
   // Con el contenedor del tablero como elemento a pantalla completa, Chrome en Android dejaba el lienzo WebGL en negro.
@@ -6394,8 +6402,9 @@ function r3init(){
   if(rq){let r;try{r=rq.call(wrap)}catch(e){enterFake();return}Promise.resolve(r).catch(()=>enterFake())}else enterFake();
  };
  fsb.addEventListener('click',e=>{e.stopPropagation();toggleFS()});fsb.addEventListener('pointerdown',e=>e.stopPropagation());
- document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&wrap.classList.contains('fakeFS')&&fsDocReq)leaveFake();sync()});
+ document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&wrap.classList.contains('fakeFS')&&fsDocReq&&!MOB())leaveFake();sync()});
  wrap.append(fsb);
+ {const mobOn=()=>{if(MOB())enterFake();else if(wrap.classList.contains('fakeFS')&&!nativeFS()&&!fsDocReq)leaveFake()};mobOn();addEventListener('resize',()=>setTimeout(mobOn,150));addEventListener('orientationchange',()=>setTimeout(mobOn,300))}
  // v650: menú del juego dentro de la pantalla completa (los botones de la barra superior quedan fuera de la vista)
  {const mb=document.createElement('button');mb.type='button';mb.className='fsMenuBtn';mb.textContent='☰';mb.title='Menú del juego (M)';mb.setAttribute('aria-label','Menú del juego');
   const pan=document.createElement('div');pan.className='fsMenu';pan.hidden=true;pan.setAttribute('role','dialog');pan.setAttribute('aria-label','Menú del juego');
@@ -6403,7 +6412,7 @@ function r3init(){
    [['openCampaign','🗺️ Mapa de Kanto'],['openTeam','🐾 Equipo'],['openDex','📕 Pokédex'],['quickSave','💾 Guardar'],['openHelp','❓ Cómo jugar'],['endTurn','▶ Terminar fase','main'],['backTitle','☰ Menú principal'],['abandonBtn','🏳️ Abandonar','warn'],['__exit','✕ Salir de pantalla completa','wide']].map(([id,t,c])=>'<button type="button" data-a="'+id+'"'+(c?' class="'+c+'"':'')+'>'+t+'</button>').join('')+'</div></div>';
   const vis=el=>!!el&&!el.hidden&&el.style.display!=='none'&&!el.disabled;
   const fill=()=>{pan.querySelector('.fsMenuChips').innerHTML=['moneyChip','medalChip','phaseChip'].map(id=>{const e=document.getElementById(id);return e&&e.textContent.trim()?'<span>'+e.textContent.trim().replace(/[<>&]/g,'')+'</span>':''}).join('');
-   for(const b of pan.querySelectorAll('.fsMenuGrid button')){const id=b.dataset.a;if(id==='__exit'){b.textContent=isFS()?'✕ Salir de pantalla completa':'⛶ Pantalla completa';continue}b.hidden=!vis(document.getElementById(id))}};
+   for(const b of pan.querySelectorAll('.fsMenuGrid button')){const id=b.dataset.a;if(id==='__exit'){b.textContent=(MOB()?nativeFS():isFS())?'✕ Salir de pantalla completa':'⛶ Pantalla completa';continue}b.hidden=!vis(document.getElementById(id))}};
   const close=()=>{pan.hidden=true};
   mb.addEventListener('click',e=>{e.stopPropagation();if(pan.hidden){fill();pan.hidden=false}else close()});mb.addEventListener('pointerdown',e=>e.stopPropagation());
   pan.addEventListener('pointerdown',e=>e.stopPropagation());
@@ -6430,7 +6439,7 @@ function r3init(){
    const tick=()=>{const st=STEPS[k];if(st&&st.ok(base)){const bx=c.querySelector('.gcBox');if(bx)bx.classList.add('gcOk');k++;clearInterval(timer);setTimeout(()=>{if(!c.isConnected)return;draw();if(k<STEPS.length)timer=setInterval(tick,250)},700)}};
    draw();timer=setInterval(tick,250)};
   if(touch&&!seen)setTimeout(run,1200)}
- addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;if(e.key.toLowerCase()==='f'){toggleFS();e.preventDefault()}else if(e.key==='Escape'&&wrap.classList.contains('fakeFS'))leaveFake()});
+ addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;if(e.key.toLowerCase()==='f'){toggleFS();e.preventDefault()}else if(e.key==='Escape'&&wrap.classList.contains('fakeFS')&&!MOB())leaveFake()});
  addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;const k=e.key.toLowerCase();if(k==='q')camStep(-Math.PI/2);else if(k==='e')camStep(Math.PI/2);else if(k==='r'){R3.yawT=Math.PI/4+Math.round((R3.yawT-Math.PI/4)/(2*Math.PI))*2*Math.PI;R3.zmT=1}else if(k==='+'||k==='=')zoomBy(1/1.25);else if(k==='-'||k==='_')zoomBy(1.25)});
  const cv=document.createElement('canvas');cv.id='map3d';cv.setAttribute('aria-label','Tablero táctico 3D');wrap.insertBefore(cv,canvas.nextSibling);
  let renderer;try{renderer=new T.WebGLRenderer({canvas:cv,antialias:false,alpha:true,powerPreference:'high-performance'})}catch(e){cv.remove();R3fail=true;console.warn('WebGL no disponible: se usa el tablero 2D.');return}
