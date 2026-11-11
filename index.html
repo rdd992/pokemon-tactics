@@ -1330,7 +1330,7 @@ async function showCaptureSequence(enemy,ballId,result,actor){
  target.classList.remove('caught');target.replaceChildren();
  let sp=sprites[enemy.id];if(sp&&sp.ready){let img=document.createElement('img');img.src=sp.img.src;img.alt=base[enemy.id].name;target.append(img)}else{const f=document.createElement('span');f.className='captureFallback';f.textContent=base[enemy.id].emoji;target.append(f)}
  ball.innerHTML=ITEM_SPR[ballId]?itemIc(ballId,72):BALLS[ballId].icon;ball.className='captureBall throw';$('captureMessage').textContent='¡'+BALLS[ballId].name+' lanzada!';stage.hidden=false;
- await delay(720);target.classList.add('caught');await delay(460);ball.className='captureBall';
+ await delay(720);target.classList.add('caught');$('captureMessage').textContent='…';await delay(460);ball.className='captureBall';
  const visibleShakes=result.success?3:Math.min(result.shakes,3);
  for(let i=0;i<visibleShakes;i++){
    ball.className='captureBall shake';$('captureMessage').textContent=['Uno…','Dos…','Tres…'][i];
@@ -4803,10 +4803,12 @@ async function showCaptureFE(actor,enemy,ballId,result){
    if(result.success&&t>=shakeEnd+100){const k=(t-shakeEnd-100)/900;for(let i=0;i<10;i++){const a=i*.63+k*2,r=20+k*70;sg.save();sg.globalAlpha=Math.max(0,1-k);polygon([[bx+Math.cos(a)*r,by+Math.sin(a)*r-8],[bx+Math.cos(a)*r+5,by+Math.sin(a)*r],[bx+Math.cos(a)*r,by+Math.sin(a)*r+8],[bx+Math.cos(a)*r-5,by+Math.sin(a)*r]],i%2?'#fff3a0':'#ffd04a');sg.restore()}}
    // textos
    feRibbon('CAPTURA · '+base[enemy.id].name.toUpperCase()+' · NV. '+enemy.level,'#d8423c');
-   let msg='¡'+BALLS[ballId].name+' lanzada!';
-   if(t>=T.drop&&t<shakeEnd){const i=Math.min(shakes-1,Math.floor(Math.max(0,t-T.shake0)/T.shakeLen));msg=t<T.shake0?'…':['Uno…','Dos…','Tres…'][i]||'…'}
+   // v651: "¡Poké Ball lanzada!" solo mientras vuela y entra en el Pokémon; luego las sacudidas y el resultado (sin volver al texto inicial)
+   let msg='';
+   if(t>=T.throw-150&&t<T.absorb)msg='¡'+BALLS[ballId].name+' lanzada!';
+   else if(t>=T.drop&&t<shakeEnd+200){const i=Math.min(shakes-1,Math.floor(Math.max(0,t-T.shake0)/T.shakeLen));msg=(t<T.shake0||shakes<1)?'…':['Uno…','Dos…','Tres…'][i]||'…'}
    else if(t>=shakeEnd+200)msg=result.success?'¡Capturado! '+base[enemy.id].name+' se unió a tu colección.':'¡Oh, no! ¡Se ha escapado!';
-   sg.save();const mw=Math.min(680,msg.length*12+60);px(360-mw/2+4,100,mw,40,'#08121c');px(360-mw/2,96,mw,40,result.success&&t>=shakeEnd+200?'#28775b':'#0f1c2e');textPixel(msg,360,116,16,'#fff3cf','center');sg.restore();
+   if(msg){sg.save();const mw=Math.min(680,msg.length*12+60);px(360-mw/2+4,100,mw,40,'#08121c');px(360-mw/2,96,mw,40,result.success&&t>=shakeEnd+200?'#28775b':'#0f1c2e');textPixel(msg,360,116,16,'#fff3cf','center');sg.restore()}
    if(t<280||t>end-230){const a=t<280?1-t/280:Math.max(0,(t-(end-230))/230);sg.save();sg.globalAlpha=a;px(0,0,720,600,'#172d3b');sg.restore()}
   },sounds);
  }finally{feSolo=_sv.solo;window.__evoFront=_sv.evo;hideCinematic()}
