@@ -4074,7 +4074,11 @@ function drawCinematicFrameClassic(ev,t,duration){
     if(crit&&t>hitAt&&t<hitAt+145){sg.save();sg.globalAlpha=1-(t-hitAt)/145;px(0,0,720,600,'#fff2c5');sg.restore()}
 }
 /* ===== v0.51 — Escena de combate frente a frente (inspirada en los combates de GBA tipo Fire Emblem) ===== */
-let animSpeed=1;try{const sp=Number(localStorage.getItem('pokemon-tactics-anim-speed'));if(sp===2||sp===3)animSpeed=sp}catch(e){}
+// v651: velocidades disponibles x1 (normal), x1,5 y x2 (rápida). Un x3 guardado de versiones anteriores pasa a x2.
+const ANIM_SPEEDS=[1,1.5,2];
+let animSpeed=1;try{const sp=Number(localStorage.getItem('pokemon-tactics-anim-speed'));animSpeed=sp>=2?2:sp===1.5?1.5:1}catch(e){}
+const speedLabel=v=>'x'+String(v).replace('.',',')+(v===1?' · normal':v===2?' · rápida':'');
+const nextAnimSpeed=()=>ANIM_SPEEDS[(ANIM_SPEEDS.indexOf(animSpeed)+1)%ANIM_SPEEDS.length];
 let battleStyle='face';
 try{const saved=localStorage.getItem('pokemon-tactics-battle-style');if(saved==='classic'||saved==='face')battleStyle=saved}catch(e){}
 const FE={pX:196,eX:524,feet:458,chest:-66};
@@ -4883,10 +4887,10 @@ $('demoCrit').onclick=()=>previewAnimation(true);
 const styleLabel=()=>battleStyle==='face'?'FRENTE A FRENTE':'CLÁSICA (ESPALDAS)';
 function setBattleStyle(v){battleStyle=v;try{localStorage.setItem('pokemon-tactics-battle-style',v)}catch(e){}$('toggleBattleStyle').textContent='Escena: '+styleLabel();$('titleStyleToggle').textContent=styleLabel()}
 $('toggleBattleStyle').onclick=()=>setBattleStyle(battleStyle==='face'?'classic':'face');
-function setAnimSpeed(v){animSpeed=v;try{localStorage.setItem('pokemon-tactics-anim-speed',String(v))}catch(e){}$('toggleBattleSpeed').textContent='Velocidad de combate: x'+v;{const cb=$('cinSpeed');if(cb)cb.textContent='⏩ Velocidad x'+v}$('titleSpeedToggle').textContent='x'+v}
-{const cb=document.createElement('button');cb.type='button';cb.id='cinSpeed';cb.className='cinSpeed';cb.title='Cambiar la velocidad de las animaciones de combate';cb.onclick=e=>{e.stopPropagation();setAnimSpeed(animSpeed>=3?1:animSpeed+1)};$('cinematic').append(cb)}
-$('toggleBattleSpeed').onclick=()=>setAnimSpeed(animSpeed>=3?1:animSpeed+1);
-$('titleSpeedToggle').onclick=()=>setAnimSpeed(animSpeed>=3?1:animSpeed+1);
+function setAnimSpeed(v){animSpeed=v;try{localStorage.setItem('pokemon-tactics-anim-speed',String(v))}catch(e){}$('toggleBattleSpeed').textContent='Velocidad de combate: '+speedLabel(v);{const cb=$('cinSpeed');if(cb)cb.textContent='⏩ Velocidad x'+String(v).replace('.',',')}$('titleSpeedToggle').textContent='x'+speedLabel(v).slice(1).toUpperCase()}
+{const cb=document.createElement('button');cb.type='button';cb.id='cinSpeed';cb.className='cinSpeed';cb.title='Cambiar la velocidad de las animaciones de combate';cb.onclick=e=>{e.stopPropagation();setAnimSpeed(nextAnimSpeed())};$('cinematic').append(cb)}
+$('toggleBattleSpeed').onclick=()=>setAnimSpeed(nextAnimSpeed());
+$('titleSpeedToggle').onclick=()=>setAnimSpeed(nextAnimSpeed());
 setAnimSpeed(animSpeed);
 $('titleStyleToggle').onclick=()=>setBattleStyle(battleStyle==='face'?'classic':'face');
 setBattleStyle(battleStyle);
