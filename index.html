@@ -181,6 +181,12 @@
 
 /* v0.27: pixel-art FR/LG y retratos en la ficha, manteniendo el resto del HUD. */
 .pokemonDetailPortrait{height:116px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 80%,#81b99e 0,#81b99e 28%,#406e69 29%,#295166 65%,#1c3d4f 100%);border:2px solid #759d9b;border-radius:6px;margin:8px 0 11px;font-size:48px}
+.managerBox.teamMode{width:min(800px,100%);height:min(760px,calc(100dvh - 28px));max-height:none;display:flex;flex-direction:column;overflow:hidden}
+.managerBox.teamMode>.managerHead{flex:none}
+.managerBox.teamMode>#teamManager{flex:1;min-height:0}
+.managerBox.teamMode .managerGrid{height:100%;min-height:0}
+.managerBox.teamMode .managerGrid>div{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:4px;scrollbar-width:thin}
+@media(max-width:570px){.managerBox.teamMode>#teamManager{overflow-y:auto}.managerBox.teamMode .managerGrid{height:auto}.managerBox.teamMode .managerGrid>div{overflow:visible;padding-right:0}}
 .releaseBye{animation:byeAway 2.4s ease-in forwards}@keyframes byeAway{0%,35%{opacity:1;transform:translateY(0)}100%{opacity:.15;transform:translateY(-26px) scale(.8)}}
 .releaseBtn{background:#6a3a42!important;border-color:#a8646e!important}.releaseBtn:disabled{opacity:.45}
 .evoRow{display:flex;flex-direction:column;gap:5px;margin:2px 0 10px}.evoRow .managerHint{margin:0}.evoStoneBtn{align-self:flex-start;padding:6px 12px!important;font-weight:800}.evoStoneBtn small{opacity:.75;font-weight:600}
@@ -1330,7 +1336,7 @@ async function showCaptureSequence(enemy,ballId,result,actor){
  const stage=$('captureScene'),ball=$('captureBall'),target=$('captureTarget');
  $('captureTitle').textContent='CAPTURA · '+base[enemy.id].name.toUpperCase()+' · NV. '+enemy.level;
  target.classList.remove('caught');target.replaceChildren();
- let sp=sprites[enemy.id];if(sp&&sp.ready){let img=document.createElement('img');img.src=sp.img.src;img.alt=base[enemy.id].name;target.append(img)}else{const f=document.createElement('span');f.className='captureFallback';f.textContent=base[enemy.id].emoji;target.append(f)}
+ let sp=sprites[enemy.id];if(sp&&sp.ready){let img=document.createElement('img');img.alt=base[enemy.id].name;if(enemy.shiny){const nrm=sp.img.src,urls=SPRITE_MIRRORS.map(m=>m+SPRITE_PATH+'firered-leafgreen/shiny/'+enemy.id+'.png');let k=0;img.onerror=()=>{k++;if(k<urls.length)img.src=urls[k];else{img.onerror=null;img.src=nrm}};img.src=urls[0]}else img.src=sp.img.src;target.append(img)}else{const f=document.createElement('span');f.className='captureFallback';f.textContent=base[enemy.id].emoji;target.append(f)}
  ball.innerHTML=ITEM_SPR[ballId]?itemIc(ballId,72):BALLS[ballId].icon;ball.className='captureBall throw';$('captureMessage').textContent='¡'+BALLS[ballId].name+' lanzada!';stage.hidden=false;
  await delay(720);target.classList.add('caught');$('captureMessage').textContent='…';await delay(460);ball.className='captureBall';
  const visibleShakes=result.success?3:Math.min(result.shakes,3);
@@ -4763,6 +4769,7 @@ async function showCaptureFE(actor,enemy,ballId,result){
  const T={throw:500,enter:1050,absorb:1500,drop:1950,shake0:2450,shakeLen:820};
  const shakeEnd=T.shake0+shakes*T.shakeLen,end=shakeEnd+1500;
  fetchSprite(enemy.id);fetchSprite(actor.id);
+ const enemySid=(enemy.shiny&&pmdOk(enemy.id+1000))?enemy.id+1000:enemy.id; // v651: si es variocolor, se ve variocolor también al capturarlo
  const sounds=[[T.throw,'throw'],[T.enter,'ballhit'],[T.absorb,'absorb'],[T.drop,'ballhit']];
  for(let i=0;i<shakes;i++)sounds.push([T.shake0+i*T.shakeLen+120,'shake']);
  sounds.push([shakeEnd+100,result.success?'caught':'escape']);
@@ -4778,7 +4785,7 @@ async function showCaptureFE(actor,enemy,ballId,result){
    const escapeAt=shakeEnd+200;
    if(!result.success&&t>=escapeAt){const k=Math.min(1,(t-escapeAt)/420);mul=k;tint='#ffffff';ta=1-k;alpha=1}
    if(result.success&&t>=T.absorb+450)alpha=0;
-   if(alpha>0&&mul>.03&&!(t>=T.drop&&t<escapeAt))feSprite(enemy.id,ex,fy,false,mul*1.4,alpha,tint,ta);
+   if(alpha>0&&mul>.03&&!(t>=T.drop&&t<escapeAt))feSprite(enemySid,ex,fy,false,mul*1.4,alpha,tint,ta);
    // pelota
    if(t>=T.throw&&t<T.enter){const k=(t-T.throw)/(T.enter-T.throw);bx=px0+(ex-px0)*k;by=py0+(fy-140-py0)*k-Math.sin(k*Math.PI)*170;rot=k*14;br=17+40*Math.pow(1-k,1.5);showBall=true}
    else if(t>=T.enter&&t<T.absorb){const k=(t-T.enter)/(T.absorb-T.enter);bx=ex;by=(fy-140)+Math.sin(k*3)*4;rot=0;showBall=true}
@@ -5776,6 +5783,7 @@ function openManager(tab){
     managerTab=tab;
     $('managerOverlay').hidden=false;
     $('teamManager').hidden=tab!=='team';$('bagManager').hidden=tab!=='bag';$('saveManager').hidden=tab!=='save';
+    $('managerOverlay').querySelector('.managerBox').classList.toggle('teamMode',tab==='team'); // v651: tamaño fijo en Equipo
     $('managerTitle').textContent=tab==='team'?'🐾 EQUIPO POKÉMON':tab==='bag'?'🎒 MOCHILA':'💾 GUARDADO DE PARTIDA';
     if(tab==='team'){if(![...partyAll(),...storageBox].includes(managerSelected))managerSelected=partyAll()[0];renderTeam()}
 
@@ -5808,7 +5816,7 @@ function renderTeam0(){
     {/* v651: el mismo sprite que en la Pokédex (Rojo Fuego / Verde Hoja), en vez del retrato; variocolor si es shiny */
      const i=document.createElement('img');i.alt=base[u.id].name;i.style.cssText='width:104px;height:104px;image-rendering:pixelated;object-fit:contain';
      const normal=spriteURL(u.id);
-     if(u.shiny){i.onerror=()=>{i.onerror=null;i.src=normal};i.src=SPRITE_MIRRORS[0]+SPRITE_PATH+'firered-leafgreen/shiny/'+u.id+'.png'}else i.src=normal;
+     if(u.shiny){const urls=SPRITE_MIRRORS.map(m=>m+SPRITE_PATH+'firered-leafgreen/shiny/'+u.id+'.png');let k=0;i.onerror=()=>{k++;if(k<urls.length)i.src=urls[k];else{i.onerror=null;i.src=normal}};i.src=urls[0]}else i.src=normal;
      art.append(i)}d.append(art);
     const p=document.createElement('p');p.className='managerHint';p.textContent=base[u.id].types.join(' / ').toUpperCase()+' · EXP '+u.xp+'/'+xpRequired(u.level,u.id)+' · PS '+u.hp+'/'+u.maxHp;d.append(p);
     const stats=document.createElement('div');stats.className='statTable';for(const [k,v] of [['Ataque',u.atk],['Defensa',u.def],['At. Esp.',u.spa],['Def. Esp.',u.spd],['Velocidad',u.speed],['Movilidad',base[u.id].move]]){const a=document.createElement('span');a.textContent=k+': '+v;stats.append(a)}d.append(stats);
