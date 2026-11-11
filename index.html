@@ -7304,13 +7304,13 @@ const st=document.createElement('style');st.textContent=`
 @keyframes mcBtn{0%,100%{box-shadow:0 0 0 0 rgba(247,216,143,.85)}50%{box-shadow:0 0 0 9px rgba(247,216,143,0)}}body.hasEC #tutBar{left:12px;transform:none;width:calc(100% - 300px);text-align:left}#tutBar b{color:#ffd58a}#tutBar small{display:block;opacity:.75;margin-top:2px;font-size:.82em}
 `;document.head.appendChild(st);
 let bar=null,active=false,seenPlayerTurns=0,lastPhase='';
-window.__tutStart=()=>{active=true;seenPlayerTurns=0;lastPhase=''};
+window.__tutStart=()=>{active=true;seenPlayerTurns=0;lastPhase='';try{mcOff=false;mcSawEnemy=false;mcDoneAt=0;mcHit=false;mcAim=false;mcHide()}catch(e){}};
 // v652 · móvil: tutorial guiado "aprender haciendo" en el primer combate (Pueblo Paleta). En vez de texto largo,
 // una tarjeta corta dice qué tocar y un dedo animado lo señala en el tablero o en el menú. Avanza solo cuando lo haces.
 const isMobT=()=>matchMedia('(pointer:coarse)').matches;
 const MC_KEY='pt_mobTut_v1';let mc=null,mcMark=null,mcRAF=0,mcPulse=null,mcStep=-1,mcDoneAt=0,mcTarget=null,mcAim=false,mcHit=false;
-const mcSeen=()=>{try{return !!localStorage.getItem(MC_KEY)}catch(e){return false}};
-const mcSave=()=>{try{localStorage.setItem(MC_KEY,'1')}catch(e){}};
+// v652: el tutorial se muestra en cada partida nueva; «Saltar» solo lo cierra para la partida actual
+let mcOff=false,mcSawEnemy=false;const mcSeen=()=>mcOff;const mcSave=()=>{mcOff=true};
 const mcClearPulse=()=>{if(mcPulse){mcPulse.classList.remove('gcPulse','mcPulseBtn');mcPulse=null}};
 const mcHide=()=>{if(mc)mc.hidden=true;if(mcMark)mcMark.hidden=true;mcTarget=null;mcClearPulse();cancelAnimationFrame(mcRAF);mcRAF=0};
 const mcLoop=()=>{mcRAF=0;if(!mcMark||!mcTarget||!window.__r3screen){if(mcMark)mcMark.hidden=true;return}
@@ -7337,13 +7337,13 @@ function mobCoach(){
  const me=units.filter(u=>u.side==='player'&&u.hp>0),foes=units.filter(u=>u.side==='enemy'&&u.hp>0);
  const nm=u=>base[u.id].name;
  mcTarget=null;
- if(phase==='enemy'){mcClearPulse();mcShow(-1,'🕒','Turno del rival','Mira cómo se mueve y ataca. Luego vuelve tu turno.',{noSkip:true});mcPoint(null);if(mcMark)mcMark.hidden=true;return}
+ if(phase==='enemy'){mcSawEnemy=true;mcClearPulse();mcShow(-1,'🕒','Turno del rival','Mira cómo se mueve y ataca. Luego vuelve tu turno.',{noSkip:true});mcPoint(null);if(mcMark)mcMark.hidden=true;return}
  if(phase!=='player'||locked){mcHide();return}
  if(mcAim&&skill===null){mcAim=false;mcHit=true} // acaba de atacar
  // 1 · elegir Pokémon
  if(!selected){const u=me.find(q=>!q.acted);mcClearPulse();
   if(!u){mcShow(-1,'▶','Termina tu fase','Toca ☰ y luego «Terminar fase».');return}
-  mcShow(0,'👆',(seenPlayerTurns>=2?'Tu turno otra vez: toca a ':'Toca a ')+nm(u),'Es tu Pokémon. Tócalo para elegirlo.');mcPoint({x:u.x,y:u.y,h:1.6});return}
+  mcShow(0,'👆',(mcSawEnemy?'Tu turno otra vez: toca a ':'Toca a ')+nm(u),'Es tu Pokémon. Tócalo para elegirlo.');mcPoint({x:u.x,y:u.y,h:1.6});return}
  if(selected.side!=='player'){mcClearPulse();mcShow(0,'👆','Ese es el rival','Toca a tu Pokémon para empezar.');const u=me.find(q=>!q.acted);if(u)mcPoint({x:u.x,y:u.y,h:1.6});return}
  // 4/5 · apuntar el ataque
  if(skill!==null){mcClearPulse();const m=moveDB[selected.moves[skill].key];
