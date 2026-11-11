@@ -7305,4 +7305,22 @@ window.__kmap=function(holder){
 requestAnimationFrame(draw);loadPokeAPI();
 })();
 
+/* v651: con una ventana abierta (mapa de Kanto, Equipo, Pokédex, Tienda, Mochila, avisos, Cómo jugar…) la página de atrás no se desplaza:
+   se bloquea el scroll del documento y el scroll de las ventanas no "se escapa" al llegar a su borde. */
+(()=>{
+ const st=document.createElement('style');
+ st.textContent='html.ptLock,html.ptLock body{overflow:hidden!important;overscroll-behavior:none!important}'+
+  '#campaignOverlay,#campaignOverlay *,#managerOverlay,#managerOverlay *,#dexOverlay,#dexOverlay *,#shopOverlay,#shopOverlay *,#modal,#modal *,#gameBag,#gameBag *,#helpBox,[role=dialog],[role=dialog] *{overscroll-behavior:contain}';
+ document.head.append(st);
+ const IDS=['campaignOverlay','managerOverlay','dexOverlay','shopOverlay','modal','gameBag','revivePicker'];
+ const shown=el=>!!el&&!el.hidden&&el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';
+ const anyOpen=()=>{for(const id of IDS)if(shown(document.getElementById(id)))return true;const hb=document.getElementById('helpBox');if(hb&&shown(hb.parentElement||hb))return true;
+  for(const d of document.querySelectorAll('.fsMenu,[role=dialog]'))if(shown(d)&&getComputedStyle(d).position==='fixed')return true;return false};
+ let q=false;const check=()=>{q=false;document.documentElement.classList.toggle('ptLock',anyOpen())};
+ new MutationObserver(()=>{if(!q){q=true;requestAnimationFrame(check)}}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['hidden','style','class']});
+ // la rueda del ratón sobre el fondo oscuro de una ventana no debe mover la página
+ addEventListener('wheel',e=>{if(!document.documentElement.classList.contains('ptLock'))return;let t=e.target;while(t&&t!==document.body){const cs=getComputedStyle(t);if(/(auto|scroll)/.test(cs.overflowY)&&t.scrollHeight>t.clientHeight+1)return;t=t.parentElement}e.preventDefault()},{passive:false});
+ check();
+})();
+
 </script></body></html>
