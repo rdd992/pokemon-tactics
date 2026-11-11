@@ -181,6 +181,7 @@
 
 /* v0.27: pixel-art FR/LG y retratos en la ficha, manteniendo el resto del HUD. */
 .pokemonDetailPortrait{height:116px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 80%,#81b99e 0,#81b99e 28%,#406e69 29%,#295166 65%,#1c3d4f 100%);border:2px solid #759d9b;border-radius:6px;margin:8px 0 11px;font-size:48px}
+.releaseBye{animation:byeAway 2.4s ease-in forwards}@keyframes byeAway{0%,35%{opacity:1;transform:translateY(0)}100%{opacity:.15;transform:translateY(-26px) scale(.8)}}
 .releaseBtn{background:#6a3a42!important;border-color:#a8646e!important}.releaseBtn:disabled{opacity:.45}
 .evoRow{display:flex;flex-direction:column;gap:5px;margin:2px 0 10px}.evoRow .managerHint{margin:0}.evoStoneBtn{align-self:flex-start;padding:6px 12px!important;font-weight:800}.evoStoneBtn small{opacity:.75;font-weight:600}
 .pokemonDetailPortrait img{width:104px;height:104px;object-fit:contain;image-rendering:pixelated}
@@ -5854,7 +5855,9 @@ function askRelease(u){
  showModal('🕊️ ¿LIBERAR A '+base[u.id].name.toUpperCase()+'?','Vas a liberar a '+nm+'. Volverá a la naturaleza y no podrás recuperarlo. Sigue registrado en la Pokédex.',
   '<div class="evobox"><span class="pmdSlot" data-pmd="'+pkId(u)+'" data-s="84"></span></div>',
   [{text:'LIBERAR',fn:()=>{const a=reserves.indexOf(u),b=storageBox.indexOf(u);if(a>=0)reserves.splice(a,1);else if(b>=0)storageBox.splice(b,1);else return;
-    log('🕊️ Liberaste a '+base[u.id].name+'. ¡Adiós, '+base[u.id].name+'!');managerSelected=partyAll()[0];$('modal').hidden=true;updateUI();autoSaveSafe();openManager('team')}},
+    log('🕊️ Liberaste a '+base[u.id].name+'. ¡Adiós, '+base[u.id].name+'!');managerSelected=partyAll()[0];updateUI();autoSaveSafe();
+    showModal('🕊️ ¡ADIÓS, '+base[u.id].name.toUpperCase()+'!',base[u.id].name+' vuelve a la naturaleza. ¡Cuídate mucho!','<div class="evobox releaseBye"><span class="pmdSlot" data-pmd="'+pkId(u)+'" data-s="84"></span></div>',
+     [{text:'CONTINUAR',fn:()=>{$('modal').hidden=true;openManager('team')}}])}},
    {text:'CANCELAR',fn:()=>{$('modal').hidden=true;openManager('team')}}]);
 }
 function swapBoxPokemon(boxUnit,teamUnit){
