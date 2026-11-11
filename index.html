@@ -181,6 +181,7 @@
 
 /* v0.27: pixel-art FR/LG y retratos en la ficha, manteniendo el resto del HUD. */
 .pokemonDetailPortrait{height:116px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 80%,#81b99e 0,#81b99e 28%,#406e69 29%,#295166 65%,#1c3d4f 100%);border:2px solid #759d9b;border-radius:6px;margin:8px 0 11px;font-size:48px}
+.evoRow{display:flex;flex-direction:column;gap:5px;margin:2px 0 10px}.evoRow .managerHint{margin:0}.evoStoneBtn{align-self:flex-start;padding:6px 12px!important;font-weight:800}.evoStoneBtn small{opacity:.75;font-weight:600}
 .pokemonDetailPortrait img{width:104px;height:104px;object-fit:contain;image-rendering:pixelated}
 .partyEntry .miniSprite img{width:35px;height:35px;image-rendering:pixelated;object-fit:contain}
 .unitcard .portrait img{image-rendering:pixelated}
@@ -877,6 +878,25 @@ const evolutionRules={
   10:{to:11,level:7},11:{to:12,level:10},13:{to:14,level:7},14:{to:15,level:10},19:{to:20,level:20},129:{to:130,level:20},60:{to:61,level:25},21:{to:22,level:20},
   23:{to:24,level:22},27:{to:28,level:22},29:{to:30,level:16},32:{to:33,level:16},41:{to:42,level:22},46:{to:47,level:24},56:{to:57,level:28},109:{to:110,level:35},116:{to:117,level:32},118:{to:119,level:33},98:{to:99,level:28},54:{to:55,level:33},79:{to:80,level:37}
 };
+// v651: piedras evolutivas. La Piedra Trueno usa el contador histórico thunderStones (compatibilidad con guardados);
+// el resto se guarda en la mochila (bag[key]). Para añadir una especie basta con {to,item:'fire-stone'} en evolutionRules.
+const EVO_STONES={
+  'thunder-stone':{key:'thunderStone',name:'Piedra Trueno',icon:'⚡'},
+  'fire-stone':{key:'fireStone',name:'Piedra Fuego',icon:'🔥'},
+  'water-stone':{key:'waterStone',name:'Piedra Agua',icon:'💧'},
+  'leaf-stone':{key:'leafStone',name:'Piedra Hoja',icon:'🍃'},
+  'moon-stone':{key:'moonStone',name:'Piedra Lunar',icon:'🌙'}
+};
+function stoneQty(item){const S=EVO_STONES[item];if(!S)return 0;return item==='thunder-stone'?thunderStones:(bag[S.key]||0)}
+function spendStone(item){const S=EVO_STONES[item];if(!S)return;if(item==='thunder-stone')thunderStones=Math.max(0,thunderStones-1);else bag[S.key]=Math.max(0,(bag[S.key]||0)-1)}
+function useEvoStone(u){
+  const r=u&&evolutionRules[u.id],S=r&&EVO_STONES[r.item];
+  if(!S||!base[r.to]||stoneQty(r.item)<=0||!canPrepare())return;
+  const wasLocked=locked;locked=true;
+  $('managerOverlay').hidden=true;
+  pendingProgress.push({kind:'evolve',u,to:r.to,reason:S.name,stone:r.item});
+  resolveProgress(()=>{locked=wasLocked;managerSelected=u;autoSaveSafe();openManager('team')});
+}
 // Tabla local FireRed / LeafGreen para los Pokémon del primer arco (incluye cada nivel inicial).
 // Cada fila corresponde a un aprendizaje por nivel. No hay ataques adelantados por comodidad.
 const learnsets={
@@ -2494,8 +2514,8 @@ function resolveProgress(done){
             const u=e.u;
             if(!base[e.to]||evolutionRules[u.id]?.to!==e.to){next();return}
             const old=u.id;
-            const stone=e.reason==='Piedra Trueno';
-            const confirm=()=>{if(stone)thunderStones=Math.max(0,thunderStones-1);const fromId=u.id;$('modal').hidden=true;evolvePokemon(u,e.to);if(!animationEnabled){next();return}showEvolutionScene(u,fromId,e.to).catch(err=>{console.warn(err);hideCinematic()}).then(()=>next())};
+            const stone=e.stone||(e.reason==='Piedra Trueno'?'thunder-stone':null);
+            const confirm=()=>{if(stone)spendStone(stone);const fromId=u.id;$('modal').hidden=true;evolvePokemon(u,e.to);if(!animationEnabled){next();return}showEvolutionScene(u,fromId,e.to).catch(err=>{console.warn(err);hideCinematic()}).then(()=>next())};
             const no=()=>{log('↩ '+base[u.id].name+' no evolucionó.');next()};
             fetchSprite(old);fetchSprite(e.to);
             showModal('¡EVOLUCIÓN DISPONIBLE!','¡'+base[u.id].name+' puede evolucionar a '+base[e.to].name+'! Requisito: '+e.reason+'.',
@@ -2545,7 +2565,7 @@ $('useStone').onclick=()=>{
     const u=units.filter(v=>v.side==='player').concat(reserves)[Number($('labPokemon').value)];
     if(!u||u.id!==25){log('La Piedra Trueno solo sirve a Pikachu.');return}
     locked=true;
-    pendingProgress.push({kind:'evolve',u,to:26,reason:'Piedra Trueno'});
+    pendingProgress.push({kind:'evolve',u,to:26,reason:'Piedra Trueno',stone:'thunder-stone'});
     resolveProgress(()=>{locked=false;updateUI();autoSaveSafe()});
 };
 // Cálculo y animación separados: todas las cantidades de daño que muestra la escena
@@ -5720,6 +5740,15 @@ function renderTeam0(){
      art.append(i)}d.append(art);
     const p=document.createElement('p');p.className='managerHint';p.textContent=base[u.id].types.join(' / ').toUpperCase()+' · EXP '+u.xp+'/'+xpRequired(u.level,u.id)+' · PS '+u.hp+'/'+u.maxHp;d.append(p);
     const stats=document.createElement('div');stats.className='statTable';for(const [k,v] of [['Ataque',u.atk],['Defensa',u.def],['At. Esp.',u.spa],['Def. Esp.',u.spd],['Velocidad',u.speed],['Movilidad',base[u.id].move]]){const a=document.createElement('span');a.textContent=k+': '+v;stats.append(a)}d.append(stats);
+    {const r=evolutionRules[u.id];if(r&&base[r.to]){ /* v651: evolución (por nivel: informativa; por piedra: botón para usarla) */
+     const lab=document.createElement('div');lab.className='managerLabel';lab.textContent='EVOLUCIÓN';d.append(lab);
+     const box=document.createElement('div');box.className='evoRow';
+     const S=r.item&&EVO_STONES[r.item];
+     if(S){const q=stoneQty(r.item),ok=q>0&&canPrepare();
+      const b=document.createElement('button');b.type='button';b.className='miniBtn evoStoneBtn';b.innerHTML=S.icon+' Usar '+S.name+' <small>(tienes '+q+')</small>';b.disabled=!ok;b.onclick=()=>useEvoStone(u);box.append(b);
+      const t=document.createElement('small');t.className='managerHint';t.textContent=q<=0?'Necesitas una '+S.name+' para que evolucione a '+base[r.to].name+'.':!canPrepare()?'🔒 Solo entre combates o antes de actuar en el capítulo.':'Evolucionará a '+base[r.to].name+'.';box.append(t);
+     }else{const t=document.createElement('small');t.className='managerHint';t.textContent='Evoluciona a '+base[r.to].name+' al Nv. '+r.level+'.';box.append(t)}
+     d.append(box)}}
     const label=document.createElement('div');label.className='managerLabel';label.textContent='MOVIMIENTOS EQUIPADOS (máximo 4)';d.append(label);
     const list=document.createElement('div');list.className='managerMoves';
     u.moves.forEach((mp,i)=>{const row=document.createElement('div');row.className='managerMove';const name=document.createElement('span');const m=moveDB[mp.key];name.innerHTML='<b>'+m.name+'</b><br><small>'+m.type.toUpperCase()+' · PP '+mp.pp+'/'+m.pp+' · '+(m.shape==='area'?'ÁREA':m.shape==='line'?'LÍNEA':m.shape==='melee'?'CERCANO':'OBJETIVO')+'</small>';row.append(name);
@@ -5826,7 +5855,7 @@ function renderBag(){
         {id:'ether',icon:'💠',name:'Éter',desc:'Recupera 10 PP del movimiento elegido del usuario.'},
         {id:'antidote',icon:'💜',name:'Antídoto',desc:'Cura el envenenamiento · a ti o a un aliado adyacente.'},
         {id:'parlyz',icon:'💛',name:'Antiparalizador',desc:'Cura la parálisis · a ti o a un aliado adyacente.'},
-        {id:'thunderStone',icon:'⚡',name:'Piedra Trueno',desc:'Evoluciona a Pikachu fuera de la batalla.'},
+        {id:'thunderStone',icon:'⚡',name:'Piedra Trueno',desc:'Evoluciona a Pikachu. Úsala desde 🐾 Equipo, entre combates o antes de actuar.'},
         {id:'pokeball',icon:'🔴',name:'Poké Ball',desc:'Captura salvajes · ratio ×1 · alcance 3'},{id:'greatball',icon:'🔵',name:'Super Ball',desc:'Captura salvajes · ratio ×1,5 · alcance 3'},{id:'ultraball',icon:'🟡',name:'Ultra Ball',desc:'Captura salvajes · ratio ×2 · alcance 3'}
     ];
     const hasFainted=partyAll().some(u=>u.hp===0);
