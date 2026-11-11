@@ -392,6 +392,8 @@ select,input{background:rgba(255,255,255,.08)!important;border:1px solid var(--l
 /* v651: móvil = solo la pantalla de juego; la página de atrás no existe ni se desplaza */
 html:has(body.mobGame),body.mobGame{overflow:hidden!important;height:100%;overscroll-behavior:none}
 body.mobGame>.shell,body.mobGame>.credit,body.mobGame>p.credit{display:none!important}
+/* v652: en el móvil la cámara se maneja con gestos; solo queda el botón ⟲ para restablecerla */
+body.mobGame .camCtl>button:not(:nth-child(2)){display:none!important}
 .canvaswrap:fullscreen::backdrop{background:#05070f}
 .canvaswrap:fullscreen #map3d,.canvaswrap.fakeFS #map3d{width:100%;height:100%}
 .canvaswrap:fullscreen .cinematic,.canvaswrap.fakeFS .cinematic{inset:auto!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%);width:min(100vw,calc(100vh*1.2))!important;height:min(100vh,calc(100vw/1.2))!important}
@@ -6423,8 +6425,8 @@ function r3init(){
  // v650: tutorial interactivo de gestos la primera vez en un teléfono (se hace cada gesto sobre el tablero real)
  {const KEY='pt_gestureHint_v1',touch=matchMedia('(pointer:coarse)').matches;let seen=true;try{seen=!!localStorage.getItem(KEY)}catch(e){}
   // v652: primero la cámara (acercar y girar): de cerca es mucho más fácil tocar las casillas desde el teléfono
-  const STEPS=[{ico:'<span class="gcPinch">🤏</span>',t:'Acerca la cámara',d:'Separa dos dedos sobre el tablero (o toca ＋). De cerca es más fácil tocar las casillas.',ok:o=>(R3.zmT||1)<o.zm-.04},
-   {ico:'<span class="gcSwipe">👆</span>',t:'Gira la cámara',d:'Desliza un dedo hacia un lado sobre el tablero (o usa ↶ ↷).',ok:o=>Math.abs(R3.yawT-o.yaw)>.5},
+  const STEPS=[{ico:'<span class="gcPinch">🤏</span>',t:'Acerca la cámara',d:'Separa dos dedos sobre el tablero. De cerca es más fácil tocar las casillas. ⟲ la deja como al inicio.',ok:o=>(R3.zmT||1)<o.zm-.04},
+   {ico:'<span class="gcSwipe">👆</span>',t:'Gira la cámara',d:'Desliza un dedo hacia un lado sobre el tablero.',ok:o=>Math.abs(R3.yawT-o.yaw)>.5},
    {ico:'<span class="gcMenuI">☰</span>',t:'Toca ☰ arriba a la derecha',d:'ahí están el mapa, el equipo, guardar…',ok:()=>{const m=wrap.querySelector('.fsMenu');return !!m&&!m.hidden},hl:'.fsMenuBtn'}];
   const run=()=>{const h=$('helpOv');if((h&&!h.hidden)||!$('titleOverlay').hidden||!wrap.offsetWidth){setTimeout(run,800);return}
    if(wrap.querySelector('.gCoach:not(.mcCoach)'))return;
