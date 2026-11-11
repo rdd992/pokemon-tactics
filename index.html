@@ -1605,6 +1605,13 @@ function beginCampaignEncounter0(id,kind){
    enemies=[];
    const wpool=currentEncounter.fish?fishPool(id,currentEncounter.fish):data.wild;for(let n=0;n<count;n++){let pick=pickWild(wpool);for(let tries=0;tries<8&&enemies.some(e=>e.id===pick.id)&&new Set(wpool.map(w=>w.id)).size>enemies.length;tries++)pick=pickWild(wpool);enemies.push(pick)}
  }
+ // v651: en los desafíos principales con Pokémon salvajes (no entrenamiento) aparecen tantos salvajes como Pokémon despliegas: 1v1, 2v2, 3v3, 4v4.
+ // Se respetan las especies fijas de la etapa (p. ej. Pidgey de la Ruta 1) y el resto sale de la hierba de la zona, sin repetir especie si se puede.
+ if(kind==='main'&&data.mainKind==='wild'&&!currentEncounter.fish&&data.wild&&data.wild.length){
+  const want=Math.min(4,Math.max(1,originalParty.length));
+  enemies=enemies.slice(0,want);
+  for(let tries=0;enemies.length<want&&tries<40;tries++){const pick=pickWild(data.wild);if(enemies.some(e=>e.id===pick.id)&&new Set(data.wild.map(w=>w.id)).size>enemies.length&&tries<30)continue;enemies.push(pick)}
+ }
  const locations=id==='route2'?[[1,3],[2,4],[1,5],[2,6]]:id==='forestdoug'?[[9,2],[10,3],[9,4],[10,4]]:id==='forestexit'?[[9,2],[10,2],[9,3],[10,3]]:id==='route3'?[[8,5],[9,5],[8,6],[9,6]]:id==='route3b'?[[6,2],[7,2],[8,2],[7,3]]:id==='mtmoonj'?[[7,2],[8,2],[8,3],[7,3]]:id==='mtmoon'?[[7,1],[8,1],[7,2],[8,2]]:id==='ceruleanrival'?[[6,1],[7,1],[6,2],[7,2]]:id==='route5'?[[8,3],[9,4],[8,5],[9,5]]:id==='route6'?[[8,2],[9,3],[8,4],[9,4]]:id==='vermilionrival'?[[5,5],[6,5],[7,5],[8,5]]:id==='vermilionguard'?[[4,3],[7,3],[5,3],[6,3]]:id==='vermilion'?[[5,1],[6,1],[5,3],[6,3]]:id==='route22'?[[6,2],[7,2],[5,2],[8,2]]:id==='cerulean'?[[5,1],[6,1],[5,2],[6,2]]:id==='ceruleanguard'?[[4,3],[7,3],[5,3],[6,3]]:(id==='route25'||id==='route25b')?[[4,3],[5,3],[6,3],[5,2]]:id==='nugget'?(kind==='wild'?[[3,2],[4,2],[5,2],[4,3]]:[[5,2],[6,2],[5,3],[6,3]]):id==='nuggetrocket'?[[5,1],[6,1],[5,2],[6,2]]:id==='route4'?[[8,3],[9,4],[8,5],[9,5]]:id==='mtmoonc'?[[7,1],[8,1],[7,2],[8,2]]:[[9,1],[10,2],[9,3],[10,3]];
  const actualWild=(kind==='wild'||(kind==='main'&&data.mainKind==='wild'));
  const foes=enemies.map((e,i)=>unit(e.id,'enemy',locations[i][0],locations[i][1],e.level,e.moves||movesForLevel(e.id,e.level),actualWild?rollIVs():null));
