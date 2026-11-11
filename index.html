@@ -3889,7 +3889,9 @@ function fxDrawImpact(plan,delta,dur,crit,ex,ey){
    // Coordenadas de la referencia (lienzo ~980px, centro 490,480) → se escalan sobre el rival.
    const CL=[[535,130,510,388,165,735,1],[720,115,650,462,160,840,1.15],[818,275,731,561,280,843,1]];
    const set=(p0,sc,mir)=>{for(let i=0;i<3;i++){const pr=Math.min(1,Math.max(0,(p0-i*.1)/.72));if(pr<=0)continue;
-     const c=CL[i],X=v=>ex+mir*((v-490)*sc+12),Y=v=>ey-14+(v-480)*sc;
+     const c0=CL[i],mx=(c0[0]+c0[4])/2,my=(c0[1]+c0[5])/2,GX=490,GY=480,JN=.72,LN=.82; // JN: juntar las marcas · LN: acortarlas
+     const tr=(x,y)=>[GX+(mx-GX)*JN+(x-mx)*LN,GY+(my-GY)*JN+(y-my)*LN],c=[...tr(c0[0],c0[1]),...tr(c0[2],c0[3]),...tr(c0[4],c0[5]),c0[6]];
+     const X=v=>ex+mir*((v-490)*sc+12),Y=v=>ey-14+(v-480)*sc;
      fxClawMarkQ(X(c[0]),Y(c[1]),X(c[2]),Y(c[3]),X(c[4]),Y(c[5]),(crit?4.4:3.6)*c[6],pr)}};
    if(!crit){const p=Math.min(1,k/.32);set(p*1.2,.19,-1)} // espejado: zarpazo de mano izquierda
    else{const p1=Math.min(1,k/.3),p2=Math.min(1,Math.max(0,(k-.24)/.3));set(p1*1.2,.23,-1);if(p2>0)set(p2*1.2,.23,1)}
