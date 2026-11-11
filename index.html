@@ -181,6 +181,7 @@
 
 /* v0.27: pixel-art FR/LG y retratos en la ficha, manteniendo el resto del HUD. */
 .pokemonDetailPortrait{height:116px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 80%,#81b99e 0,#81b99e 28%,#406e69 29%,#295166 65%,#1c3d4f 100%);border:2px solid #759d9b;border-radius:6px;margin:8px 0 11px;font-size:48px}
+.releaseBtn{background:#6a3a42!important;border-color:#a8646e!important}.releaseBtn:disabled{opacity:.45}
 .evoRow{display:flex;flex-direction:column;gap:5px;margin:2px 0 10px}.evoRow .managerHint{margin:0}.evoStoneBtn{align-self:flex-start;padding:6px 12px!important;font-weight:800}.evoStoneBtn small{opacity:.75;font-weight:600}
 .pokemonDetailPortrait img{width:104px;height:104px;object-fit:contain;image-rendering:pixelated}
 .partyEntry .miniSprite img{width:35px;height:35px;image-rendering:pixelated;object-fit:contain}
@@ -5831,12 +5832,30 @@ function renderTeam0(){
         if(partyAll().length<6){const btn=document.createElement('button');btn.className='miniBtn';btn.textContent='Añadir a reservas';btn.disabled=!canPrepare();btn.onclick=()=>swapBoxPokemon(u,null);bar.append(btn)}
         d.append(bar);
     }
+    if(reserves.includes(u)||storageBox.includes(u)){ /* v651: liberar a un Pokémon de la reserva o de la caja (p. ej. duplicados) */
+        const lab=document.createElement('div');lab.className='managerLabel';lab.style.marginTop='13px';lab.textContent='LIBERAR';d.append(lab);
+        const b=document.createElement('button');b.type='button';b.className='miniBtn releaseBtn';b.textContent='🕊️ Liberar a '+base[u.id].name;
+        const total=partyAll().length+storageBox.length;b.disabled=!canPrepare()||total<=1;
+        b.title=total<=1?'No puedes liberar a tu último Pokémon.':!canPrepare()?'Solo entre combates o antes de actuar en el capítulo.':'';
+        b.onclick=()=>askRelease(u);d.append(b);
+        if(!canPrepare()){const t=document.createElement('small');t.className='managerHint';t.style.display='block';t.textContent='🔒 Solo entre combates o antes de actuar en el capítulo.';d.append(t)}
+    }
     if(reserves.includes(u)){
         const lab=document.createElement('div');lab.className='managerLabel';lab.style.marginTop='13px';lab.textContent='DESPLIEGUE Y CAMBIO';d.append(lab);
         if(deployed.length<maxDeploy()){const deploy=document.createElement('button');deploy.type='button';deploy.className='miniBtn';deploy.textContent='＋ DESPLEGAR EN EL TABLERO';deploy.disabled=!canPrepare();deploy.onclick=()=>deployFromReserve(u);d.append(deploy)}
         const bar=document.createElement('div');bar.className='reserveSwap';
         deployed.forEach((current,i)=>{const b=document.createElement('button');b.className='miniBtn';b.textContent=(i+1)+'. '+base[current.id].name;b.disabled=!canPrepare();b.onclick=()=>swapParty(u,current);bar.append(b)});d.append(bar);
     }
+}
+function askRelease(u){
+ if(!canPrepare()||!(reserves.includes(u)||storageBox.includes(u))||partyAll().length+storageBox.length<=1)return;
+ const nm=(u.shiny?'✨ ':'')+base[u.id].name+' Nv. '+u.level;
+ $('managerOverlay').hidden=true;
+ showModal('🕊️ ¿LIBERAR A '+base[u.id].name.toUpperCase()+'?','Vas a liberar a '+nm+'. Volverá a la naturaleza y no podrás recuperarlo. Sigue registrado en la Pokédex.',
+  '<div class="evobox"><span class="pmdSlot" data-pmd="'+pkId(u)+'" data-s="84"></span></div>',
+  [{text:'LIBERAR',fn:()=>{const a=reserves.indexOf(u),b=storageBox.indexOf(u);if(a>=0)reserves.splice(a,1);else if(b>=0)storageBox.splice(b,1);else return;
+    log('🕊️ Liberaste a '+base[u.id].name+'. ¡Adiós, '+base[u.id].name+'!');managerSelected=partyAll()[0];$('modal').hidden=true;updateUI();autoSaveSafe();openManager('team')}},
+   {text:'CANCELAR',fn:()=>{$('modal').hidden=true;openManager('team')}}]);
 }
 function swapBoxPokemon(boxUnit,teamUnit){
  if(!canPrepare()||!storageBox.includes(boxUnit))return;
