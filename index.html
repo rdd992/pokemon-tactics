@@ -2613,6 +2613,7 @@ $('useStone').onclick=()=>{
 // coinciden con la resolución real del tablero. No se adelanta ningún resultado visual.
 async function perform(u,index,x,y){
     if(locked||cinematicBusy||u.acted||u.hp<=0)return;
+    if(u.side==='player'&&moveDB[u.moves[index].key].power>0)window.__mcAttacked=true; // v652: para el tutorial móvil
     if(u.flinch){u.flinch=false;u.acted=true;u.moved=true;selected=null;closeBattleMenu();skill=null;log('😖 '+base[u.id].name+' está amedrentado y pierde su acción.');updateUI();if(u.side==='player')nextIfAll();return}
     if(u.asleep>0){u.asleep--;u.acted=true;u.moved=true;selected=null;closeBattleMenu();skill=null;log('💤 '+base[u.id].name+' sigue dormido y pierde su acción.');updateUI();if(u.side==='player')nextIfAll();return}
     {const _L=encoreLock(u);if(_L&&u.moves[index].key!==_L){if(u.side==='player'){log('🔁 '+base[u.id].name+' está bajo Otra Vez y solo puede usar '+moveDB[_L].name+'.');return}index=u.moves.findIndex(q=>q.key===_L)}}
@@ -7298,6 +7299,7 @@ const st=document.createElement('style');st.textContent=`
 #tutBar[hidden]{display:none}
 .mcCoach{bottom:64px}
 .mcCoach.mcTop{bottom:auto;top:52px}
+.mcCoach.mcDone,.mcCoach.mcDone .gcBox{pointer-events:none}
 .mcMark{position:absolute;z-index:540;pointer-events:none;transform:translate(-50%,-100%)}
 .mcMark[hidden]{display:none}
 .mcMark span{display:block;font-size:34px;line-height:1;filter:drop-shadow(0 3px 4px rgba(0,0,0,.6));animation:mcTap 1s ease-in-out infinite}
@@ -7309,7 +7311,7 @@ const st=document.createElement('style');st.textContent=`
 @keyframes mcBtn{0%,100%{box-shadow:0 0 0 0 rgba(247,216,143,.85)}50%{box-shadow:0 0 0 9px rgba(247,216,143,0)}}body.hasEC #tutBar{left:12px;transform:none;width:calc(100% - 300px);text-align:left}#tutBar b{color:#ffd58a}#tutBar small{display:block;opacity:.75;margin-top:2px;font-size:.82em}
 `;document.head.appendChild(st);
 let bar=null,active=false,seenPlayerTurns=0,lastPhase='';
-window.__tutStart=()=>{active=true;seenPlayerTurns=0;lastPhase='';try{if(isMobT()&&window.__gestureCoach)window.__gestureCoach()}catch(e){}try{mcOff=false;mcSawEnemy=false;mcDoneAt=0;mcHit=false;mcAim=false;mcHide()}catch(e){}};
+window.__tutStart=()=>{active=true;seenPlayerTurns=0;lastPhase='';try{if(isMobT()&&window.__gestureCoach)window.__gestureCoach()}catch(e){}try{window.__mcAttacked=false;mcOff=false;mcSawEnemy=false;mcDoneAt=0;mcHit=false;mcAim=false;mcHide()}catch(e){}};
 // v652 · móvil: tutorial guiado "aprender haciendo" en el primer combate (Pueblo Paleta). En vez de texto largo,
 // una tarjeta corta dice qué tocar y un dedo animado lo señala en el tablero o en el menú. Avanza solo cuando lo haces.
 const isMobT=()=>matchMedia('(pointer:coarse)').matches;
@@ -7344,7 +7346,7 @@ function mobCoach(){
  mcTarget=null;
  if(phase==='enemy'){mcSawEnemy=true;mcClearPulse();mcShow(-1,'🕒','Turno del rival','Mira cómo se mueve y ataca. Luego vuelve tu turno.',{noSkip:true});mcPoint(null);if(mcMark)mcMark.hidden=true;return}
  if(phase!=='player'||locked){mcHide();return}
- if(mcAim&&skill===null){mcAim=false;mcHit=true} // acaba de atacar
+ if(window.__mcAttacked)mcHit=true; // atacó de verdad (perform)
  // 1 · elegir Pokémon
  if(!selected){const u=me.find(q=>!q.acted);mcClearPulse();
   if(!u){mcShow(-1,'▶','Termina tu fase','Toca ☰ y luego «Terminar fase».');return}
@@ -7377,12 +7379,13 @@ function mobCoach(){
   if(best&&!(best.x===selected.x&&best.y===selected.y))mcPoint({x:best.x,y:best.y,h:.05,tile:true});else mcPoint({x:selected.x,y:selected.y,h:1.6});return}
  mcShow(2,'📋','Elige qué hacer','Usa el menú que apareció junto a tu Pokémon.');
 }
-setInterval(()=>{if(active&&isMobT()&&!mcSeen())try{window.__tutHint()}catch(e){}},400);
+setInterval(()=>{if(active&&isMobT()&&!mcSeen())try{window.__tutHint()}catch(e){}
+ if(mc&&!mc.hidden){const bm=$('battleMenu');mc.classList.toggle('mcTop',!!(bm&&!bm.hidden))}},300);
 window.__tutHint=function(){
  const wrap=document.querySelector('.canvaswrap');if(!wrap)return;
  if(!bar){bar=document.createElement('div');bar.id='tutBar';bar.hidden=true;wrap.appendChild(bar)}
  const mob=isMobT();
- const finish=()=>{active=false;bar.hidden=true;if(mob&&mc&&!mc.hidden&&!mcDoneAt&&!mcSeen()){mcSave();mcDoneAt=1;mcShow(-1,'✨','¡Ya sabes jugar!','Elige, muévete y ataca. Más opciones y ayuda en ☰.',{ok:true,noSkip:true});if(mcMark)mcMark.hidden=true;mcClearPulse();setTimeout(mcHide,3800)}else if(!mcDoneAt)mcHide()};
+ const finish=()=>{active=false;bar.hidden=true;if(mob&&mc&&!mc.hidden&&!mcDoneAt&&!mcSeen()){mcSave();mcDoneAt=1;mcShow(-1,'✨','¡Ya sabes jugar!','Elige, muévete y ataca. Más opciones y ayuda en ☰.',{ok:true,noSkip:true});mc.classList.add('mcDone');if(mcMark)mcMark.hidden=true;mcClearPulse();setTimeout(()=>{mcHide();if(mc)mc.classList.remove('mcDone')},3000)}else if(!mcDoneAt)mcHide()};
  if(!active||!currentEncounter||currentEncounter.id&&currentEncounter.id!=='pallet'){if(active&&phase==='win')finish();else{bar.hidden=true;if(!mcDoneAt)mcHide()}return}
  if(phase==='win'){finish();return}
  if(phase==='player'&&lastPhase!=='player')seenPlayerTurns++;lastPhase=phase;
