@@ -6422,15 +6422,17 @@ function r3init(){
   wrap.append(mb,pan)}
  // v650: tutorial interactivo de gestos la primera vez en un teléfono (se hace cada gesto sobre el tablero real)
  {const KEY='pt_gestureHint_v1',touch=matchMedia('(pointer:coarse)').matches;let seen=true;try{seen=!!localStorage.getItem(KEY)}catch(e){}
-  const STEPS=[{ico:'<span class="gcSwipe">👆</span>',t:'Desliza un dedo hacia un lado',d:'sobre el tablero para girar la cámara',ok:o=>Math.abs(R3.yawT-o.yaw)>.5},
-   {ico:'<span class="gcPinch">🤏</span>',t:'Pellizca con dos dedos',d:'para acercar o alejar (o usa ＋ －)',ok:o=>Math.abs((R3.zmT||1)-o.zm)>.04},
+  // v652: primero la cámara (acercar y girar): de cerca es mucho más fácil tocar las casillas desde el teléfono
+  const STEPS=[{ico:'<span class="gcPinch">🤏</span>',t:'Acerca la cámara',d:'Separa dos dedos sobre el tablero (o toca ＋). De cerca es más fácil tocar las casillas.',ok:o=>(R3.zmT||1)<o.zm-.04},
+   {ico:'<span class="gcSwipe">👆</span>',t:'Gira la cámara',d:'Desliza un dedo hacia un lado sobre el tablero (o usa ↶ ↷).',ok:o=>Math.abs(R3.yawT-o.yaw)>.5},
    {ico:'<span class="gcMenuI">☰</span>',t:'Toca ☰ arriba a la derecha',d:'ahí están el mapa, el equipo, guardar…',ok:()=>{const m=wrap.querySelector('.fsMenu');return !!m&&!m.hidden},hl:'.fsMenuBtn'}];
   const run=()=>{const h=$('helpOv');if((h&&!h.hidden)||!$('titleOverlay').hidden||!wrap.offsetWidth){setTimeout(run,800);return}
+   if(wrap.querySelector('.gCoach:not(.mcCoach)'))return;
    const c=document.createElement('div');c.className='gCoach';c.setAttribute('role','status');c.setAttribute('aria-live','polite');wrap.append(c);
    let k=0,base=null,timer=0,hl=null;
    const finish=()=>{clearInterval(timer);if(hl)hl.classList.remove('gcPulse');c.remove();try{localStorage.setItem(KEY,'1')}catch(e){}if(window.__helpAfterGestures){window.__helpAfterGestures=false;setTimeout(()=>window.__showHelpOnce&&window.__showHelpOnce(),300)}};
    const draw=()=>{if(hl){hl.classList.remove('gcPulse');hl=null}
-    if(k>=STEPS.length){c.innerHTML='<div class="gcBox gcDone"><div class="gcIco">✨</div><div class="gcTxt"><b>¡Listo!</b><small>Ahora, cómo se combate…</small></div></div>';setTimeout(finish,1800);clearInterval(timer);return}
+    if(k>=STEPS.length){c.innerHTML='<div class="gcBox gcDone"><div class="gcIco">✨</div><div class="gcTxt"><b>¡Listo!</b><small>Ahora, a combatir…</small></div></div>';setTimeout(finish,1800);clearInterval(timer);return}
     const st=STEPS[k];base={yaw:R3.yawT,zm:R3.zmT||1};
     c.innerHTML='<div class="gcBox"><div class="gcIco">'+st.ico+'</div><div class="gcTxt"><b>'+st.t+'</b><small>'+st.d+'</small><div class="gcDots">'+STEPS.map((_,i)=>'<i class="'+(i<k?'ok':i===k?'on':'')+'"></i>').join('')+'</div></div><button type="button" class="gcSkip">Saltar</button></div>';
     c.querySelector('.gcSkip').onclick=e=>{e.stopPropagation();finish()};
@@ -6438,7 +6440,8 @@ function r3init(){
    c.addEventListener('pointerdown',e=>e.stopPropagation());
    const tick=()=>{const st=STEPS[k];if(st&&st.ok(base)){const bx=c.querySelector('.gcBox');if(bx)bx.classList.add('gcOk');k++;clearInterval(timer);setTimeout(()=>{if(!c.isConnected)return;draw();if(k<STEPS.length)timer=setInterval(tick,250)},700)}};
    draw();timer=setInterval(tick,250)};
-  if(touch&&!seen)setTimeout(run,1200)}
+  // v652: en el móvil se enseña al empezar cada partida nueva (lo lanza __tutStart), antes del tutorial de combate
+  window.__gestureCoach=()=>{if(touch)setTimeout(run,600)}}
  addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;if(e.key.toLowerCase()==='f'){toggleFS();e.preventDefault()}else if(e.key==='Escape'&&wrap.classList.contains('fakeFS')&&!MOB())leaveFake()});
  addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;const k=e.key.toLowerCase();if(k==='q')camStep(-Math.PI/2);else if(k==='e')camStep(Math.PI/2);else if(k==='r'){R3.yawT=Math.PI/4+Math.round((R3.yawT-Math.PI/4)/(2*Math.PI))*2*Math.PI;R3.zmT=1}else if(k==='+'||k==='=')zoomBy(1/1.25);else if(k==='-'||k==='_')zoomBy(1.25)});
  const cv=document.createElement('canvas');cv.id='map3d';cv.setAttribute('aria-label','Tablero táctico 3D');wrap.insertBefore(cv,canvas.nextSibling);
@@ -7304,7 +7307,7 @@ const st=document.createElement('style');st.textContent=`
 @keyframes mcBtn{0%,100%{box-shadow:0 0 0 0 rgba(247,216,143,.85)}50%{box-shadow:0 0 0 9px rgba(247,216,143,0)}}body.hasEC #tutBar{left:12px;transform:none;width:calc(100% - 300px);text-align:left}#tutBar b{color:#ffd58a}#tutBar small{display:block;opacity:.75;margin-top:2px;font-size:.82em}
 `;document.head.appendChild(st);
 let bar=null,active=false,seenPlayerTurns=0,lastPhase='';
-window.__tutStart=()=>{active=true;seenPlayerTurns=0;lastPhase='';try{mcOff=false;mcSawEnemy=false;mcDoneAt=0;mcHit=false;mcAim=false;mcHide()}catch(e){}};
+window.__tutStart=()=>{active=true;seenPlayerTurns=0;lastPhase='';try{if(isMobT()&&window.__gestureCoach)window.__gestureCoach()}catch(e){}try{mcOff=false;mcSawEnemy=false;mcDoneAt=0;mcHit=false;mcAim=false;mcHide()}catch(e){}};
 // v652 · móvil: tutorial guiado "aprender haciendo" en el primer combate (Pueblo Paleta). En vez de texto largo,
 // una tarjeta corta dice qué tocar y un dedo animado lo señala en el tablero o en el menú. Avanza solo cuando lo haces.
 const isMobT=()=>matchMedia('(pointer:coarse)').matches;
@@ -7364,6 +7367,10 @@ function mobCoach(){
  // 2 · moverse
  if(!selected.moved){
   let best=null,bd=1e9;try{for(const sp of reachableSpots(selected)){const d=Math.min(...foes.map(v=>Math.abs(v.x-sp.x)+Math.abs(v.y-sp.y)));if(d>=1&&(d<bd||d===bd&&sp.cost<best.cost)){bd=d;best=sp}}}catch(e){}
+  // v652: si ya alcanza al rival desde donde está, no le pedimos moverse: basta con tocarlo otra vez para quedarse
+  const hitHere=foes.some(v=>selected.moves.some(mp=>mp.pp>0&&moveDB[mp.key].power>0&&canAim(selected,moveDB[mp.key],v.x,v.y)));
+  const curD=Math.min(...foes.map(v=>Math.abs(v.x-selected.x)+Math.abs(v.y-selected.y)));
+  if(hitHere||!best||bd>=curD){mcShow(1,'📍',hitHere?'Ya estás junto al rival':'Quédate aquí','Toca a '+nm(selected)+' otra vez para quedarte'+(hitHere?' y atacar.':'.'));mcPoint({x:selected.x,y:selected.y,h:1.6});return}
   mcShow(1,'👣','Toca una casilla azul','Ahí se moverá '+nm(selected)+'. Acércate al rival.');
   if(best&&!(best.x===selected.x&&best.y===selected.y))mcPoint({x:best.x,y:best.y,h:.05,tile:true});else mcPoint({x:selected.x,y:selected.y,h:1.6});return}
  mcShow(2,'📋','Elige qué hacer','Usa el menú que apareció junto a tu Pokémon.');
