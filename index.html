@@ -889,6 +889,8 @@ const EVO_STONES={
 };
 function stoneQty(item){const S=EVO_STONES[item];if(!S)return 0;return item==='thunder-stone'?thunderStones:(bag[S.key]||0)}
 function spendStone(item){const S=EVO_STONES[item];if(!S)return;if(item==='thunder-stone')thunderStones=Math.max(0,thunderStones-1);else bag[S.key]=Math.max(0,(bag[S.key]||0)-1)}
+const STONE_BY_KEY=Object.fromEntries(Object.entries(EVO_STONES).map(([item,S])=>[S.key,item]));
+function itemQty(id){return STONE_BY_KEY[id]?stoneQty(STONE_BY_KEY[id]):(bag[id]||0)}
 function useEvoStone(u){
   const r=u&&evolutionRules[u.id],S=r&&EVO_STONES[r.item];
   if(!S||!base[r.to]||stoneQty(r.item)<=0||!canPrepare())return;
@@ -1297,10 +1299,10 @@ function calculateCapture(enemy,ballId,random=()=>Math.random()){
  let shakes=0;for(let i=0;i<4;i++){if(Math.floor(random()*65536)>=threshold)break;shakes++}
  return {success:shakes===4,shakes,rate,adjusted,status};
 }
-const ITEM_RANGE=1,ITEM_NAMES={potion:'Poción',superPotion:'Superpoción',antidote:'Antídoto',parlyz:'Antiparalizador'};
+const ITEM_RANGE=1,ITEM_NAMES={potion:'Poción',superPotion:'Superpoción',antidote:'Antídoto',parlyz:'Antiparalizador',thunderStone:'Piedra Trueno',fireStone:'Piedra Fuego',waterStone:'Piedra Agua',leafStone:'Piedra Hoja',moonStone:'Piedra Lunar'};
 function itemTargets(id,actor){return units.filter(u=>u.side==='player'&&u.hp>0&&distance(actor,u)<=ITEM_RANGE&&itemWorks(id,u))}
 function startItemAim(id){
- if(!canUseBagNow()||(bag[id]||0)<1)return;
+ if(!canUseBagNow()||itemQty(id)<1)return;
  const actor=currentBagActor();if(!actor)return;
  $('gameBag').hidden=true;captureMode={actor,ballId:null,itemId:id};actionMenu=null;$('battleMenu').hidden=true;
  skill=null;syncAttackBack();updateUI();log('🎯 '+base[actor.id].name+' prepara '+ITEM_NAMES[id]+'. Elige a quién usarlo: a sí mismo o a un aliado adyacente.');
@@ -2515,7 +2517,7 @@ function resolveProgress(done){
             if(!base[e.to]||evolutionRules[u.id]?.to!==e.to){next();return}
             const old=u.id;
             const stone=e.stone||(e.reason==='Piedra Trueno'?'thunder-stone':null);
-            const confirm=()=>{if(stone)spendStone(stone);const fromId=u.id;$('modal').hidden=true;evolvePokemon(u,e.to);if(!animationEnabled){next();return}showEvolutionScene(u,fromId,e.to).catch(err=>{console.warn(err);hideCinematic()}).then(()=>next())};
+            const confirm=()=>{if(stone)spendStone(stone);if(e.onConfirm)e.onConfirm();const fromId=u.id;$('modal').hidden=true;evolvePokemon(u,e.to);if(!animationEnabled){next();return}showEvolutionScene(u,fromId,e.to).catch(err=>{console.warn(err);hideCinematic()}).then(()=>next())};
             const no=()=>{log('↩ '+base[u.id].name+' no evolucionó.');next()};
             fetchSprite(old);fetchSprite(e.to);
             showModal('¡EVOLUCIÓN DISPONIBLE!','¡'+base[u.id].name+' puede evolucionar a '+base[e.to].name+'! Requisito: '+e.reason+'.',
@@ -5855,14 +5857,18 @@ function renderBag(){
         {id:'ether',icon:'💠',name:'Éter',desc:'Recupera 10 PP del movimiento elegido del usuario.'},
         {id:'antidote',icon:'💜',name:'Antídoto',desc:'Cura el envenenamiento · a ti o a un aliado adyacente.'},
         {id:'parlyz',icon:'💛',name:'Antiparalizador',desc:'Cura la parálisis · a ti o a un aliado adyacente.'},
-        {id:'thunderStone',icon:'⚡',name:'Piedra Trueno',desc:'Evoluciona a Pikachu. Úsala desde 🐾 Equipo, entre combates o antes de actuar.'},
+        {id:'thunderStone',icon:'⚡',name:'Piedra Trueno',desc:'Evoluciona a Pikachu · a ti o a un aliado adyacente. También desde 🐾 Equipo.'},
+        {id:'fireStone',icon:'🔥',name:'Piedra Fuego',desc:'Piedra evolutiva · a ti o a un aliado adyacente.'},
+        {id:'waterStone',icon:'💧',name:'Piedra Agua',desc:'Piedra evolutiva · a ti o a un aliado adyacente.'},
+        {id:'leafStone',icon:'🍃',name:'Piedra Hoja',desc:'Piedra evolutiva · a ti o a un aliado adyacente.'},
+        {id:'moonStone',icon:'🌙',name:'Piedra Lunar',desc:'Piedra evolutiva · a ti o a un aliado adyacente.'},
         {id:'pokeball',icon:'🔴',name:'Poké Ball',desc:'Captura salvajes · ratio ×1 · alcance 3'},{id:'greatball',icon:'🔵',name:'Super Ball',desc:'Captura salvajes · ratio ×1,5 · alcance 3'},{id:'ultraball',icon:'🟡',name:'Ultra Ball',desc:'Captura salvajes · ratio ×2 · alcance 3'}
     ];
     const hasFainted=partyAll().some(u=>u.hp===0);
     const list=$('inventoryList');list.replaceChildren();
     $('bagTabs').querySelectorAll('button').forEach(t=>t.classList.toggle('on',t.dataset.t===bagTab));
-    for(const item of items.filter(it=>it.id!=='ether'&&(bagTab==='balls')===!!BALLS[it.id]&&(it.id==='thunderStone'?thunderStones:bag[it.id])>0)){
-        const num=item.id==='thunderStone'?thunderStones:bag[item.id];
+    for(const item of items.filter(it=>it.id!=='ether'&&(bagTab==='balls')===!!BALLS[it.id]&&itemQty(it.id)>0)){
+        const num=itemQty(item.id);
         const row=document.createElement('div');row.className='inventoryItem';
         const label=document.createElement('div'),title=document.createElement('b');
         title.innerHTML=(ITEM_SPR[item.id]?itemIc(item.id,24):item.icon)+' '+item.name+' ×'+num;
@@ -5872,7 +5878,7 @@ function renderBag(){
         let canUse=false;
         if(item.id==='revive')canUse=hasFainted;
         else if(BALLS[item.id])canUse=isTrainerBattle()||(captureAllowed()&&storageBox.length<BOX_CAPACITY&&units.some(u=>u.side==='enemy'&&u.hp>0));
-        else if(item.id!=='thunderStone')canUse=itemTargets(item.id,actor).length>0;
+        else canUse=itemTargets(item.id,actor).length>0;
         btn.disabled=(!num&&!(BALLS[item.id]&&isTrainerBattle()))||!canUse||!actor;
         btn.onclick=()=>{if(item.id==='revive')openRevivePicker();else if(BALLS[item.id]){if(isTrainerBattle()){const tm='¡El entrenador bloqueó la Ball! ¡No seas ladrón!';$('inventoryMessage').textContent='🚫 '+tm;log('🚫 '+tm);playSfx('error')}else startCaptureAim(item.id)}else if(ITEM_NAMES[item.id])startItemAim(item.id);else useItem(item.id,actor)};
         row.append(btn);list.append(row);
@@ -5890,6 +5896,7 @@ function itemWorks(id,u){
     if(id==='revive')return u.hp===0;
     if(id==='antidote')return u.hp>0&&!!u.poisoned;
     if(id==='parlyz')return u.hp>0&&!!u.paralyzed;
+    if(STONE_BY_KEY[id])return u.hp>0&&evolutionRules[u.id]?.item===STONE_BY_KEY[id]&&!!base[evolutionRules[u.id].to];
     if(id==='ether'){
         const mp=u.moves[Number($('bagMove').value)];
         return !!mp&&mp.pp<moveDB[mp.key].pp;
@@ -5935,7 +5942,7 @@ function findRevivePosition(target,actor){
 function useItem(id,target){
     if(!canUseBagNow()||$('gameBag').hidden)return;
     const actor=currentBagActor();
-    if(!actor||!bag[id]||actor.acted||actor.hp<=0)return;
+    if(!actor||itemQty(id)<1||actor.acted||actor.hp<=0)return;
     let revivalPosition=null;
     if(id==='revive'){
         if($('revivePicker').hidden)return;
@@ -5966,6 +5973,20 @@ function useItem(id,target){
     }
     else if(id==='antidote'){target.poisoned=false;target.src_poison=null}
     else if(id==='parlyz'){target.paralyzed=false}
+    else if(STONE_BY_KEY[id]){ /* v651: piedra evolutiva desde la mochila; la piedra y la acción solo se gastan si se confirma */
+        const item=STONE_BY_KEY[id],S=EVO_STONES[item],r=evolutionRules[target.id];
+        let used=false;
+        closeGameBag();locked=true;updateUI();
+        pendingProgress.push({kind:'evolve',u:target,to:r.to,reason:S.name,stone:item,onConfirm:()=>{
+            used=true;actor.acted=true;actor.moved=true;actor.origin=null;
+            log('🎒 '+base[actor.id].name+' usa '+S.name+' en '+base[target.id].name+'. Acción consumida.');
+        }});
+        resolveProgress(()=>{locked=false;
+            if(used){selected=null;inspectedEnemy=null;enemyAnalysis=null;skill=null;closeBattleMenu();updateUI();autoSaveSafe();nextIfAll()}
+            else{updateUI();if(actionMenu)renderBattleMenu()}
+        });
+        return;
+    }
     else return;
     bag[id]--;
     actor.acted=true;actor.moved=true;actor.origin=null;
