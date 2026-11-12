@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,interactive-widget=resizes-content"><meta name="theme-color" content="#132733"><meta name="mobile-web-app-capable" content="yes"><title>Pokémon Tactics 2.5D v652 · Escena frente a frente</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,interactive-widget=resizes-content"><meta name="theme-color" content="#132733"><meta name="mobile-web-app-capable" content="yes"><title>Pokémon Tactics 2.5D v653 · Escena frente a frente</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&family=Antonio:wght@600;700&display=swap');
 :root{--bg:#0c1520;--panel:#1c2c3b;--panel2:#273f50;--edge:#61848c;--gold:#f7d88f;--cream:#faf3d8;--teal:#7dccb0;--red:#e5877f;--blue:#78bee7}
@@ -659,7 +659,7 @@ html:has(#titleOverlay:not([hidden])),body:has(#titleOverlay:not([hidden])){over
 </style></head>
 <body>
 <div class="titleOverlay" id="titleOverlay" data-screen="home" role="dialog" aria-modal="true" aria-label="Menú principal Pokémon Tactics">
-<div id="titleHero"><canvas id="titleScene" aria-hidden="true"></canvas><div class="heroUI"><div class="heroLeft"><div class="heroLogo"><span class="hl1">POKÉMON</span><span class="hl2">TACTICS</span><span class="hl3">2.5D · UNA AVENTURA TÁCTICA EN KANTO</span></div><div class="heroMenu"><button id="hPlay" class="hBig" type="button"><i>▶</i><span><b>JUGAR</b><small></small></span></button><div class="hSide"><button id="hNew" type="button">✦ Nueva partida</button><button id="hImport" type="button">📥 Importar</button></div></div><div class="heroTiles"><button id="hReturn" type="button" hidden>↩ Volver al juego</button><button id="hOpt" type="button">⚙ Opciones</button><button id="hCred" type="button">© Créditos</button></div><p id="hNotice"></p></div><aside class="heroPanel" id="heroPanel"></aside><div class="heroFoot">v652 · VERSIÓN 2.5D · PROTOTIPO NO OFICIAL · Pokémon y sus personajes pertenecen a sus respectivos titulares</div></div></div>
+<div id="titleHero"><canvas id="titleScene" aria-hidden="true"></canvas><div class="heroUI"><div class="heroLeft"><div class="heroLogo"><span class="hl1">POKÉMON</span><span class="hl2">TACTICS</span><span class="hl3">2.5D · UNA AVENTURA TÁCTICA EN KANTO</span></div><div class="heroMenu"><button id="hPlay" class="hBig" type="button"><i>▶</i><span><b>JUGAR</b><small></small></span></button><div class="hSide"><button id="hNew" type="button">✦ Nueva partida</button><button id="hImport" type="button">📥 Importar</button></div></div><div class="heroTiles"><button id="hReturn" type="button" hidden>↩ Volver al juego</button><button id="hOpt" type="button">⚙ Opciones</button><button id="hCred" type="button">© Créditos</button></div><p id="hNotice"></p></div><aside class="heroPanel" id="heroPanel"></aside><div class="heroFoot">v653 · VERSIÓN 2.5D · PROTOTIPO NO OFICIAL · Pokémon y sus personajes pertenecen a sus respectivos titulares</div></div></div>
  <div class="titleWindow">
   <div class="titleVisual"><canvas id="titleCanvas" width="640" height="270" aria-label="Paisaje pixel art de Kanto"></canvas><div class="titleBrand"><div class="eyebrow">UNA AVENTURA TÁCTICA EN KANTO</div><h1>POKÉMON TACTICS</h1><div class="caption">KANTO · MEDALLAS ROCA Y CASCADA</div></div></div>
   <div id="titleHome" class="titleBody">
@@ -669,7 +669,7 @@ html:has(#titleOverlay:not([hidden])),body:has(#titleOverlay:not([hidden])){over
   <div id="titleStarter" class="titleSubscreen" hidden><h2>PROFESOR OAK · ELIGE A TU COMPAÑERO</h2><div class="starterCards" id="starterCards"></div><div class="starterFooter"><small>Empezarás únicamente con el Pokémon elegido, en el nivel 5.<br>Los demás se conseguirán mediante capturas durante la aventura.</small><button class="starterConfirm" id="starterConfirm" disabled>¡COMENZAR AVENTURA! ▶</button></div><div style="margin-top:17px"><button class="titleBack" id="starterBack">← VOLVER</button></div></div>
   <div id="titleOptionsPanel" class="titleSubscreen" hidden><h2>⚙ OPCIONES DEL JUEGO</h2><div class="titleOptRow"><span>🔊 Efectos de sonido originales</span><button id="titleSoundToggle">ACTIVADOS</button></div><div class="titleOptRow"><span>🎬 Escenas cinematográficas</span><button id="titleAnimToggle">ACTIVADAS</button></div><div class="titleOptRow"><span>🎵 Música de fondo</span><button id="titleMusicToggle">ACTIVADA</button></div><div class="titleOptRow"><span>⚔ Estilo de escena de combate</span><button id="titleStyleToggle">FRENTE A FRENTE</button></div><div class="titleOptRow"><span>🎨 Sprites (original / SpriteCollab)</span><button id="titlePmdToggle">ORIGINALES</button></div><div class="titleOptRow"><span>⏩ Velocidad de animaciones de combate</span><button id="titleSpeedToggle">x1</button></div><p class="tiny">El sonido se genera en el navegador mediante sintetizadores. No utilizamos música o efectos oficiales de Pokémon.</p><button class="titleBack" id="titleOptionsBack">← VOLVER</button></div>
   <div id="titleCreditsPanel" class="titleSubscreen" hidden><h2>✦ CRÉDITOS</h2><p class="titleStory">Prototipo independiente de RPG táctico. Diseño de mecánicas y desarrollo iterativo. Escenario original en pixel art y sonidos sintetizados propios.<br>Pokémon, sus nombres y diseños pertenecen a sus titulares. Proyecto fan no oficial y sin autorización de The Pokémon Company. Datos opcionales: PokéAPI. Motor 3D: three.js (licencia MIT). Sprites alternativos: SpriteCollab (PMDCollab), licencia CC BY-NC 4.0, créditos a sus artistas en github.com/PMDCollab/SpriteCollab.</p><button class="titleBack" id="titleCreditsBack">← VOLVER</button></div>
-  <p id="titleNotice" class="titleMessage"></p><div class="titleCredits">v652 · VERSIÓN 2.5D · PROTOTIPO NO OFICIAL</div>
+  <p id="titleNotice" class="titleMessage"></p><div class="titleCredits">v653 · VERSIÓN 2.5D · PROTOTIPO NO OFICIAL</div>
  </div>
 </div>
 <div class="shell">
@@ -678,7 +678,7 @@ html:has(#titleOverlay:not([hidden])),body:has(#titleOverlay:not([hidden])){over
 <section><div id="spriteNotice" role="status" style="font-size:10px;color:#bbd7cc">🎨 Comprobando sprites…</div><div class="boardShell"><div class="canvaswrap"><canvas id="map" width="720" height="600" aria-label="Tablero táctico interactivo"></canvas><div class="turnBanner" id="turnBanner" hidden><span></span></div><span class="maplabel" id="locationLabel">🌾 RUTA 1 · KANTO</span><span class="tilehint" id="tileHint"></span><div class="battleMenu" id="battleMenu" role="menu" aria-label="Acciones del Pokémon" hidden></div><div class="forecast" id="forecast" hidden aria-live="polite"></div><div class="attackPrompt" id="attackPrompt" hidden>🎯 Selecciona un objetivo · Esc: volver</div><button class="attackBack" id="attackBack" type="button" hidden>↩ Volver a ataques</button><div class="effectivenessToast" id="effectivenessToast" aria-live="polite" hidden></div><div id="gameBag" class="gameBag" role="dialog" aria-modal="true" aria-label="Mochila del jugador" hidden><div class="gameBagBox"><div class="gameBagHeader"><div><small>MENÚ DEL JUEGO</small><h2>🎒 MOCHILA <span id="bagBadge">OBJETOS</span></h2></div><button type="button" id="bagClose" aria-label="Cerrar mochila">✕ Volver</button></div><div id="bagManager" class="gameBagContent"><div class="bagSelects"><div class="bagActorRow" hidden><label for="bagActor">QUIÉN USA EL OBJETO</label><select id="bagActor" class="mgSelect"></select></div><div class="bagSelfTarget" id="bagSelfTarget"><span>OBJETIVO DE LOS OBJETOS</span><strong id="bagSelfName">Pokémon seleccionado</strong><small>Poción y Superpoción solo para sí mismo</small></div><select id="bagMove" class="mgSelect" hidden></select><div class="bagTabs" id="bagTabs"><button type="button" data-t="items">🎒 Objetos</button><button type="button" data-t="balls">🔴 Poké Balls</button></div></div><div class="bagItems"><div id="inventoryList" class="inventoryList"></div><p id="inventoryMessage" class="managerHint"></p></div></div><div class="gameBagFooter"><span id="bagStatus">Selecciona un Pokémon y utiliza un objeto.</span><span>ESC: VOLVER A ACCIONES</span></div><div class="revivePicker" id="revivePicker" hidden role="dialog" aria-label="Elegir Pokémon para revivir"><div class="reviveBox"><div class="reviveHeading">✨ REVIVIR</div><h3>¿A quién quieres revivir?</h3><p>Elige un Pokémon debilitado. Los desplegados volverán al mapa; los de reserva se recuperarán sin entrar en batalla. Utilizarlo consume tu acción.</p><div id="reviveChoices" class="reviveChoices"></div><button type="button" class="reviveCancel" id="reviveCancel">← Cancelar</button></div></div></div></div><div class="captureScene" id="captureScene" hidden role="status" aria-live="polite"><div class="captureWindow"><div class="captureTitle" id="captureTitle">CAPTURA POKÉMON</div><div class="captureTarget" id="captureTarget"></div><div class="captureBall" id="captureBall">🔴</div><div class="captureMessage" id="captureMessage">¡Lanzando Poké Ball!</div><div class="captureHelp">Las sacudidas se determinan por los PS, estado y ratio de captura de la especie.</div></div></div><div class="cinematic" id="cinematic" hidden><canvas id="battleScene" width="720" height="600" aria-label="Escena animada de combate"></canvas></div><div class="expScene" id="expScene" hidden aria-live="polite"><div class="expTop"><div class="expIcon" id="expIcon">⚡</div><div class="expDetail"><div class="expNameRow"><span id="expPokemon">PIKACHU</span><span id="expLevel">Nv. 15</span></div><div class="expLabel">EXPERIENCIA</div><div class="expTrack"><div class="expTrackFill" id="expFill"></div><div class="expTrackShine"></div></div></div></div><div class="expFoot"><span class="expGain" id="expEarned">+0 EXP</span><span id="expCounter">0 / 500</span></div><div class="expLevelMsg" id="expLevelMsg"></div></div></div><div class="foot"><small><span class="turn" id="turnNote">Selecciona uno de tus Pokémon.</span><span class="hintKb"><br>Selecciona → mueve → Habilidades / Objeto / Esperar / Cancelar<br>🖱️ Ratón libre: clic en unidad → rango azul → clic en destino<br>⌨️ Flechas: cursor/menú · Intro: confirmar · Esc: volver · N: finalizar fase</span><span class="hintTouch"><br>👆 Toca un Pokémon → toca una casilla azul → elige acción</span></small><button id="endTurn" class="rbtn main">Terminar fase ▶</button></div></div><div class="legend" style="margin:14px 6px"><span><em style="background:#80bdff"></em>Movimiento</span><span><em style="background:#f2a55f"></em>Alcance</span><span><em style="background:#d87a88"></em>Movimiento enemigo</span><span><em style="background:#f4b36d"></em>Amenaza enemiga</span><span>🌳 Bosque: +defensa</span><span>🌊 Agua: bloquea paso</span></div></section>
 <aside class="side"><section class="panel"><div class="heading">TU EQUIPO <span class="tiny" id="remaining">3 disponibles</span></div><div id="roster"></div></section><section class="panel"><div class="heading">INFORMACIÓN <span class="tiny" id="selection">Sin selección</span></div><div class="movedetail" id="instruction">Selecciona un aliado para moverlo o un enemigo para examinar su alcance.</div><div id="enemyInfo" class="enemyInfo hide"></div><div id="moves" class="moves"></div><div style="margin-top:10px" id="moveinfo" class="tiny">Tras el desplazamiento: Habilidades / Objeto / Esperar / Cancelar.</div></section><section class="panel devOnly"><div class="heading">🎬 ANIMACIONES DE COMBATE</div><div class="tiny">Elige cualquier ataque y mira su efecto (normal o crítico), sin afectar tu partida.</div><label class="tiny" for="demoMove" style="display:block;margin-top:9px">Efecto de ataque</label><select id="demoMove" class="labSelect" aria-label="Movimiento de prueba"></select><div class="cinematicControls"><button type="button" id="demoNormal">🔥 Ataque normal</button><button type="button" class="criticalButton" id="demoCrit">💥 Golpe crítico</button></div><div class="cinematicControls"><button type="button" id="toggleAnimations">Animaciones: ACTIVADAS</button></div><div class="cinematicControls"><button type="button" id="toggleMusic">Música: ACTIVADA</button></div><div class="cinematicControls"><button type="button" id="toggleBattleStyle">Escena: FRENTE A FRENTE</button></div><div class="cinematicControls"><button type="button" id="toggleBattleSpeed">Velocidad de combate: x1</button></div><p class="cinematicNote">Los ataques reales también activan estas escenas. Crítico: probabilidad base de 1/16 y daño ×2 (fórmula Gen III).</p></section><section class="panel"><div class="heading">🧭 EQUIPO Y PARTIDA <span class="tiny" id="partyCount">3/6</span></div><div class="managementActions"><button type="button" id="openTeam">🐾 Equipo</button><button type="button" id="quickSave">💾 Guardar</button><button type="button" id="exportSave">📤 Exportar</button></div><p class="saveStatus" id="saveStatus">🎒 Objetos de uso personal: Poción, Superpoción y Éter. Revivir permite elegir al compañero debilitado. Consumir objetos gasta la acción.</p></section><section class="panel progressPanel devOnly"><div class="heading">✨ PROGRESIÓN <span class="tiny">ROJO FUEGO / VERDE HOJA</span></div><div class="tiny">Movimientos por nivel basados en Rojo Fuego / Verde Hoja. Estadísticas, experiencia y evoluciones. El laboratorio permite probar niveles sin repetir combates.</div><label class="tiny" for="labPokemon" style="display:block;margin-top:9px">Pokémon del equipo</label><select id="labPokemon" class="labSelect" aria-label="Pokémon para entrenar"><option value="0">Pikachu</option><option value="1">Charmander</option><option value="2">Bulbasaur</option></select><div class="progressStats" id="labStats">Selecciona un Pokémon.</div><div class="expBar"><i id="labXpBar" style="width:0%"></i></div><div class="trainButtons"><button type="button" id="trainOne">✨ +1 nivel (prueba)</button><button type="button" id="trainFive">✨ +5 niveles (prueba)</button><button type="button" id="useStone">⚡ Usar Piedra Trueno ×<span id="stoneCount">1</span></button></div><div class="trainNote">Las pruebas de nivel no consumen turnos. Cada Pokémon aprende sus movimientos según su nivel en Rojo Fuego / Verde Hoja. La experiencia sigue siendo individual.</div></section><section class="panel logpanel"><div class="heading">REGISTRO DE BATALLA</div><div class="log" id="log" aria-live="polite"></div><div id="apiStatus" class="tiny" style="margin-top:8px">⚙ Estadísticas base Gen III · IV individuales · daño ajustado</div></section></aside>
 <div class="shopOverlay" id="shopOverlay" hidden role="dialog" aria-modal="true" aria-label="Tienda Poké"><div class="shopBox"><div class="shopHead"><div><small id="shopPlace">TIENDA POKÉ</small><h2>🛒 TIENDA POKÉ</h2></div><div class="shopMoney" id="shopMoney">₽ 0</div></div><div class="shopList" id="shopList"></div><div class="shopFoot"><span id="shopMsg">Solo ganas dinero venciendo a entrenadores.</span><button type="button" class="rbtn" id="shopClose">← Salir</button></div></div></div>
-</main><p class="credit">v652 · Primer capítulo hasta la Medalla Roca · mapas y encuentros inspirados en Rojo Fuego / Verde Hoja · adaptación táctica no oficial · Prototipo personal no oficial · Pokémon y sus personajes pertenecen a sus respectivos titulares · Movimientos por nivel: Rojo Fuego / Verde Hoja · datos opcionales de PokéAPI</p>
+</main><p class="credit">v653 · Primer capítulo hasta la Medalla Roca · mapas y encuentros inspirados en Rojo Fuego / Verde Hoja · adaptación táctica no oficial · Prototipo personal no oficial · Pokémon y sus personajes pertenecen a sus respectivos titulares · Movimientos por nivel: Rojo Fuego / Verde Hoja · datos opcionales de PokéAPI</p>
 </div>
 <div class="managerOverlay" id="dexOverlay" hidden><div class="managerBox dexBox" role="dialog" aria-modal="true" aria-label="Pokédex"><div class="managerHead"><h2>📕 POKÉDEX <span class="tiny" id="dexCount"></span></h2><button type="button" id="dexClose" class="rbtn">✕ Cerrar</button></div><div class="dexLayout"><div id="dexGrid" class="dexGrid"></div><div id="dexDetail" class="dexDetail"></div></div></div></div>
 <div class="managerOverlay" id="managerOverlay" hidden><div class="managerBox" role="dialog" aria-modal="true" aria-label="Gestión de Pokémon Tactics"><div class="managerHead"><h2 id="managerTitle">🐾 EQUIPO POKÉMON</h2><button type="button" id="managerClose" class="rbtn">✕ Cerrar</button></div><div id="teamManager" hidden><div class="managerGrid"><div><div class="managerLabel">DESPLEGADOS · HASTA 3 EN TABLERO</div><div id="deployedList"></div><div class="managerLabel">RESERVAS · HASTA 3</div><div id="reserveList"></div><div class="managerLabel">💻 CAJA POKÉMON · <span id="boxCount">0/30</span></div><div id="boxList"></div><p class="managerHint" id="reformHint"></p></div><div><div class="managerLabel">FICHA DEL POKÉMON</div><div id="partyDetails" class="managerDetails"></div></div></div></div><div id="saveManager" hidden><p class="managerHint">El guardado local se conserva en este navegador para este archivo. Exporta un archivo JSON si quieres hacer una copia o trasladar la partida a otra versión.</p><div class="saveBtns"><button type="button" class="primary" id="saveFromPanel">💾 Guardar partida</button><button type="button" id="loadFromPanel">↩ Continuar guardado</button><button type="button" id="exportFromPanel">📤 Exportar JSON</button><button type="button" id="importFromPanel">📥 Importar JSON</button></div><p id="saveDetails" class="saveStatus"></p></div></div></div><input id="saveUpload" type="file" accept=".json,application/json" hidden>
@@ -5191,7 +5191,7 @@ function restoreUnit(data,side){
 }
 function makeSave(){
     return {schema:15,starterChoice,game:'pokemon-tactics-gba',savedAt:new Date().toISOString(),
-        chapter:stageId,unlocked:stageUnlocked,cleared:[...stageCleared],optionalCleared:[...optionalCleared],dexSeen:[...dexSeen],dexCaught:[...dexCaught],encounter:currentEncounter,phase,round,wins,thunderStones,money,moneyPaid:[...moneyPaid],bag:{...bag},fm:1,rod:fishRods,ro:1,r3:1,mj:1,mc:1,cr:1,nb:1,r25:1,fo:fossilChoice||'',fr:fossilRevived?1:0,animationEnabled,
+        chapter:stageId,unlocked:stageUnlocked,cleared:[...stageCleared],optionalCleared:[...optionalCleared],dexSeen:[...dexSeen],dexCaught:[...dexCaught],encounter:currentEncounter,phase,round,wins,thunderStones,money,moneyPaid:[...moneyPaid],bag:{...bag},fm:1,rod:fishRods,ro:1,r3:1,mj:1,mc:1,cr:1,nb:1,r25:1,fo:fossilChoice||'',fr:fossilRevived?1:0,tc:window.__tutCT||0,animationEnabled,
         storageBox:storageBox.map(unitSnapshot),
         party:units.filter(u=>u.side==='player').map(unitSnapshot),
         reserves:reserves.map(unitSnapshot),
@@ -5230,7 +5230,7 @@ function validateSave(data){
     const loc=new Set();for(const u of [...friends,...foes].filter(u=>u.hp>0)){const k=u.x+','+u.y;if(loc.has(k))throw new Error('Dos Pokémon comparten casilla.');loc.add(k)}
     return {friends,foes,bench,captured};
 }
-function restoreSave(data){exitCamp();if(data&&!data.ro){if(data.chapter==='route2')data.chapter='route2in';if(data.encounter&&data.encounter.id==='route2')data.encounter=Object.assign({},data.encounter,{id:'route2in'})}
+function restoreSave(data){exitCamp();window.__tutCT=data&&data.tc!=null?data.tc:undefined;if(data&&!data.ro){if(data.chapter==='route2')data.chapter='route2in';if(data.encounter&&data.encounter.id==='route2')data.encounter=Object.assign({},data.encounter,{id:'route2in'})}
     setupTerrain(data.schema>=9&&CAMPAIGN[data.chapter]?data.chapter:'forest');
     const restored=validateSave(data);
     units=[...restored.friends,...restored.foes];reserves=restored.bench;storageBox=restored.captured;starterChoice=data.schema>=14&&[1,4,7].includes(data.starterChoice)?data.starterChoice:null;
@@ -6469,7 +6469,7 @@ function r3init(){
  const resize=()=>{const r=wrap.getBoundingClientRect(),w=Math.max(200,Math.round(r.width)),h=Math.max(160,Math.round(r.height));if(R3.size.w===w&&R3.size.h===h)return;R3.size={w,h};renderer.setPixelRatio(1/PXS);renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};
  new ResizeObserver(resize).observe(wrap);resize();
  const reResize=()=>{R3.size={w:0,h:0};resize()};document.addEventListener('fullscreenchange',()=>{reResize();setTimeout(reResize,250);setTimeout(reResize,800)});addEventListener('resize',()=>setTimeout(reResize,60));
- cv.addEventListener('webglcontextlost',()=>{R3.lost=true;console.warn('Contexto WebGL del tablero perdido');setTimeout(()=>{if(R3.lost)gameErr('Tablero 3D (v652)','el teléfono liberó el contexto gráfico del tablero y no lo devolvió')},2000)});cv.addEventListener('webglcontextrestored',()=>{R3.lost=false;R3.sig='';reResize()});
+ cv.addEventListener('webglcontextlost',()=>{R3.lost=true;console.warn('Contexto WebGL del tablero perdido');setTimeout(()=>{if(R3.lost)gameErr('Tablero 3D (v653)','el teléfono liberó el contexto gráfico del tablero y no lo devolvió')},2000)});cv.addEventListener('webglcontextrestored',()=>{R3.lost=false;R3.sig='';reResize()});
  // Ratón: se lanza un rayo contra el suelo y se reenvía como evento de casilla al lienzo 2D oculto, que conserva toda la lógica original.
  const touchSnap=ev=>{if(!(ev.pointerType==='touch'||matchMedia('(pointer:coarse)').matches)||typeof units==='undefined')return null;const r=cv.getBoundingClientRect(),px=ev.clientX-r.left,py=ev.clientY-r.top,P=(x,y,z)=>{const p=new T.Vector3(x,y,z).project(cam);return [(p.x+1)/2*r.width,(1-p.y)/2*r.height]};let best=null,bd=1e9;for(const u of units){if(!(u.hp>0)||u.x<0)continue;const fy=(R3.elev&&R3.elev.has(u.x+','+u.y))?R3.eh:0,f=P(u.x+.5,fy,u.y+.5),hd=P(u.x+.5,fy+1.15,u.y+.5),b=P(u.x+1.5,fy,u.y+.5),cs=Math.hypot(f[0]-b[0],f[1]-b[1]),dx=Math.abs(px-f[0]);
   // solo se "imanta" al Pokémon si el toque cae sobre su cuerpo (entre la cabeza y los pies); un toque por delante de los pies es para la casilla de delante
@@ -7312,7 +7312,7 @@ const st=document.createElement('style');st.textContent=`
 @keyframes mcBtn{0%,100%{box-shadow:0 0 0 0 rgba(247,216,143,.85)}50%{box-shadow:0 0 0 9px rgba(247,216,143,0)}}body.hasEC #tutBar{left:12px;transform:none;width:calc(100% - 300px);text-align:left}#tutBar b{color:#ffd58a}#tutBar small{display:block;opacity:.75;margin-top:2px;font-size:.82em}
 `;document.head.appendChild(st);
 let bar=null,active=false,seenPlayerTurns=0,lastPhase='';
-window.__tutStart=()=>{active=true;seenPlayerTurns=0;lastPhase='';try{clearTimeout(mcDoneT);if(mc)mc.classList.remove('mcDone')}catch(e){}try{if(isMobT()&&window.__gestureCoach)window.__gestureCoach()}catch(e){}try{window.__mcAttacked=false;mcOff=false;mcSawEnemy=false;mcDoneAt=0;mcHit=false;mcAim=false;mcHide()}catch(e){}};
+window.__tutStart=()=>{active=true;try{window.__capTutReset&&window.__capTutReset()}catch(e){}seenPlayerTurns=0;lastPhase='';try{clearTimeout(mcDoneT);if(mc)mc.classList.remove('mcDone')}catch(e){}try{if(isMobT()&&window.__gestureCoach)window.__gestureCoach()}catch(e){}try{window.__mcAttacked=false;mcOff=false;mcSawEnemy=false;mcDoneAt=0;mcHit=false;mcAim=false;mcHide()}catch(e){}};
 // v652 · móvil: tutorial guiado "aprender haciendo" en el primer combate (Pueblo Paleta). En vez de texto largo,
 // una tarjeta corta dice qué tocar y un dedo animado lo señala en el tablero o en el menú. Avanza solo cuando lo haces.
 const isMobT=()=>matchMedia('(pointer:coarse)').matches;
@@ -7331,13 +7331,13 @@ function mcShow(step,ico,title,sub,opts){
  if(!mc){mc=document.createElement('div');mc.className='gCoach mcCoach';mc.setAttribute('role','status');mc.setAttribute('aria-live','polite');wrap.append(mc)}
  if(!mcMark){mcMark=document.createElement('div');mcMark.className='mcMark';mcMark.hidden=true;mcMark.innerHTML='<i></i><span>👇</span>';wrap.append(mcMark)}
  if(mc.parentNode!==wrap)wrap.append(mc);if(mcMark.parentNode!==wrap)wrap.append(mcMark);
- const dots=step>=0?'<div class="gcDots">'+[0,1,2,3,4].map(k=>'<i class="'+(k<step?'ok':k===step?'on':'')+'"></i>').join('')+'</div>':'';
+ const dots=step>=0?'<div class="gcDots">'+Array.from({length:(opts&&opts.n)||5},(_,k)=>k).map(k=>'<i class="'+(k<step?'ok':k===step?'on':'')+'"></i>').join('')+'</div>':'';
  const key=step+'|'+title+'|'+sub;
  if(mc.dataset.k!==key){mc.dataset.k=key;
   mc.innerHTML='<div class="gcBox'+(opts&&opts.ok?' gcOk':'')+'"><div class="gcIco">'+ico+'</div><div class="gcTxt"><b>'+title+'</b>'+(sub?'<small>'+sub+'</small>':'')+dots+'</div>'+(opts&&opts.noSkip?'':'<button type="button" class="gcSkip">Saltar</button>')+'</div>';
-  const sk=mc.querySelector('.gcSkip');if(sk){sk.addEventListener('pointerdown',e=>e.stopPropagation());sk.onclick=e=>{e.stopPropagation();mcSave();active=false;mcHide()}}}
- mc.hidden=false;mcStep=step;
- {const bm=$('battleMenu');mc.classList.toggle('mcTop',!!(bm&&!bm.hidden))} // con el menú de batalla abierto (abajo en el móvil), la tarjeta sube arriba
+  const sk=mc.querySelector('.gcSkip');if(sk){sk.addEventListener('pointerdown',e=>e.stopPropagation());sk.onclick=e=>{e.stopPropagation();if(opts&&opts.onSkip){opts.onSkip();capHide()}else{mcSave();active=false;mcHide()}}}}
+ mc.hidden=false;mcStep=step;mc.dataset.top=opts&&opts.top?'1':'';
+ {const bm=$('battleMenu');mc.classList.toggle('mcTop',!!(bm&&!bm.hidden)||mc.dataset.top==='1')} // con el menú de batalla abierto (abajo en el móvil), la tarjeta sube arriba
 }
 function mobCoach(){
  if(window.__gcPending||document.querySelector('.gCoach:not(.mcCoach)')){mcHide();return} // v652: ni la tarjeta ni la mano mientras espera/corre el tutorial de gestos          // primero termina el tutorial de gestos
@@ -7380,14 +7380,108 @@ function mobCoach(){
   if(best&&!(best.x===selected.x&&best.y===selected.y))mcPoint({x:best.x,y:best.y,h:.05,tile:true});else mcPoint({x:selected.x,y:selected.y,h:1.6});return}
  mcShow(2,'📋','Elige qué hacer','Usa el menú que apareció junto a tu Pokémon.');
 }
+// v653 · tutorial de captura (primer combate salvaje con Poké Balls) y de equipo (llevar la captura al tablero).
+// Mismo estilo que el del primer combate: tarjeta corta + dedo que señala. Se guarda en la partida (tc): 1 = captura, 2 = equipo.
+let capOwn=false,capEnc=null,capCaught0=-1,capBalls0=-1,capMsg=null,capMsgUntil=0,teamWatch=null,capScrolled=null;
+const tutCT=()=>window.__tutCT||0,tutSet=b=>{window.__tutCT=tutCT()|b;try{autoSaveSafe()}catch(e){}};
+const caughtCount=()=>[...partyAll(),...storageBox].filter(u=>u.caughtAt).length;
+const ballCount=()=>['pokeball','greatball','ultraball'].reduce((s,k)=>s+(bag[k]||0),0);
+const visEl=el=>!!el&&!el.hidden&&el.offsetParent!==null;
+const tw=s=>!s||isMobT()?s:s.replace(/\bToca a /g,'Haz clic en ').replace(/\bToca\b/g,'Haz clic en').replace(/\btoca\b/g,'haz clic en');
+const capShow=(step,ico,t,sub,opts)=>{capOwn=true;mcShow(step,ico,tw(t),tw(sub),opts)};
+const capHide=()=>{if(capOwn){capOwn=false;mcHide()}};
+const capFlash=(ico,t,sub,opts,ms)=>{capMsg=[ico,t,sub,opts,ms];capMsgUntil=0};
+const pulseSee=b=>{mcPulseBtn(b);if(b&&capScrolled!==b){capScrolled=b;try{b.scrollIntoView({block:'nearest',behavior:'smooth'})}catch(e){}}};
+window.__capTutReset=()=>{window.__tutCT=0;capEnc=null;capCaught0=-1;capBalls0=-1;capMsg=null;teamWatch=null;capHide()};
+function capCoach(){
+ if(mc&&mc.classList.contains('mcDone'))return;
+ if(window.__gcPending||document.querySelector('.gCoach:not(.mcCoach)')){capHide();return}
+ if(window.__tutCT==null)window.__tutCT=caughtCount()>0?3:0; // partidas guardadas antes de este tutorial
+ if(capMsg&&(!capMsgUntil||Date.now()<capMsgUntil)){
+  if(!$('modal').hidden||cinematicBusy||captureBusy||!$('captureScene').hidden||!$('expScene').hidden||progressIsOpen||pendingExperience.length||pendingProgress.length||!$('managerOverlay').hidden&&!capMsg[0].includes('✨')){capHide();return}
+  if(!capMsgUntil)capMsgUntil=Date.now()+capMsg[4];
+  capShow(-1,capMsg[0],capMsg[1],capMsg[2],capMsg[3]);mcPoint(null);if(mcMark)mcMark.hidden=true;mcClearPulse();return}
+ capMsg=null;
+ if(teamCoach())return;
+ if(capFlow())return;
+ capHide();
+}
+function capFlow(){
+ const enc=currentEncounter;
+ if(tutCT()&1||!enc||isTrainerBattle()||!$('campaignOverlay').hidden)return false;
+ const balls=ballCount(),cc=caughtCount();
+ if(capEnc!==enc){capEnc=enc;capCaught0=cc;capBalls0=balls}
+ if(cc>capCaught0){capCaught0=cc;capBalls0=balls;tutSet(1);
+  const u=[...reserves,...storageBox].filter(q=>q.caughtAt).pop(),nm=u?base[u.id].name:'el Pokémon';
+  capFlash('🔴','¡Capturaste a '+nm+'!',u&&reserves.includes(u)?'Quedó en tus reservas. En el próximo combate te enseño a llevarlo al tablero.':'Se envió a la Caja Pokémon.',{ok:true,noSkip:true},4500);return true}
+ if(balls<capBalls0&&!captureBusy){capBalls0=balls;capFlash('💨','¡Se escapó!','Bájale PS con un ataque (sin debilitarlo) y vuelve a intentarlo.',{noSkip:true},4500);return true}
+ capBalls0=balls;
+ if(balls<1||phase!=='player'||locked||cinematicBusy||captureBusy||!$('modal').hidden||!$('managerOverlay').hidden)return false;
+ const wild=units.filter(u=>u.side==='enemy'&&u.hp>0);if(!wild.length||storageBox.length>=BOX_CAPACITY)return false;
+ const me=units.filter(u=>u.side==='player'&&u.hp>0),nm=u=>base[u.id].name,sk={onSkip:()=>tutSet(1)};
+ const near=a=>wild.filter(v=>distance(a,v)<=CAPTURE_RANGE);
+ // 5 · apuntar la Ball
+ if(captureMode&&captureMode.ballId){mcClearPulse();const t=near(captureMode.actor);
+  if(t.length){capShow(4,'🎯','Toca al Pokémon salvaje','Le lanzarás la Poké Ball. Con menos PS es más fácil.',sk);mcPoint({x:t[0].x,y:t[0].y,h:1.6})}
+  else{capShow(4,'📏','Está muy lejos','La Ball llega a 3 casillas o menos.',sk);mcPoint(null)}return true}
+ if(captureMode)return false; // está usando otro objeto
+ // 4 · mochila
+ if(!$('gameBag').hidden){mcPoint(null);
+  if(!$('revivePicker').hidden)return false;
+  if(bagTab!=='balls'){capShow(3,'🔴','Toca «🔴 Poké Balls»','Es la pestaña de arriba de la mochila.',Object.assign({top:true},sk));pulseSee($('bagTabs').querySelector('[data-t="balls"]'))}
+  else{const row=[...$('inventoryList').querySelectorAll('.inventoryItem')].find(r=>/Ball/.test(r.textContent)),b=row&&row.querySelector('button');
+   capShow(3,'🔴','Toca «Usar» en la Poké Ball','Después eliges a qué salvaje lanzarla.',Object.assign({top:true},sk));pulseSee(b&&!b.disabled?b:null)}
+  return true}
+ // 1 · elegir Pokémon
+ if(!selected){const u=me.find(q=>!q.acted);if(!u)return false;mcClearPulse();
+  capShow(0,'🔴','¡Captura un Pokémon!','Tienes Poké Balls del Profesor Oak. Toca a '+nm(u)+' para empezar.',sk);mcPoint({x:u.x,y:u.y,h:1.6});return true}
+ if(selected.side!=='player'||selected.acted||skill!==null)return false; // si está atacando, lo dejamos
+ // 3 · menú de acciones
+ if(actionMenu==='moves'){mcClearPulse();mcPoint(null);capShow(2,'🎒','¿Atacar o capturar?','Un ataque le baja PS. Para lanzar la Ball, toca ✕ y luego «🎒 Objeto».',sk);return true}
+ if(actionMenu==='actions'){mcPoint(null);const bm=$('battleMenu'),btns=bm?[...bm.querySelectorAll(':scope>button:not(.bmClose)')]:[];
+  if(near(selected).length){capShow(2,'🎒','Toca «🎒 Objeto»','Ahí están tus Poké Balls.',sk);mcPulseBtn(btns[1])}
+  else{capShow(2,'📏','Aún está lejos','La Ball llega a 3 casillas. Toca «⌛ Esperar» y acércate el próximo turno.',sk);mcPulseBtn(btns[2])}
+  return true}
+ // 2 · acercarse
+ if(!selected.moved){mcClearPulse();
+  if(near(selected).length){capShow(1,'📍','Ya está a tu alcance','Toca a '+nm(selected)+' otra vez para quedarte ahí.',sk);mcPoint({x:selected.x,y:selected.y,h:1.6});return true}
+  let best=null,bd=1e9;try{for(const sp of reachableSpots(selected)){const d=Math.min(...wild.map(v=>distance(sp,v)));if(d>=1&&(d<bd||d===bd&&sp.cost<best.cost)){bd=d;best=sp}}}catch(e){}
+  capShow(1,'👣','Acércate al salvaje','Toca una casilla azul. La Ball llega a 3 casillas o menos.',sk);
+  if(best&&!(best.x===selected.x&&best.y===selected.y))mcPoint({x:best.x,y:best.y,h:.05,tile:true});else mcPoint({x:selected.x,y:selected.y,h:1.6});return true}
+ return false;
+}
+function teamCoach(){
+ if(teamWatch&&units.includes(teamWatch)){const nm=base[teamWatch.id].name;teamWatch=null;tutSet(2);
+  capFlash('✨','¡'+nm+' está en el tablero!','Las reservas no pelean. En 🐾 Equipo cambias quién combate.',{ok:true,noSkip:true},4500);return true}
+ if(tutCT()&2)return false;
+ const u=reserves.filter(q=>q.caughtAt).slice(-1)[0];if(!u){teamWatch=null;return false}
+ if(units.filter(q=>q.side==='player').length>=maxDeploy()||cinematicBusy||captureBusy||!$('modal').hidden||!$('campaignOverlay').hidden)return false;
+ const mgr=$('managerOverlay'),teamOpen=!mgr.hidden&&!$('teamManager').hidden;
+ let prep=false;try{prep=canPrepare()}catch(e){}
+ if(!teamOpen&&(!prep||phase!=='player'))return false; // al empezar un combate, antes de mover a nadie
+ const nm=base[u.id].name,sk={onSkip:()=>{teamWatch=null;tutSet(2)},n:3};teamWatch=u;mcPoint(null);if(mcMark)mcMark.hidden=true;
+ if(teamOpen){
+  if(managerSelected===u){const b=[...$('partyDetails').querySelectorAll('button')].find(q=>/DESPLEGAR/.test(q.textContent));
+   capShow(2,'＋','Toca «＋ Desplegar en el tablero»',nm+' entrará a este combate.',Object.assign({top:true},sk));pulseSee(b&&!b.disabled?b:null)}
+  else{const b=$('reserveList').children[reserves.indexOf(u)];
+   capShow(1,'🐾','Toca a '+nm,'Está en tus reservas: las reservas no pelean.',Object.assign({top:true},sk));pulseSee(b)}
+  return true}
+ const fm=document.querySelector('.fsMenu');
+ if(fm&&!fm.hidden){capShow(0,'🐾','Toca «🐾 Equipo»','Ahí organizas tu equipo.',Object.assign({top:true},sk));pulseSee(fm.querySelector('[data-a="openTeam"]'));return true}
+ const mb=document.querySelector('.fsMenuBtn');
+ if(visEl(mb)){capShow(0,'☰','¡Lleva a '+nm+' al combate!','Toca ☰ y luego «🐾 Equipo».',sk);mcPulseBtn(mb)}
+ else{capShow(0,'🐾','¡Lleva a '+nm+' al combate!','Toca «🐾 Equipo».',sk);mcPulseBtn($('openTeam'))}
+ return true;
+}
 setInterval(()=>{if(active&&isMobT()&&!mcSeen())try{window.__tutHint()}catch(e){}
- if(mc&&!mc.hidden){const bm=$('battleMenu');mc.classList.toggle('mcTop',!!(bm&&!bm.hidden))}},300);
+ else try{capCoach()}catch(e){}
+ if(mc&&!mc.hidden){const bm=$('battleMenu');mc.classList.toggle('mcTop',!!(bm&&!bm.hidden)||mc.dataset.top==='1')}},300);
 window.__tutHint=function(){
  const wrap=document.querySelector('.canvaswrap');if(!wrap)return;
  if(!bar){bar=document.createElement('div');bar.id='tutBar';bar.hidden=true;wrap.appendChild(bar)}
  const mob=isMobT();
  const finish=()=>{active=false;bar.hidden=true;if(mob&&mc&&!mc.hidden&&!mcDoneAt&&!mcSeen()){mcSave();mcDoneAt=1;mcShow(-1,'✨','¡Ya sabes jugar!','Elige, muévete y ataca. Más opciones y ayuda en ☰.',{ok:true,noSkip:true});mc.classList.add('mcDone');if(mcMark)mcMark.hidden=true;mcClearPulse();clearTimeout(mcDoneT);mcDoneT=setTimeout(()=>{mcHide();if(mc)mc.classList.remove('mcDone')},3000)}else if(!mcDoneAt)mcHide()};
- if(!active||!currentEncounter||currentEncounter.id&&currentEncounter.id!=='pallet'){if(active&&phase==='win')finish();else{bar.hidden=true;if(!mcDoneAt)mcHide()}return}
+ if(!active||!currentEncounter||currentEncounter.id&&currentEncounter.id!=='pallet'){if(active&&phase==='win')finish();else{bar.hidden=true;if(!mcDoneAt)mcHide();if(currentEncounter&&currentEncounter.id!=='pallet')active=false}return}
  if(phase==='win'){finish();return}
  if(phase==='player'&&lastPhase!=='player')seenPlayerTurns++;lastPhase=phase;
  if(seenPlayerTurns>=(mob?5:3)||(mob&&mcHit&&!locked&&(typeof cinematicBusy==='undefined'||!cinematicBusy))){finish();return}
