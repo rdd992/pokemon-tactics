@@ -667,3 +667,4 @@ html:has(#titleOverlay:not([hidden])),body:has(#titleOverlay:not([hidden])){over
 
 .battleMenu .mvInfoBtn{flex:none;display:inline-grid;place-items:center;width:24px;height:24px;margin-left:4px;border-radius:50%;border:1.5px solid #8a7a5c;font-size:14px;line-height:1;color:#5b4a2a;background:rgba(255,255,255,.35)}
 .battleMenu button.menuOff{opacity:.42}
+@media (pointer:coarse){.attackBack{right:12px!important;bottom:62px!important}.attackPrompt{transform:translateX(-50%)}}

@@ -161,7 +161,7 @@ function closeBattleMenu(){actionMenu=null;$('battleMenu').hidden=true;$('battle
 function syncAttackBack(){
     const targeting=phase==='player'&&!locked&&selected&&!actionMenu&&(skill!==null||!!captureMode);
     $('attackBack').hidden=!targeting;
-    $('attackPrompt').hidden=!targeting;
+    $('attackPrompt').hidden=!targeting;placePrompt();
     if(targeting){$('attackPrompt').textContent=captureMode?(captureMode.itemId?'🎯 '+ITEM_NAMES[captureMode.itemId]+' · elige a ti o a un aliado adyacente':'🎯 '+BALLS[captureMode.ballId].name+' · elige Pokémon salvaje (≤'+CAPTURE_RANGE+' casillas)'+' · menos PS, más fácil de atrapar'): '🎯 '+moveDB[selected.moves[skill].key].name+' · selecciona objetivo';$('attackBack').textContent=captureMode?'↩ Volver a objetos':'↩ Volver a ataques'}
 }
 function backFromAttack(){
@@ -217,9 +217,11 @@ function updateMoveInfo(){
     // PC: la ficha sigue al movimiento resaltado.
     const touch=matchMedia('(pointer:coarse)').matches;
     const mp=touch?(skill!==null&&selected&&phase==='player'&&selected.moves[skill]):(actionMenu==='moves'&&selected&&selected.moves[menuIndex]);
-    if(!mp){box.hidden=true;return}
-    box.innerHTML=moveInfoHTML(mp);box.hidden=false;
+    if(!mp){box.hidden=true;placePrompt();return}
+    box.innerHTML=moveInfoHTML(mp);box.hidden=false;placePrompt();
 }
+// El aviso «selecciona objetivo» baja justo debajo de la ficha para no taparla
+function placePrompt(){const p=$('attackPrompt'),c=$('moveInfoCard');if(!p)return;p.style.top=(c&&!c.hidden&&!p.hidden)?(c.offsetTop+c.offsetHeight+6)+'px':''}
 function renderBattleMenu(){
     syncAttackBack();
     let el=$('battleMenu');
