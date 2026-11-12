@@ -1347,7 +1347,7 @@ function startCaptureAim(ballId){
 }
 function cancelCaptureAim(){
  if(!captureMode||captureBusy)return;
- const actor=captureMode.actor;captureMode=null;selected=actor;skill=null;actionMenu='actions';menuIndex=1;
+ const actor=captureMode.actor;captureMode=null;selected=actor;skill=null;actionMenu='actions';menuIndex=Math.max(0,menuCommands().findIndex(c=>c.run===openGameBag));
  updateUI();renderBattleMenu();openGameBag();
 }
 async function showCaptureSequence(enemy,ballId,result,actor){
@@ -2119,15 +2119,15 @@ function cancelSelection(){
 }
 function menuCommands(){
     if(actionMenu==='actions')return [
-        {label:'⚔ Habilidades',detail:'Elegir uno de 4 movimientos',run:()=>{actionMenu='moves';menuIndex=0;renderBattleMenu()}},
+        canUseMoves(selected)&&{label:'⚔ Habilidades',detail:'Elegir uno de 4 movimientos',run:()=>{actionMenu='moves';menuIndex=0;renderBattleMenu()}}, // v653: sin rival al alcance no aparece
         {label:'🎒 Objeto',detail:'Abrir la mochila de este Pokémon',run:openGameBag},
         {label:'⌛ Esperar',detail:'Terminar acción',run:wait},
         {label:'↩ Cancelar',detail:'Deshacer movimiento',run:cancelSelection}
-    ];
+    ].filter(Boolean);
     if(actionMenu==='moves'&&selected){
         const entries=selected.moves.map((mp,i)=>({
             label:moveDB[mp.key].name,icon:moveDB[mp.key].type,ppText:'PP '+mp.pp+'/'+moveDB[mp.key].pp,
-            disabled:mp.pp<=0||(!!encoreLock(selected)&&mp.key!==encoreLock(selected)),
+            disabled:!moveUsable(selected,mp), // v653: sin PP, bloqueado por Otra Vez o sin objetivo al alcance
             run:()=>{closeBattleMenu();chooseSkill(i)}
         }));
         entries.push({label:'← Volver',detail:'Menú de acciones',run:()=>{actionMenu='actions';menuIndex=0;renderBattleMenu()}});
@@ -2184,6 +2184,10 @@ function animateMove(u,path){playSfx('move');
 }
 function lineClear(a,b){if(a.x!==b.x&&a.y!==b.y)return false;let dx=Math.sign(b.x-a.x),dy=Math.sign(b.y-a.y),x=a.x+dx,y=a.y+dy;while(x!==b.x||y!==b.y){if(map[y][x]==='X')return false;x+=dx;y+=dy}return true}
 function canAim(u,m,x,y,pos){let p=pos||u,d=Math.abs(p.x-x)+Math.abs(p.y-y);if(m.shape==='self')return d===0;if(d===0||d>m.range)return false;if(m.shape==='line')return (p.x===x||p.y===y)&&lineClear(p,{x,y});if(m.shape==='melee')return d===1;return m.shape==='area'||m.shape==='point'}
+// v653 · como en Advance Wars: un movimiento solo se ofrece si tiene a quién afectar desde donde está el Pokémon
+function moveUsable(u,mp){if(!mp||mp.pp<=0)return false;const L=encoreLock(u);if(L&&mp.key!==L)return false;const m=moveDB[mp.key];if(m.shape==='self')return true;
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(canAim(u,m,x,y)&&aimTargets(u,m,x,y).length)return true;return false}
+function canUseMoves(u){return !!u&&u.moves.some(mp=>moveUsable(u,mp))}
 function aimTargets(u,m,x,y){if(m.shape==='self')return[u];if(m.shape==='area')return opponent(u).filter(v=>Math.abs(v.x-x)+Math.abs(v.y-y)<=m.radius);const q=occupied(x,y);return q&&q.side!==u.side?[q]:[]}
 function stageFactor(stage){return stage>=0?(2+stage)/2:2/(2-stage)}
 function effect(type,defTypes){let m=1;for(const d of defTypes)m*=((chart[type]||{})[d]===undefined?1:chart[type][d]);return m}
@@ -7360,10 +7364,10 @@ function mobCoach(){
   else mcShow(4,'📏','No llega','El rival está lejos. Toca ✕ y elige «⌛ Esperar» para acercarte el próximo turno.');return}
  // 3 · menú de acciones / ataques
  if(actionMenu){const bm=$('battleMenu'),btns=bm?[...bm.querySelectorAll(':scope>button:not(.bmClose)')]:[];
-  if(actionMenu==='actions'){
+  if(actionMenu==='actions'){const bt=t=>btns.find(b=>b.textContent.includes(t));
    const canHit=foes.some(v=>selected.moves.some(mp=>mp.pp>0&&moveDB[mp.key].power>0&&canAim(selected,moveDB[mp.key],v.x,v.y)));
-   if(canHit){mcShow(2,'⚔','Toca «Habilidades»','Ahí están los ataques de '+nm(selected)+'.');mcPulseBtn(btns[0])}
-   else{mcShow(2,'⌛','Toca «Esperar»','El rival aún está lejos. Esperar termina el turno de '+nm(selected)+'.');mcPulseBtn(btns[2])}
+   if(canHit&&bt('Habilidades')){mcShow(2,'⚔','Toca «Habilidades»','Ahí están los ataques de '+nm(selected)+'.');mcPulseBtn(bt('Habilidades'))}
+   else{mcShow(2,'⌛','Toca «Esperar»','El rival aún está lejos: por eso no aparece «Habilidades». Esperar termina el turno de '+nm(selected)+'.');mcPulseBtn(bt('Esperar'))}
    return}
   if(actionMenu==='moves'){let k=selected.moves.findIndex(mp=>mp.pp>0&&moveDB[mp.key].power>0&&foes.some(v=>canAim(selected,moveDB[mp.key],v.x,v.y)));if(k<0)k=selected.moves.findIndex(mp=>mp.pp>0&&moveDB[mp.key].power>0);
    mcShow(3,'💥','Elige un ataque',k>=0?'Prueba con «'+moveDB[selected.moves[k].key].name+'».':'Elige uno de la lista.');mcPulseBtn(btns[k>=0?k:0]);return}
@@ -7439,8 +7443,9 @@ function capFlow(){
  // 3 · menú de acciones
  if(actionMenu==='moves'){mcClearPulse();mcPoint(null);capShow(2,'🎒','¿Atacar o capturar?','Un ataque le baja PS. Para lanzar la Ball, toca ✕ y luego «🎒 Objeto».',sk);return true}
  if(actionMenu==='actions'){mcPoint(null);const bm=$('battleMenu'),btns=bm?[...bm.querySelectorAll(':scope>button:not(.bmClose)')]:[];
-  if(near(selected).length){capShow(2,'🎒','Toca «🎒 Objeto»','Ahí están tus Poké Balls.',sk);mcPulseBtn(btns[1])}
-  else{capShow(2,'📏','Aún está lejos','La Ball llega a 3 casillas. Toca «⌛ Esperar» y acércate el próximo turno.',sk);mcPulseBtn(btns[2])}
+  const bt=t=>btns.find(b=>b.textContent.includes(t));
+  if(near(selected).length){capShow(2,'🎒','Toca «🎒 Objeto»','Ahí están tus Poké Balls.',sk);mcPulseBtn(bt('Objeto'))}
+  else{capShow(2,'📏','Aún está lejos','La Ball llega a 3 casillas. Toca «⌛ Esperar» y acércate el próximo turno.',sk);mcPulseBtn(bt('Esperar'))}
   return true}
  // 2 · acercarse
  if(!selected.moved){mcClearPulse();
