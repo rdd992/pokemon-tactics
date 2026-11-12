@@ -1212,6 +1212,8 @@ function statCalc(u){
  u.spa=Math.floor((2*b[3]+v.spa)*n/100)+5;
  u.spd=Math.floor((2*b[4]+v.spd)*n/100)+5;
  u.speed=Math.floor((2*b[5]+v.speed)*n/100)+5;
+ // v653: en el primer combate (rival en Pueblo Paleta) el rival pega un poco menos y aguanta un poco menos; PS y velocidad sin cambios
+ if(u.side==='enemy'&&typeof currentEncounter!=='undefined'&&currentEncounter&&currentEncounter.id==='pallet'&&currentEncounter.kind==='main'){u.atk=Math.round(u.atk*.8);u.spa=Math.round(u.spa*.8);u.def=Math.round(u.def*.9);u.spd=Math.round(u.spd*.9)}
  if(u.side==='player'){try{for(const g in BADGE_BOOST)if(stageCleared.has(g))for(const k of BADGE_BOOST[g])u[k]=Math.floor(u[k]*1.1)}catch(e){}}
 }
 function unit(id,side,x,y,lvl,moves,ivs=null){let u={id,side,x,y,level:lvl,ivs:normalizeIVs(ivs),moves:moves.map(k=>({key:k,pp:moveDB[k].pp})),hp:0,moved:false,acted:false,atkDown:0,defUp:0,accuracyDown:0,effectTimers:{slow:0,atkDown:0,defUp:0,accuracyDown:0},paralyzed:false,burned:false,seeded:false,poisoned:false,trapped:false,trapBy:null,critUp:false,asleep:0,counterUsed:false,xp:0,slowed:false,lastEvoOffer:0};statCalc(u);u.hp=u.maxHp;fetchSprite(id);getMiniSprite(id);getBackSprite(id);return u}
