@@ -86,7 +86,11 @@ function validateSave(data){
           let best=null,bd=1e9;for(let y=0;y<H;y++)for(let x=0;x<W;x++){if(terrain(x,y)==='X'||terrain(x,y)==='~'||used.has(x+','+y))continue;const d=Math.abs(x-u.x)+Math.abs(y-u.y);if(d<bd){bd=d;best={x,y}}}
           if(best){u.x=best.x;u.y=best.y;used.add(best.x+','+best.y)}}}}
     if(friends.some(u=>!inside(u.x,u.y))||foes.some(u=>!inside(u.x,u.y))||friends.some(u=>terrain(u.x,u.y)==='X')||foes.some(u=>terrain(u.x,u.y)==='X'))throw new Error('Casillas del guardado inválidas.');
-    const loc=new Set();for(const u of [...friends,...foes].filter(u=>u.hp>0)){const k=u.x+','+u.y;if(loc.has(k))throw new Error('Dos Pokémon comparten casilla.');loc.add(k)}
+    // Si dos Pokémon quedaron en la misma casilla (guardado dañado), se reubica al segundo en la casilla libre más cercana en vez de rechazar la partida.
+    const loc=new Set();for(const u of [...friends,...foes].filter(u=>u.hp>0)){let k=u.x+','+u.y;
+        if(loc.has(k)){let best=null,bd=1e9;for(let y=0;y<H;y++)for(let x=0;x<W;x++){const tt=terrain(x,y);if(tt==='X'||tt==='~'||loc.has(x+','+y))continue;const d=Math.abs(x-u.x)+Math.abs(y-u.y);if(d<bd){bd=d;best={x,y}}}
+            if(!best)throw new Error('Dos Pokémon comparten casilla.');u.x=best.x;u.y=best.y;k=u.x+','+u.y}
+        loc.add(k)}
     return {friends,foes,bench,captured};
 }
 function restoreSave(data){exitCamp();window.__tutCT=data&&data.tc!=null?data.tc:undefined;if(data&&!data.ro){if(data.chapter==='route2')data.chapter='route2in';if(data.encounter&&data.encounter.id==='route2')data.encounter=Object.assign({},data.encounter,{id:'route2in'})}
