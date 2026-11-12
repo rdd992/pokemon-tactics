@@ -1,0 +1,1 @@
+window.porSrc=function(u,c){if(c==='enemy')c={enemy:1};const N=PMD_EMO.n[u.id]||{},S=PMD_EMO.s[u.id]||{};let e=porEmo(u,c);if(!N[e])e='Normal';const b=(u.shiny&&S[e])||N[e];if(b)return 'data:image/png;base64,'+b;const pp=window.PMD_POR&&PMD_POR[u.id];return pp?'data:image/png;base64,'+pp:null};

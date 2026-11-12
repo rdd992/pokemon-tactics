@@ -1,0 +1,44 @@
+{
+ "css": [
+  "styles/main.css"
+ ],
+ "vendor": [
+  "vendor/vendor01.js",
+  "data/vendor02.js",
+  "data/vendor03.js",
+  "vendor/vendor04.js"
+ ],
+ "game": [
+  "game/00-nucleo-y-estado.js",
+  "game/01-datos-especies-movimientos.js",
+  "game/02-carga-sprites.js",
+  "data/03-sprites-incrustados.js",
+  "game/04-estadisticas-y-campana.js",
+  "game/05-efectos-y-estados.js",
+  "data/06-medallas-img.js",
+  "game/07-efectos-y-estados-2.js",
+  "data/07b-sprites-canas.js",
+  "game/08-audio-musica.js",
+  "game/09-rutas-pronostico-dano.js",
+  "game/10-animaciones-tablero.js",
+  "game/11-progresion-evolucion.js",
+  "game/12-resolucion-combate.js",
+  "game/13-ia-enemiga.js",
+  "game/14-entrada-raton.js",
+  "game/15-render-tablero-terreno.js",
+  "data/16-fondo-gimnasio.js",
+  "game/17-render-tablero-terreno-2.js",
+  "game/18-render-escena-batalla.js",
+  "data/19-sprites-pmd.js",
+  "game/20-render-escena-batalla-2.js",
+  "data/21-gritos.js",
+  "game/22-render-escena-batalla-3.js",
+  "game/23-ui-objetivos.js",
+  "game/24-guardado-admin.js",
+  "game/25-ui-menus-sonido.js",
+  "game/26-pantalla-inicio.js",
+  "game/27-paisaje-campamento.js",
+  "game/28-equipo-objetos.js",
+  "game/29-texturas-3d.js"
+ ]
+}
