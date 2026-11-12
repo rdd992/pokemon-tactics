@@ -7305,6 +7305,7 @@ const st=document.createElement('style');st.textContent=`
 #tutBar{position:absolute;left:50%;top:56px;transform:translateX(-50%);z-index:45;width:min(88%,540px);pointer-events:none;background:linear-gradient(180deg,rgba(40,28,8,.95),rgba(24,16,4,.95));border:2px solid #ffd58a;border-radius:12px;box-shadow:0 4px 18px #000a;color:#fff3d6;padding:9px 13px;font-size:clamp(11px,1.6vw,14px);line-height:1.4;text-align:center}
 #tutBar[hidden]{display:none}
 .mcCoach{bottom:64px}
+.mcCoach.mcFixed{position:fixed;z-index:600;bottom:24px}.mcCoach.mcFixed.mcTop{top:16px;bottom:auto}
 .mcCoach .mcKb{display:block;margin-top:3px;font-style:normal;color:#f7d88f;font-size:11px}
 .mcCoach.mcTop{bottom:auto;top:52px}
 .mcCoach.mcDone,.mcCoach.mcDone .gcBox{pointer-events:none}
@@ -7338,7 +7339,10 @@ function mcShow(step,ico,title,sub,opts){
  const wrap=document.querySelector('.canvaswrap');if(!wrap)return;
  if(!mc){mc=document.createElement('div');mc.className='gCoach mcCoach';mc.setAttribute('role','status');mc.setAttribute('aria-live','polite');wrap.append(mc)}
  if(!mcMark){mcMark=document.createElement('div');mcMark.className='mcMark';mcMark.hidden=true;mcMark.innerHTML='<i></i><span>👇</span>';wrap.append(mcMark)}
- if(mc.parentNode!==wrap)wrap.append(mc);if(mcMark.parentNode!==wrap)wrap.append(mcMark);
+ // v653: si la ventana de victoria o la de Equipo están fuera del tablero (PC sin pantalla completa), la tarjeta va encima de ellas
+ {const ov=['managerOverlay','modal'].map(id=>$(id)).find(e=>e&&!e.hidden&&!wrap.contains(e));const host=ov?document.body:wrap;
+  if(mc.parentNode!==host)host.append(mc);mc.classList.toggle('mcFixed',!!ov)}
+ if(mcMark.parentNode!==wrap)wrap.append(mcMark);
  const dots=step>=0?'<div class="gcDots">'+Array.from({length:(opts&&opts.n)||5},(_,k)=>k).map(k=>'<i class="'+(k<step?'ok':k===step?'on':'')+'"></i>').join('')+'</div>':'';
  const key=step+'|'+title+'|'+sub;
  if(mc.dataset.k!==key){mc.dataset.k=key;
