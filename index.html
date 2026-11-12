@@ -6434,7 +6434,7 @@ function r3init(){
    if(wrap.querySelector('.gCoach:not(.mcCoach)'))return;
    const c=document.createElement('div');c.className='gCoach';c.setAttribute('role','status');c.setAttribute('aria-live','polite');wrap.append(c);
    let k=0,base=null,timer=0,hl=null;
-   const finish=()=>{clearInterval(timer);if(hl)hl.classList.remove('gcPulse');c.remove();try{localStorage.setItem(KEY,'1')}catch(e){}if(window.__helpAfterGestures){window.__helpAfterGestures=false;setTimeout(()=>window.__showHelpOnce&&window.__showHelpOnce(),300)}};
+   const finish=()=>{window.__gcPending=false;clearInterval(timer);if(hl)hl.classList.remove('gcPulse');c.remove();try{localStorage.setItem(KEY,'1')}catch(e){}if(window.__helpAfterGestures){window.__helpAfterGestures=false;setTimeout(()=>window.__showHelpOnce&&window.__showHelpOnce(),300)}};
    const draw=()=>{if(hl){hl.classList.remove('gcPulse');hl=null}
     if(k>=STEPS.length){c.innerHTML='<div class="gcBox gcDone"><div class="gcIco">✨</div><div class="gcTxt"><b>¡Listo!</b><small>Ahora, a combatir…</small></div></div>';setTimeout(finish,1800);clearInterval(timer);return}
     const st=STEPS[k];base={yaw:R3.yawT,zm:R3.zmT||1};
@@ -6445,7 +6445,7 @@ function r3init(){
    const tick=()=>{const st=STEPS[k];if(st&&st.ok(base)){const bx=c.querySelector('.gcBox');if(bx)bx.classList.add('gcOk');k++;clearInterval(timer);setTimeout(()=>{if(!c.isConnected)return;draw();if(k<STEPS.length)timer=setInterval(tick,250)},700)}};
    draw();timer=setInterval(tick,250)};
   // v652: en el móvil se enseña al empezar cada partida nueva (lo lanza __tutStart), antes del tutorial de combate
-  window.__gestureCoach=()=>{if(touch)setTimeout(run,600)}}
+  window.__gestureCoach=()=>{if(touch){window.__gcPending=true;setTimeout(run,600)}}}
  addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;if(e.key.toLowerCase()==='f'){toggleFS();e.preventDefault()}else if(e.key==='Escape'&&wrap.classList.contains('fakeFS')&&!MOB())leaveFake()});
  addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;const k=e.key.toLowerCase();if(k==='q')camStep(-Math.PI/2);else if(k==='e')camStep(Math.PI/2);else if(k==='r'){R3.yawT=Math.PI/4+Math.round((R3.yawT-Math.PI/4)/(2*Math.PI))*2*Math.PI;R3.zmT=1}else if(k==='+'||k==='=')zoomBy(1/1.25);else if(k==='-'||k==='_')zoomBy(1.25)});
  const cv=document.createElement('canvas');cv.id='map3d';cv.setAttribute('aria-label','Tablero táctico 3D');wrap.insertBefore(cv,canvas.nextSibling);
@@ -7340,7 +7340,7 @@ function mcShow(step,ico,title,sub,opts){
  {const bm=$('battleMenu');mc.classList.toggle('mcTop',!!(bm&&!bm.hidden))} // con el menú de batalla abierto (abajo en el móvil), la tarjeta sube arriba
 }
 function mobCoach(){
- if(document.querySelector('.gCoach:not(.mcCoach)')){mcHide();return}          // primero termina el tutorial de gestos
+ if(window.__gcPending||document.querySelector('.gCoach:not(.mcCoach)')){mcHide();return} // v652: ni la tarjeta ni la mano mientras espera/corre el tutorial de gestos          // primero termina el tutorial de gestos
  if(!$('modal').hidden||!$('managerOverlay').hidden||(typeof cinematicBusy!=='undefined'&&cinematicBusy)){mcHide();return}
  const me=units.filter(u=>u.side==='player'&&u.hp>0),foes=units.filter(u=>u.side==='enemy'&&u.hp>0);
  const nm=u=>base[u.id].name;
