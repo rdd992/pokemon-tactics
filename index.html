@@ -7402,7 +7402,8 @@ function capCoach(){
  if(window.__gcPending||document.querySelector('.gCoach:not(.mcCoach)')){capHide();return}
  if(window.__tutCT==null)window.__tutCT=caughtCount()>0?3:0; // partidas guardadas antes de este tutorial
  if(capMsg&&(!capMsgUntil||Date.now()<capMsgUntil)){
-  if(!$('modal').hidden||cinematicBusy||captureBusy||!$('captureScene').hidden||!$('expScene').hidden||progressIsOpen||pendingExperience.length||pendingProgress.length||!$('managerOverlay').hidden&&!capMsg[0].includes('✨')){capHide();return}
+  const blocked=!$('modal').hidden||cinematicBusy||captureBusy||!$('captureScene').hidden||!$('expScene').hidden||progressIsOpen||pendingExperience.length||pendingProgress.length||!$('managerOverlay').hidden&&!capMsg[0].includes('✨');
+  if(blocked){if(teamCoach())return;capHide();return}
   if(!capMsgUntil)capMsgUntil=Date.now()+capMsg[4];
   capShow(-1,capMsg[0],capMsg[1],capMsg[2],capMsg[3]);mcPoint(null);if(mcMark)mcMark.hidden=true;mcClearPulse();return}
  capMsg=null;
@@ -7417,7 +7418,7 @@ function capFlow(){
  if(capEnc!==enc){capEnc=enc;capCaught0=cc;capBalls0=balls}
  if(cc>capCaught0){capCaught0=cc;capBalls0=balls;tutSet(1);
   const u=[...reserves,...storageBox].filter(q=>q.caughtAt).pop(),nm=u?base[u.id].name:'el Pokémon';
-  capFlash('🔴','¡Capturaste a '+nm+'!',u&&reserves.includes(u)?'Quedó en tus reservas. En el próximo combate te enseño a llevarlo al tablero.':'Se envió a la Caja Pokémon.',{ok:true,noSkip:true},4500);return true}
+  capFlash('🔴','¡Capturaste a '+nm+'!',u&&reserves.includes(u)?'Quedó en tus reservas. Al terminar la etapa te enseño a sumarlo a tu equipo.':'Se envió a la Caja Pokémon.',{ok:true,noSkip:true},4500);return true}
  if(balls<capBalls0&&!captureBusy){capBalls0=balls;capFlash('💨','¡Se escapó!','Bájale PS con un ataque (sin debilitarlo) y vuelve a intentarlo.',{noSkip:true},4500);return true}
  capBalls0=balls;
  if(balls<1||phase!=='player'||locked||cinematicBusy||captureBusy||!$('modal').hidden||!$('managerOverlay').hidden)return false;
@@ -7456,18 +7457,23 @@ function capFlow(){
  return false;
 }
 function teamCoach(){
- if(teamWatch&&units.includes(teamWatch)){const nm=base[teamWatch.id].name;teamWatch=null;tutSet(2);
-  capFlash('✨','¡'+nm+' está en el tablero!','Las reservas no pelean. En 🐾 Equipo cambias quién combate.',{ok:true,noSkip:true},4500);return true}
+ if(teamWatch&&units.includes(teamWatch)&&$('modal').hidden){const nm=base[teamWatch.id].name;teamWatch=null;tutSet(2);
+  capFlash('✨','¡'+nm+' ya está en tu equipo!','Desde 🐾 Equipo cambias quién combate. Toca ✕ Cerrar para seguir.',{ok:true,noSkip:true},4500);return true}
  if(tutCT()&2)return false;
  const u=reserves.filter(q=>q.caughtAt).slice(-1)[0];if(!u){teamWatch=null;return false}
- if(units.filter(q=>q.side==='player').length>=maxDeploy()||cinematicBusy||captureBusy||!$('modal').hidden||!$('campaignOverlay').hidden)return false;
+ if(units.filter(q=>q.side==='player').length>=maxDeploy()||cinematicBusy||captureBusy||progressIsOpen||pendingExperience.length||pendingProgress.length)return false;
  const mgr=$('managerOverlay'),teamOpen=!mgr.hidden&&!$('teamManager').hidden;
+ // v653 · al ganar la etapa: botón «🐾 EDITAR EQUIPO» de la ventana de victoria
+ if(!$('modal').hidden){const eb=phase==='win'&&[...$('modalButtons').querySelectorAll('button')].find(b=>/EDITAR EQUIPO/.test(b.textContent));if(!eb)return false;
+  const nm=base[u.id].name,fresh=capMsg&&/Capturaste/.test(capMsg[1]);if(fresh)capMsg=null;teamWatch=u;mcPoint(null);if(mcMark)mcMark.hidden=true;
+  capShow(0,'🐾',(fresh?'¡Capturaste a '+nm+'! Súmalo':'Suma a '+nm)+' a tu equipo','Toca «🐾 Editar equipo». Las reservas no pelean.',{top:true,n:3,onSkip:()=>{teamWatch=null;tutSet(2)}});pulseSee(eb);return true}
+ if(!$('campaignOverlay').hidden&&!teamOpen)return false;
  let prep=false;try{prep=canPrepare()}catch(e){}
  if(!teamOpen&&(!prep||phase!=='player'))return false; // al empezar un combate, antes de mover a nadie
  const nm=base[u.id].name,sk={onSkip:()=>{teamWatch=null;tutSet(2)},n:3};teamWatch=u;mcPoint(null);if(mcMark)mcMark.hidden=true;
  if(teamOpen){
   if(managerSelected===u){const b=[...$('partyDetails').querySelectorAll('button')].find(q=>/DESPLEGAR/.test(q.textContent));
-   capShow(2,'＋','Toca «＋ Desplegar en el tablero»',nm+' entrará a este combate.',Object.assign({top:true},sk));pulseSee(b&&!b.disabled?b:null)}
+   capShow(2,'＋','Toca «＋ Desplegar en el tablero»',nm+(phase==='win'?' peleará desde el próximo combate.':' entrará a este combate.'),Object.assign({top:true},sk));pulseSee(b&&!b.disabled?b:null)}
   else{const b=$('reserveList').children[reserves.indexOf(u)];
    capShow(1,'🐾','Toca a '+nm,'Está en tus reservas: las reservas no pelean.',Object.assign({top:true},sk));pulseSee(b)}
   return true}
