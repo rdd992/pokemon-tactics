@@ -3,7 +3,7 @@ function deployFromReserve(u){
  if(!canPrepare()||!reserves.includes(u))return;
  const active=units.filter(q=>q.side==='player');if(active.length>=maxDeploy())return;
  const positions=stageId==='route22'?[[5,9],[6,9],[7,9],[8,9],[4,9],[9,9]]:(stageId==='nuggettrain'||stageId==='route25train')?[[3,8],[4,8],[5,8],[6,8],[3,7],[4,7]]:(stageId==='nugget'||stageId==='nuggetrocket'||stageId==='route25'||stageId==='route25b')?[[4,8],[5,8],[6,8],[7,8],[4,7],[5,7]]:stageId==='ceruleanrival'?[[5,8],[6,8],[7,8],[5,7],[6,7],[7,7]]:stageId==='route4'?[[1,8],[2,8],[3,8],[1,7],[2,7],[3,7]]:stageId==='mtmoonc'?[[4,8],[5,8],[3,8],[4,7],[5,7],[6,7]]:stageId==='mtmoon'?[[3,7],[3,8],[2,9],[2,7],[4,8],[2,6]]:[[1,7],[1,8],[2,9],[2,7],[3,8],stageId==='mtmoonj'?[3,7]:[2,6]];
- let spot=positions.find(([x,y])=>!occupied(x,y));if(!spot){log('No hay casilla libre para desplegar.');return}
+ let spot=positions.find(([x,y])=>!units.some(q=>q.x===x&&q.y===y)); // también cuenta a los debilitados: el campamento los cura y quedarían apiladosif(!spot){log('No hay casilla libre para desplegar.');return}
  reserves.splice(reserves.indexOf(u),1);u.x=spot[0];u.y=spot[1];u.acted=false;u.moved=false;u.origin=null;
  const firstEnemy=units.findIndex(q=>q.side==='enemy');
  if(firstEnemy>=0)units.splice(firstEnemy,0,u);else units.push(u);
