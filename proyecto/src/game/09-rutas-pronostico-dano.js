@@ -213,7 +213,10 @@ function updateMoveInfo(){
     // La ficha es una tarjeta aparte (no está dentro del menú), para no tapar ni empujar los botones, incluido «Volver».
     let box=$('moveInfoCard');
     if(!box){const w=document.querySelector('.canvaswrap');if(!w)return;box=document.createElement('div');box.id='moveInfoCard';box.className='moveInfo';box.hidden=true;w.append(box)}
-    const mp=actionMenu==='moves'&&selected&&selected.moves[menuIndex];
+    // Móvil: no hay ficha al abrir la lista; aparece al tocar un movimiento (queda elegido) y se ve mientras apuntas al objetivo.
+    // PC: la ficha sigue al movimiento resaltado.
+    const touch=matchMedia('(pointer:coarse)').matches;
+    const mp=touch?(skill!==null&&selected&&phase==='player'&&selected.moves[skill]):(actionMenu==='moves'&&selected&&selected.moves[menuIndex]);
     if(!mp){box.hidden=true;return}
     box.innerHTML=moveInfoHTML(mp);box.hidden=false;
 }
@@ -236,18 +239,12 @@ function renderBattleMenu(){
         if(command.detail){let info=document.createElement('span');info.className='menudetail';info.textContent=command.detail;line.append(info)}
         if(command.icon){const ic=document.createElement('span');ic.className='typeBadge';ic.textContent=TYPE_EMOJI[command.icon]||'⚪';ic.style.background=typeColors[command.icon]||'#9ca4a7';ic.title=command.icon;btn.append(ic)}
         btn.append(line);
-        // Móvil: botón ⓘ para ver la ficha del movimiento sin usarlo
-        if(touchUI&&actionMenu==='moves'&&command.icon){const inf=document.createElement('span');inf.className='mvInfoBtn';inf.textContent='ⓘ';inf.setAttribute('role','button');inf.setAttribute('aria-label','Ver ficha de '+command.label);
-            const stop=e=>e.stopPropagation();inf.addEventListener('pointerdown',stop);inf.addEventListener('pointerup',stop);
-            inf.onclick=e=>{e.stopPropagation();e.preventDefault();menuIndex=i;renderMenuHighlight()};btn.append(inf)}
         if(command.ppText){const pp=document.createElement('span');pp.className='menuPP';pp.textContent=command.ppText;btn.append(pp)}btn.onmouseenter=()=>{menuIndex=i;renderMenuHighlight()};
         // Móvil: mantener pulsado un movimiento muestra su ficha sin ejecutarlo
         let lp=null,lpDone=false;btn.addEventListener('pointerdown',e=>{if(actionMenu!=='moves'||e.pointerType==='mouse')return;lpDone=false;lp=setTimeout(()=>{lpDone=true;menuIndex=i;renderMenuHighlight()},420)});
         const lpEnd=()=>{if(lp){clearTimeout(lp);lp=null}};btn.addEventListener('pointerup',lpEnd);btn.addEventListener('pointerleave',lpEnd);btn.addEventListener('pointercancel',lpEnd);
         btn.addEventListener('contextmenu',e=>{if(actionMenu==='moves')e.preventDefault()});
         btn.onclick=()=>{if(lpDone){lpDone=false;return}
-            // Móvil: tocar un movimiento que no está resaltado solo muestra su ficha; tocar el resaltado lo usa
-            if(actionMenu==='moves'&&command.icon&&i!==menuIndex&&matchMedia('(pointer:coarse)').matches){menuIndex=i;renderMenuHighlight();return}
             if(command.disabled)return;menuIndex=i;command.run()};el.append(btn);
     });
     if(bmBack){const x=document.createElement('button');x.type='button';x.className='bmClose';x.textContent='✕';x.title='Volver al menú de acciones';x.setAttribute('aria-label','Volver al menú de acciones');x.onclick=e=>{e.stopPropagation();bmBack.run()};el.append(x)}
@@ -328,7 +325,7 @@ function statusSummary(u){
  return terms.length?' · '+terms.join(' · '):'';
 }
 function updateRoster(){let allies=units.filter(u=>u.side==='player');$('roster').innerHTML='';for(const u of allies){let b=base[u.id],el=document.createElement('div');el.className='unitcard'+(selected===u?' selected':'')+(u.acted||u.hp<=0?' finished':'');let pr=document.createElement('div');pr.className='portrait';{const pp=porSrc(u,{sel:selected===u,win:phase==='win'});if(pp){const i=document.createElement('img');i.src=pp;i.alt=b.name;i.style.cssText='width:100%;height:100%;image-rendering:pixelated;object-fit:contain';pr.append(i)}else pr.append(pmdAnimCanvas(pkId(u),40,true))}let body=document.createElement('div');body.className='cardtext';body.innerHTML='<div class="cardtitle"><span>'+(u.shiny?'✨ ':'')+b.name+'</span><span>Nv. '+u.level+'</span></div><div class="bar"><i style="width:'+100*Math.max(0,u.hp/u.maxHp)+'%;background:'+(u.hp/u.maxHp<.3?'#e58e75':'#73d8a3')+'"></i></div><div class="hptext">PS '+u.hp+' / '+u.maxHp+(u.acted?' · LISTO':'')+(u.paralyzed?' · ⚡':'')+(u.slowed?' · 👣 '+movementAllowance(u)+'/'+base[u.id].move+' PM ('+effectTurnsLeft(u,'slow')+'T)':'')+statusSummary(u)+'</div><div class="lvlExp">EXP '+u.xp+' / '+xpRequired(u.level,u.id)+'</div><div class="rosterExp"><i style="width:'+100*Math.min(1,u.xp/xpRequired(u.level,u.id))+'%"></i></div>';el.append(pr,body);el.onclick=()=>choose(u);$('roster').append(el)}}
-function updateUI(){updateMoneyUI();dexTrack();$('openDex').style.display=dexUnlocked()?'':'none';$('abandonBtn').style.display=(currentEncounter&&(phase==='player'||phase==='enemy'))?'':'none';$('abandonBtn').disabled=phase!=='player'||locked||cinematicBusy||!!motion||progressIsOpen;
+function updateUI(){updateMoveInfo();updateMoneyUI();dexTrack();$('openDex').style.display=dexUnlocked()?'':'none';$('abandonBtn').style.display=(currentEncounter&&(phase==='player'||phase==='enemy'))?'':'none';$('abandonBtn').disabled=phase!=='player'||locked||cinematicBusy||!!motion||progressIsOpen;
     let isPlayer=phase==='player',remaining=units.filter(u=>u.side==='player'&&u.hp>0&&!u.acted).length;
     $('remaining').textContent=remaining+' disponibles';
     $('phaseChip').textContent=phase==='player'?'FASE DEL JUGADOR · RONDA '+round:phase==='enemy'?'FASE ENEMIGA · RONDA '+round:phase==='win'?(currentEncounter?'¡VICTORIA!':'🗺️ MAPA DE KANTO'):'POKÉMON TACTICS';
@@ -362,7 +359,7 @@ function updateUI(){updateMoneyUI();dexTrack();$('openDex').style.display=dexUnl
     updateRoster();updateLab();updateTileHint();updateManagementSummary();syncAttackBack();
 }
 function choose(u){if(phase!=='player'||locked||captureMode||actionMenu||u.side!=='player'||u.hp<=0)return;if(selected===u&&!u.acted){openActionMenu();return}playCry(u.id);inspectedEnemy=null;enemyAnalysis=null;selected=u;skill=null;closeBattleMenu();if(usingKeyboard){keyboardCursor={x:u.x,y:u.y};hovered={...keyboardCursor}}updateUI();updateTileHint()}
-function chooseSkill(i){if(phase!=='player'||!selected||selected.acted||locked)return;const m=selected.moves[i];if(m.pp<=0)return;{const _L=encoreLock(selected);if(_L&&m.key!==_L){log('🔁 '+base[selected.id].name+' está bajo Otra Vez y solo puede usar '+moveDB[_L].name+'.');return}}skill=(skill===i?null:i);    if(skill!==null&&moveDB[m.key].shape==='self'){perform(selected,i,selected.x,selected.y);return}updateUI();syncAttackBack();updateTileHint()}
+function chooseSkill(i){if(phase!=='player'||!selected||selected.acted||locked)return;const m=selected.moves[i];if(m.pp<=0)return;{const _L=encoreLock(selected);if(_L&&m.key!==_L){log('🔁 '+base[selected.id].name+' está bajo Otra Vez y solo puede usar '+moveDB[_L].name+'.');return}}skill=(skill===i?null:i);    if(skill!==null&&moveDB[m.key].shape==='self'){perform(selected,i,selected.x,selected.y);return}updateUI();syncAttackBack();updateTileHint();updateMoveInfo()}
 function cancelMovement(){if(phase!=='player'||!selected||!selected.moved||selected.acted||!selected.origin||locked)return;selected.x=selected.origin.x;selected.y=selected.origin.y;selected.moved=false;selected.origin=null;skill=null;log('↩ Movimiento cancelado.');updateUI();updateTileHint()}
 function wait(){if(!selected||phase!=='player'||locked||selected.acted)return;closeBattleMenu();selected.acted=true;selected.moved=true;if(selected.asleep>0)selected.asleep--;selected.flinch=false;log('⏳ '+base[selected.id].name+' espera.');selected=null;skill=null;nextIfAll();updateUI();updateTileHint();autoSaveSafe()}
 function nextIfAll(){if(phase==='player'&&units.filter(u=>u.side==='player'&&u.hp>0).every(u=>u.acted)){selected=null;skill=null;setTimeout(beginEnemy,650)}}

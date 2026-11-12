@@ -1059,7 +1059,7 @@ ov.innerHTML=`<div id="helpBox" role="dialog" aria-label="Cómo jugar"><h2>❓ C
 <li><b>Toca un Pokémon tuyo</b> en el tablero (o en «Tu equipo»). Se marcan en <span class="sw" style="background:#1848dc"></span><b>azul</b> las casillas a las que puede llegar.</li>
 <li><b>Toca una casilla azul</b> para moverlo. Para quedarte donde estás, toca otra vez al mismo Pokémon.</li>
 <li><b>Elige una acción</b> en el menú: <b>Movimientos</b> (solo aparece si un rival está a tu alcance), <b>Objeto</b>, <b>Esperar</b> o <b>Cancelar</b> (deshace el movimiento).</li>
-<li><b>Movimientos:</b> toca un movimiento para <b>ver su ficha</b> (tipo, potencia, alcance, efecto); <b>tócalo otra vez</b> para elegirlo y luego <b>toca al enemigo</b> que esté en alcance: el ataque se ejecuta al tocarlo. Si te equivocas, usa la ✕.</li>
+<li><b>Movimientos:</b> toca un movimiento: se elige y aparece su <b>ficha</b> (tipo, potencia, alcance, efecto). Después <b>toca al enemigo</b> que esté en alcance: el ataque se ejecuta al tocarlo. Para cambiar de movimiento, usa el botón de volver.</li>
 <li>Cuando todos hayan actuado, el turno pasa al rival. También puedes tocar <b>Terminar fase ▶</b>.</li>
 </ol>
 <h3>Mirar a los enemigos</h3>
@@ -1208,7 +1208,7 @@ function mobCoach(){
    else{mcShow(2,'⌛','Toca «Esperar»','El rival aún está lejos: por eso no aparece «Movimientos». Esperar termina el turno de '+nm(selected)+'.');mcPulseBtn(bt('Esperar'))}
    return}
   if(actionMenu==='moves'){let k=selected.moves.findIndex(mp=>mp.pp>0&&moveDB[mp.key].power>0&&foes.some(v=>canAim(selected,moveDB[mp.key],v.x,v.y)));if(k<0)k=selected.moves.findIndex(mp=>mp.pp>0&&moveDB[mp.key].power>0);
-   mcShow(3,'💥','Elige un ataque',k>=0?'Prueba con «'+moveDB[selected.moves[k].key].name+'». '+(isMobT()?'Tócalo una vez para ver su ficha y otra para elegirlo.':''):'Elige uno de la lista.');mcPulseBtn(btns[k>=0?k:0]);return}
+   mcShow(3,'💥','Elige un ataque',k>=0?'Prueba con «'+moveDB[selected.moves[k].key].name+'». '+(isMobT()?'Al tocarlo verás su ficha; luego toca al rival.':''):'Elige uno de la lista.');mcPulseBtn(btns[k>=0?k:0]);return}
  }
  mcClearPulse();
  // 2 · moverse
