@@ -7239,7 +7239,7 @@ ov.innerHTML=`<div id="helpBox" role="dialog" aria-label="Cómo jugar"><h2>❓ C
 <ol>
 <li><b>Toca un Pokémon tuyo</b> en el tablero (o en «Tu equipo»). Se marcan en <span class="sw" style="background:#1848dc"></span><b>azul</b> las casillas a las que puede llegar.</li>
 <li><b>Toca una casilla azul</b> para moverlo. Para quedarte donde estás, toca otra vez al mismo Pokémon.</li>
-<li><b>Elige una acción</b> en el menú: <b>Habilidades</b>, <b>Objeto</b>, <b>Esperar</b> o <b>Cancelar</b> (deshace el movimiento).</li>
+<li><b>Elige una acción</b> en el menú: <b>Habilidades</b> (solo aparece si un rival está a tu alcance), <b>Objeto</b>, <b>Esperar</b> o <b>Cancelar</b> (deshace el movimiento).</li>
 <li><b>Habilidades:</b> toca el movimiento y luego <b>toca al enemigo</b> que esté en alcance: el ataque se ejecuta al tocarlo. Si te equivocas de movimiento, usa el botón de volver.</li>
 <li>Cuando todos hayan actuado, el turno pasa al rival. También puedes tocar <b>Terminar fase ▶</b>.</li>
 </ol>
@@ -7261,7 +7261,7 @@ ov.innerHTML=`<div id="helpBox" role="dialog" aria-label="Cómo jugar"><h2>❓ C
 <ol>
 <li><b>Elige un Pokémon tuyo:</b> haz clic en él en el tablero o en la lista «Tu equipo».</li>
 <li><b>Muévelo:</b> se marcan en <span class="sw" style="background:#1848dc"></span><b>azul</b> las casillas a las que llega. Haz clic en una. Si quieres quedarte donde está, haz clic sobre su propia casilla.</li>
-<li><b>Elige una acción</b> en el menú que aparece: <b>Habilidades</b>, <b>Objeto</b> (pociones, Poké Ball…), <b>Esperar</b> o <b>Cancelar</b> (deshace el movimiento).</li>
+<li><b>Elige una acción</b> en el menú que aparece: <b>Habilidades</b> (solo aparece si un rival está a tu alcance), <b>Objeto</b> (pociones, Poké Ball…), <b>Esperar</b> o <b>Cancelar</b> (deshace el movimiento).</li>
 <li><b>Habilidades:</b> escoge un movimiento y luego al enemigo que quede a su alcance. Verás una previsión del daño antes de confirmar.</li>
 <li>Cuando todos tus Pokémon hayan actuado, la fase pasa sola al rival. También puedes pulsar <b>Terminar fase ▶</b> antes.</li>
 </ol>
@@ -7305,6 +7305,7 @@ const st=document.createElement('style');st.textContent=`
 #tutBar{position:absolute;left:50%;top:56px;transform:translateX(-50%);z-index:45;width:min(88%,540px);pointer-events:none;background:linear-gradient(180deg,rgba(40,28,8,.95),rgba(24,16,4,.95));border:2px solid #ffd58a;border-radius:12px;box-shadow:0 4px 18px #000a;color:#fff3d6;padding:9px 13px;font-size:clamp(11px,1.6vw,14px);line-height:1.4;text-align:center}
 #tutBar[hidden]{display:none}
 .mcCoach{bottom:64px}
+.mcCoach .mcKb{display:block;margin-top:3px;font-style:normal;color:#f7d88f;font-size:11px}
 .mcCoach.mcTop{bottom:auto;top:52px}
 .mcCoach.mcDone,.mcCoach.mcDone .gcBox{pointer-events:none}
 .mcMark{position:absolute;z-index:540;pointer-events:none;transform:translate(-50%,-100%)}
@@ -7333,6 +7334,7 @@ const mcLoop=()=>{mcRAF=0;if(!mcMark||!mcTarget||!window.__r3screen){if(mcMark)m
 const mcPoint=t=>{mcTarget=t;if(!mcRAF)mcRAF=requestAnimationFrame(mcLoop)};
 const mcPulseBtn=b=>{if(mcPulse===b)return;mcClearPulse();if(b){b.classList.add('mcPulseBtn');mcPulse=b}};
 function mcShow(step,ico,title,sub,opts){
+ if(!isMobT()){const kb=pcKey(title);title=tw(title);sub=tw(sub);if(kb)sub=(sub?sub+' ':'')+'<i class="mcKb">⌨ '+kb+'</i>'}
  const wrap=document.querySelector('.canvaswrap');if(!wrap)return;
  if(!mc){mc=document.createElement('div');mc.className='gCoach mcCoach';mc.setAttribute('role','status');mc.setAttribute('aria-live','polite');wrap.append(mc)}
  if(!mcMark){mcMark=document.createElement('div');mcMark.className='mcMark';mcMark.hidden=true;mcMark.innerHTML='<i></i><span>👇</span>';wrap.append(mcMark)}
@@ -7393,7 +7395,9 @@ const tutCT=()=>window.__tutCT||0,tutSet=b=>{window.__tutCT=tutCT()|b;try{autoSa
 const caughtCount=()=>[...partyAll(),...storageBox].filter(u=>u.caughtAt).length;
 const ballCount=()=>['pokeball','greatball','ultraball'].reduce((s,k)=>s+(bag[k]||0),0);
 const visEl=el=>!!el&&!el.hidden&&el.offsetParent!==null;
-const tw=s=>!s||isMobT()?s:s.replace(/\bToca a /g,'Haz clic en ').replace(/\bToca\b/g,'Haz clic en').replace(/\btoca\b/g,'haz clic en');
+const tw=s=>!s||isMobT()?s:s.replace(/Toca ☰ y luego «Terminar fase»\.?/g,'Haz clic en «Terminar fase ▶» o pulsa N.').replace(/Toca ☰ y luego «🐾 Equipo»\.?/g,'Haz clic en «🐾 Equipo».').replace(/\bToca a /g,'Haz clic en ').replace(/\bToca\b/g,'Haz clic en').replace(/\btoca\b/g,'haz clic en').replace(/Tócalo/g,'Haz clic en él');
+// v653 · atajos de teclado que se muestran en la guía del PC
+const pcKey=t=>/Habilidades|Objeto|Esperar|Elige qué hacer/.test(t)?'Teclas 1–4 o flechas + Enter':/Elige un ataque/.test(t)?'Teclas 1–4 · Esc vuelve':/^Toca al (rival|Pokémon salvaje)/.test(t)?'Esc para volver atrás':/Termina tu fase/.test(t)?'':/^(Tu turno otra vez: )?[Tt]oca a [A-ZÁÉÍÓÚ]/.test(t)?'Q / E giran la cámara · rueda del ratón: zoom':'';
 const capShow=(step,ico,t,sub,opts)=>{capOwn=true;mcShow(step,ico,tw(t),tw(sub),opts)};
 const capHide=()=>{if(capOwn){capOwn=false;mcHide()}};
 const capFlash=(ico,t,sub,opts,ms)=>{capMsg=[ico,t,sub,opts,ms];capMsgUntil=0};
@@ -7486,14 +7490,14 @@ function teamCoach(){
  else{capShow(0,'🐾','¡Lleva a '+nm+' al combate!','Toca «🐾 Equipo».',sk);mcPulseBtn($('openTeam'))}
  return true;
 }
-setInterval(()=>{if(active&&isMobT()&&!mcSeen())try{window.__tutHint()}catch(e){}
+setInterval(()=>{if(active&&!mcSeen())try{window.__tutHint()}catch(e){}
  else try{capCoach()}catch(e){}
  if(mc&&!mc.hidden){const bm=$('battleMenu');mc.classList.toggle('mcTop',!!(bm&&!bm.hidden)||mc.dataset.top==='1')}},300);
 window.__tutHint=function(){
  const wrap=document.querySelector('.canvaswrap');if(!wrap)return;
  if(!bar){bar=document.createElement('div');bar.id='tutBar';bar.hidden=true;wrap.appendChild(bar)}
- const mob=isMobT();
- const finish=()=>{active=false;bar.hidden=true;if(mob&&mc&&!mc.hidden&&!mcDoneAt&&!mcSeen()){mcSave();mcDoneAt=1;mcShow(-1,'✨','¡Ya sabes jugar!','Elige, muévete y ataca. Más opciones y ayuda en ☰.',{ok:true,noSkip:true});mc.classList.add('mcDone');if(mcMark)mcMark.hidden=true;mcClearPulse();clearTimeout(mcDoneT);mcDoneT=setTimeout(()=>{mcHide();if(mc)mc.classList.remove('mcDone')},3000)}else if(!mcDoneAt)mcHide()};
+ const mob=true; // v653: el PC usa la misma guía que el móvil (antes, una barra de texto)
+ const finish=()=>{active=false;bar.hidden=true;if(mob&&mc&&!mc.hidden&&!mcDoneAt&&!mcSeen()){mcSave();mcDoneAt=1;mcShow(-1,'✨','¡Ya sabes jugar!',isMobT()?'Elige, muévete y ataca. Más opciones y ayuda en ☰.':'Elige, muévete y ataca. Ayuda completa en ❓ Cómo jugar.',{ok:true,noSkip:true});mc.classList.add('mcDone');if(mcMark)mcMark.hidden=true;mcClearPulse();clearTimeout(mcDoneT);mcDoneT=setTimeout(()=>{mcHide();if(mc)mc.classList.remove('mcDone')},3000)}else if(!mcDoneAt)mcHide()};
  if(!active||!currentEncounter||currentEncounter.id&&currentEncounter.id!=='pallet'){if(active&&phase==='win')finish();else{bar.hidden=true;if(!mcDoneAt)mcHide();if(currentEncounter&&currentEncounter.id!=='pallet')active=false}return}
  if(phase==='win'){finish();return}
  if(phase==='player'&&lastPhase!=='player')seenPlayerTurns++;lastPhase=phase;
