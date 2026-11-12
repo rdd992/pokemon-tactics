@@ -183,7 +183,7 @@ function menuCommands(){
         {label:'🎒 Objeto',detail:'Abrir la mochila de este Pokémon',run:openGameBag},
         {label:'⌛ Esperar',detail:'Terminar acción',run:wait},
         {label:'↩ Cancelar',detail:'Deshacer movimiento',run:cancelSelection}
-    ];
+    ].filter(Boolean);
     if(actionMenu==='moves'&&selected){
         const entries=selected.moves.map((mp,i)=>({
             label:moveDB[mp.key].name,icon:moveDB[mp.key].type,ppText:'PP '+mp.pp+'/'+moveDB[mp.key].pp,

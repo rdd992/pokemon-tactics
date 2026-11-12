@@ -2,3 +2,4 @@ window.__T={get units(){return units},set units(v){units=v},unit,statCalc,damage
 window.__T.openMoves=(i)=>{selected=units.find(u=>u.side==='player');phase='player';locked=false;actionMenu='moves';menuIndex=i||0;renderBattleMenu();updateUI&&0};
 window.__T.setMenu=(i)=>{menuIndex=i;renderMenuHighlight()};
 window.__T.makeSave=()=>makeSave();window.__T.validateSave=d=>validateSave(d);
+window.__T.openActions=()=>{selected=units.find(u=>u.side==='player');phase='player';locked=false;actionMenu='actions';menuIndex=0;renderBattleMenu()};
