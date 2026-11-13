@@ -1545,16 +1545,16 @@ function kmZoomify(h){
  [...h.children].filter(c=>!c.classList.contains('kmBanner')).forEach(c=>inner.append(c));h.prepend(inner);
  const bPlus=document.createElement('button'),bMinus=document.createElement('button'),bReset=document.createElement('button'),ctl=document.createElement('div');
  ctl.className='kmZoomCtl';[[bPlus,'＋','Acercar el mapa'],[bMinus,'－','Alejar el mapa'],[bReset,'⟲','Restablecer el zoom']].forEach(([b,t,l])=>{b.type='button';b.textContent=t;b.title=l;b.setAttribute('aria-label',l);ctl.append(b)});h.append(ctl);
- const apply=()=>{const w=h.clientWidth,hh=h.clientHeight;KZ.s=Math.max(1,Math.min(MAXZ,KZ.s));KZ.x=Math.min(0,Math.max(w-w*KZ.s,KZ.x));KZ.y=Math.min(0,Math.max(hh-hh*KZ.s,KZ.y));
+ const apply=(sm)=>{inner.style.transition=sm?'transform .2s ease-out':'none';const w=h.clientWidth,hh=h.clientHeight;KZ.s=Math.max(1,Math.min(MAXZ,KZ.s));KZ.x=Math.min(0,Math.max(w-w*KZ.s,KZ.x));KZ.y=Math.min(0,Math.max(hh-hh*KZ.s,KZ.y));
   inner.style.transform='translate('+KZ.x+'px,'+KZ.y+'px) scale('+KZ.s+')';inner.style.setProperty('--z',KZ.s);h.classList.toggle('kmZoomed',KZ.s>1.001);bPlus.disabled=KZ.s>=MAXZ-.001;bMinus.disabled=bReset.disabled=KZ.s<=1.001};
- const zoomAt=(f,cx,cy)=>{const s0=KZ.s;KZ.s=Math.max(1,Math.min(MAXZ,s0*f));const k=KZ.s/s0;KZ.x=cx-(cx-KZ.x)*k;KZ.y=cy-(cy-KZ.y)*k;apply()};
+ const zoomAt=(f,cx,cy,sm)=>{const s0=KZ.s;KZ.s=Math.max(1,Math.min(MAXZ,s0*f));const k=KZ.s/s0;KZ.x=cx-(cx-KZ.x)*k;KZ.y=cy-(cy-KZ.y)*k;apply(sm)};
  const mid=()=>[h.clientWidth/2,h.clientHeight/2];
  // los botones acercan hacia el punto activo (tu etapa actual); si no hay, al centro
  const focus=()=>{const n=h.querySelector('.kmNode.active')||h.querySelector('.kmNode.avail');if(!n)return null;const w=h.clientWidth,hh=h.clientHeight;return [parseFloat(n.style.left)/100*w,parseFloat(n.style.top)/100*hh]};
- const step=f=>{const s0=KZ.s,fc=focus();if(!fc||isNaN(fc[0])){zoomAt(f,...mid());return}
-  KZ.s=Math.max(1,Math.min(MAXZ,s0*f));KZ.x=h.clientWidth/2-fc[0]*KZ.s;KZ.y=h.clientHeight/2-fc[1]*KZ.s;apply()};
- bPlus.onclick=()=>step(1.5);bMinus.onclick=()=>step(1/1.5);bReset.onclick=()=>{KZ.s=1;KZ.x=KZ.y=0;apply()};
- h.addEventListener('wheel',e=>{e.preventDefault();const r=h.getBoundingClientRect();zoomAt(e.deltaY<0?1.2:1/1.2,e.clientX-r.left,e.clientY-r.top)},{passive:false});
+ const step=f=>{const s0=KZ.s,fc=focus();if(!fc||isNaN(fc[0])){zoomAt(f,...mid(),true);return}
+  KZ.s=Math.max(1,Math.min(MAXZ,s0*f));KZ.x=h.clientWidth/2-fc[0]*KZ.s;KZ.y=h.clientHeight/2-fc[1]*KZ.s;apply(true)};
+ bPlus.onclick=()=>step(1.3);bMinus.onclick=()=>step(1/1.3);bReset.onclick=()=>{KZ.s=1;KZ.x=KZ.y=0;apply(true)};
+ h.addEventListener('wheel',e=>{e.preventDefault();const r=h.getBoundingClientRect();const dy=Math.max(-100,Math.min(100,e.deltaY*(e.deltaMode===1?33:1)));zoomAt(Math.exp(-dy*.0007),e.clientX-r.left,e.clientY-r.top,true)},{passive:false}); // proporcional al giro: la rueda avanza ~12 % por muesca y el panel táctil va fino
  let drag=null,dragged=false;
  h.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'||KZ.s<=1.001||e.target.closest('.kmZoomCtl'))return;drag={x:e.clientX,y:e.clientY,moved:0};dragged=false});
  addEventListener('pointermove',e=>{if(!drag||!h.isConnected)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;drag.moved+=Math.abs(dx)+Math.abs(dy);if(drag.moved>6){dragged=true;KZ.x+=dx;KZ.y+=dy;apply()}});
