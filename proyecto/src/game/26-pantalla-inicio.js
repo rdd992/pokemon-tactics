@@ -237,7 +237,7 @@ function hero3D(){
   let cur=window.__BIOSTART||0,nxt=-1,tChg=0,tNext=null,gate=1;
   BIO[cur].root.visible=true;BIO[cur].root.scale.setScalar(1);
   // etiqueta del bioma
-  const tag=document.createElement('div');tag.style.cssText='position:absolute;left:36px;top:30px;z-index:2;font:600 15px Antonio,Inter,sans-serif;letter-spacing:.22em;color:#cfe9dc;text-shadow:0 2px 8px #0008;opacity:0;transition:opacity .8s;pointer-events:none';tag.textContent=BIO[cur].name;host.appendChild(tag);
+  const tag=document.createElement('div');tag.style.cssText='display:none;position:absolute;left:36px;top:30px;z-index:2;font:600 15px Antonio,Inter,sans-serif;letter-spacing:.22em;color:#cfe9dc;text-shadow:0 2px 8px #0008;opacity:0;transition:opacity .8s;pointer-events:none';tag.textContent=BIO[cur].name;host.appendChild(tag);
   // luces y destellos
   const sp=(()=>{const n=80,g=new T.BufferGeometry(),a=new Float32Array(n*3);for(let i=0;i<n;i++)a[i*3+1]=-99;g.setAttribute('position',new T.BufferAttribute(a,3));const p=new T.Points(g,new T.PointsMaterial({size:.16,color:0xfff0a0,transparent:true,depthWrite:false,blending:T.AdditiveBlending,sizeAttenuation:true}));p.frustumCulled=false;scene.add(p);return p})(),spLife=new Float32Array(80);let spi=0;
   const bc2=document.createElement('canvas');bc2.width=32;bc2.height=128;
@@ -282,7 +282,7 @@ function hero3D(){
      if(u>=1){A.root.visible=false;A.root.scale.setScalar(.001);A.root.rotation.y=0;A.root.position.y=0;B.root.scale.setScalar(1);B.root.rotation.y=0;B.root.position.y=0;cur=nxt;nxt=-1;gate=1;tNext=t+DWELL;applyMood(B,B,0);tag.textContent=B.name;tag.style.opacity=1}}
     else if(t>1500&&tag.style.opacity==='0')tag.style.opacity=1;
     const Bc=BIO[cur];
-    const sx=HERO.sx,sy=HERO.sy,yaw=Math.PI/4+.07*Math.sin(t/7000)+sx*.0015,pit=.62,D=78,ty=-2.4+sy*.01;
+    const sx=HERO.sx,sy=HERO.sy,yaw=Math.PI/4+.07*Math.sin(t/7000)+sx*.0015,pit=.62,D=92,ty=-2.4+sy*.01;
     cam.position.set(Math.sin(yaw)*Math.cos(pit)*D,ty+Math.sin(pit)*D,Math.cos(yaw)*Math.cos(pit)*D);cam.lookAt(0,ty,0);
     const live=new Set();
     const ra=Math.PI/4,rx=Math.cos(ra),rz=-Math.sin(ra);
