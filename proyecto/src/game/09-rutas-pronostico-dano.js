@@ -32,7 +32,7 @@ function routeTo(u,x,y){
     return path.reverse();
 }
 function previewRoute(){
-    if(phase!=='player'||locked||!selected||selected.acted||selected.moved||skill!==null||!hovered||(!usingKeyboard&&!mouseOnBoard))return null;
+    if(phase!=='player'||locked||!selected||selected.acted||selected.moved||skill!==null||actionMenu||!hovered||(!usingKeyboard&&!mouseOnBoard))return null;
     if(hovered.x===selected.x&&hovered.y===selected.y)return null;
     return routeTo(selected,hovered.x,hovered.y);
 }
@@ -88,7 +88,7 @@ function showForecast(u,m,targets){
  if(targets.length>3)html+='<div class="fcRow"><i>…y '+(targets.length-3)+' objetivos más</i></div>';
  if(el.dataset.key!==html){el.innerHTML=html;el.dataset.key=html}
  el.classList.toggle('right',Math.min(...targets.map(t=>t.x))<=4);
- el.hidden=false;
+ el.hidden=false;{const lb=$('locationLabel');const pr=$('attackPrompt');el.style.top=(pr&&!pr.hidden&&pr.style.left==='12px')?(pr.offsetTop+pr.offsetHeight+6)+'px':lb&&lb.offsetHeight?(lb.offsetTop+lb.offsetHeight+6)+'px':''}
 }
 function updateTileHint(){
  hideForecast();
@@ -115,7 +115,7 @@ function updateTileHint(){
     }
     if(u){$('tileHint').textContent=(u.side==='player'?'ALIADO · ':'ENEMIGO · ')+base[u.id].name;return}
     if(inspectedEnemy&&enemyAnalysis){let k=hovered.x+','+hovered.y;$('tileHint').textContent=enemyAnalysis.movement.has(k)?'MOVIMIENTO ENEMIGO':enemyAnalysis.danger.has(k)?'ZONA DE ATAQUE':'FUERA DE ALCANCE';return}
-    if(selected&&!selected.moved&&!selected.acted){
+    if(selected&&!selected.moved&&!selected.acted&&!actionMenu){
         let p=routeTo(selected,hovered.x,hovered.y);
         $('tileHint').textContent=p?'RUTA · '+(reachable(selected)[hovered.y][hovered.x])+' PM · '+(p.length-1)+' PASOS':(t==='X'||t==='~'?'OBSTÁCULO':'FUERA DE ALCANCE');return
     }
@@ -161,7 +161,9 @@ function closeBattleMenu(){actionMenu=null;$('battleMenu').hidden=true;$('battle
 function syncAttackBack(){
     const targeting=phase==='player'&&!locked&&selected&&!actionMenu&&(skill!==null||!!captureMode);
     $('attackBack').hidden=!targeting;
-    $('attackPrompt').hidden=!targeting;placePrompt();
+    {const ab=$('attackBack'),th=$('tileHint');if(th)th.style.bottom=targeting?(ab.offsetHeight+(parseFloat(getComputedStyle(ab).bottom)||0)+8)+'px':''}
+    $('attackPrompt').hidden=!targeting||!matchMedia('(pointer:coarse)').matches; // en PC el aviso es redundante: la barra inferior ya indica el objetivo
+    placePrompt();
     if(targeting){$('attackPrompt').textContent=captureMode?(captureMode.itemId?'🎯 '+ITEM_NAMES[captureMode.itemId]+' · elige a ti o a un aliado adyacente':'🎯 '+BALLS[captureMode.ballId].name+' · elige Pokémon salvaje (≤'+CAPTURE_RANGE+' casillas)'+' · menos PS, más fácil de atrapar'): '🎯 '+moveDB[selected.moves[skill].key].name+' · selecciona objetivo';$('attackBack').textContent=captureMode?'↩ Volver a objetos':'↩ Volver a ataques'}
 }
 function backFromAttack(){
@@ -203,7 +205,7 @@ function moveInfoHTML(mp){
     const cat=m.power?(GEN3_PHYSICAL_TYPES.has(m.type)?'Físico':'Especial'):'Estado';
     const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
     let h='<div class="miHead"><span class="miType" style="background:'+(typeColors[m.type]||'#9ca4a7')+'">'+(TYPE_EMOJI[m.type]||'')+' '+esc((FE_TYPE_ES&&FE_TYPE_ES[m.type])||m.type).toLowerCase()+'</span><b>'+esc(m.name)+'</b><i>'+cat+'</i></div>';
-    h+='<div class="miStats"><span>Potencia <b>'+(m.power?(m.multi?m.power+' ×'+m.multi[0]+(m.multi[0]===m.multi[1]?'':'–'+m.multi[1]):m.power):'—')+'</b></span><span>Precisión <b>'+(m.acc?m.acc+' %':'—')+'</b></span><span>PP <b>'+mp.pp+'/'+m.pp+'</b></span></div>';
+    const tn=esc((FE_TYPE_ES&&FE_TYPE_ES[m.type])||m.type).toLowerCase();h+='<div class="miStats"><span>Tipo <b>'+tn.charAt(0).toUpperCase()+tn.slice(1)+'</b></span><span>Potencia <b>'+(m.power?(m.multi?m.power+' ×'+m.multi[0]+(m.multi[0]===m.multi[1]?'':'–'+m.multi[1]):m.power):'—')+'</b></span><span>Precisión <b>'+(m.acc?m.acc+' %':'—')+'</b></span><span>PP <b>'+mp.pp+'/'+m.pp+'</b></span></div>';
     h+='<div class="miRow">📏 '+MOVE_SHAPE_TXT(m)+'</div>';
     const ef=MOVE_EFFECT_TXT[m.effect];
     if(ef)h+='<div class="miRow">✨ '+esc(ef)+'</div>';else if(m.detail&&!m.effect)h+='<div class="miRow">ℹ️ '+esc(m.detail)+'</div>';
@@ -221,7 +223,11 @@ function updateMoveInfo(){
     box.innerHTML=moveInfoHTML(mp);box.hidden=false;placePrompt();
 }
 // El aviso «selecciona objetivo» baja justo debajo de la ficha para no taparla
-function placePrompt(){const p=$('attackPrompt'),c=$('moveInfoCard');if(!p)return;p.style.top=(c&&!c.hidden&&!p.hidden)?(c.offsetTop+c.offsetHeight+6)+'px':''}
+function placePrompt(){const p=$('attackPrompt'),c=$('moveInfoCard');if(!p)return;
+    const coarse=matchMedia('(pointer:coarse)').matches,lb=$('locationLabel');
+    if(c&&!c.hidden&&!p.hidden){p.style.top=(c.offsetTop+c.offsetHeight+6)+'px';p.style.left='';p.style.transform='';return}
+    if(!coarse&&lb&&lb.offsetHeight&&!p.hidden){p.style.top=(lb.offsetTop+lb.offsetHeight+6)+'px';p.style.left='12px';p.style.transform='none';return} // PC: columna izquierda bajo la etiqueta del lugar, sin tapar nada
+    p.style.top='';p.style.left='';p.style.transform=''}
 function renderBattleMenu(){
     syncAttackBack();
     let el=$('battleMenu');
@@ -334,6 +340,17 @@ function updateUI(){updateMoveInfo();updateMoneyUI();dexTrack();$('openDex').sty
     $('endTurn').disabled=!isPlayer||locked||!!captureMode;
     $('openCampaign').disabled=phase==='enemy'||cinematicBusy||motion||progressIsOpen;
     let focus=selected||inspectedEnemy;
+    try{const di=$('locationLabel');if(di){const ce=currentEncounter,cd=ce&&CAMPAIGN[ce.id];
+     if(window.__campOn||stageId==='camp'){di.classList.remove('duel');if(di._h!=='camp'){di._h='camp';di.textContent='⛺ CAMPAMENTO · KANTO'}}
+     else if(!ce||!cd){di.classList.remove('duel')}else{
+      const esc=s=>String(s).replace(/[<>&]/g,''),foes=units.filter(q=>q.side==='enemy'&&q.hp>0).map(q=>esc(base[q.id].name)+' Nv.'+q.level);
+      let who;if(ce.kind==='main'&&(cd.mainKind==='trainer'||cd.mainKind==='boss')){const p=String(cd.main||'').split(' · ');who=(cd.mainKind==='boss'?'👑 ':'⚔ ')+esc(p[0]||'Entrenador')}
+      else if(ce.kind==='main'&&cd.mainKind==='event')who='📦 '+esc(cd.main);
+      else if(ce.kind==='practice')who='🥋 Entrenamiento de gimnasio';
+      else if(ce.fish)who='🎣 Pesca';
+      else who='🌿 Pokémon salvajes';
+      const html='<span class="diLoc">'+esc(cd.icon+' '+String(cd.name||'').toUpperCase())+' · KANTO</span><span class="diWho">'+who+'</span>'+(foes.length?'<span class="diFoes">'+foes.join(' · ')+'</span>':'');
+      if(di._h!==html||!di.querySelector('.diLoc')){di._h=html;di.innerHTML=html}di.classList.add('duel')}}}catch(e){}
     $('selection').textContent=focus?base[focus.id].name:'Sin selección';
     $('enemyInfo').classList.toggle('hide',!inspectedEnemy);
     $('enemyInfo').innerHTML=inspectedEnemy?'<b>🔴 ENEMIGO · '+(inspectedEnemy.shiny?'✨ ':'')+base[inspectedEnemy.id].name+'</b><br>Nivel '+inspectedEnemy.level+' · PS '+inspectedEnemy.hp+'/'+inspectedEnemy.maxHp+'<br>Movilidad '+movementAllowance(inspectedEnemy)+'/'+base[inspectedEnemy.id].move+' PM'+(inspectedEnemy.slowed?' · 👣 −2 ('+effectTurnsLeft(inspectedEnemy,'slow')+'T)':'')+statusSummary(inspectedEnemy)+'<div class="enTip">🟥 Rojo: casillas de movimiento.<br>🟧 Ámbar: zonas que puede atacar después de moverse.<br>Pulsa Esc para cerrar.</div>':'';

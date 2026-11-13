@@ -373,5 +373,18 @@ $('starterBack').onclick=()=>menuScreen('home');
 $('starterConfirm').onclick=()=>{if(![1,4,7].includes(selectedStarter))return;leaveTitle();reset(true,selectedStarter);playSfx('win');try{beginCampaignEncounter('pallet','main');$('campaignOverlay').hidden=true;window.__showHelpOnce&&window.__showHelpOnce();window.__tutStart&&window.__tutStart();updateUI()}catch(e){}};
 $('titleSoundToggle').onclick=()=>{soundEnabled=!soundEnabled;try{localStorage.setItem('pokemon-tactics-sound',soundEnabled?'on':'off')}catch(e){}$('titleSoundToggle').textContent=soundEnabled?'ACTIVADOS':'DESACTIVADOS';if(soundEnabled)playSfx('select')};
 $('titlePmdToggle').onclick=()=>{pmdOn=!pmdOn;try{localStorage.setItem('ptg_pmd',pmdOn?'1':'0')}catch(e){}$('titlePmdToggle').textContent=pmdOn?'SPRITECOLLAB (PMD)':'ORIGINALES'};
+$('titleSmoothToggle').onclick=()=>{const c=window.__getPmdSmooth();window.__setPmdSmooth(c==='sharp'?'epx':c==='epx'?'off':'sharp');$('titleSmoothToggle').textContent=({off:'PIXEL PURO',sharp:'SUAVE (NÍTIDO)',epx:'SUAVE (SCALE2X)'})[window.__getPmdSmooth()]};
+// Contador de FPS (opcional): muestra FPS medios, mínimo reciente y ms por cuadro; con 3D, llamadas de dibujo.
+window.__fps=(()=>{let on=false,box=null,raf=0,last=0,fr=0,acc=0,worst=0,t0=0;
+ const loop=t=>{if(!on)return;const host=document.fullscreenElement||document.body;if(box&&box.parentNode!==host)host.appendChild(box);raf=requestAnimationFrame(loop);if(last){const d=t-last;fr++;acc+=d;if(d>worst)worst=d}last=t;
+  if(t-t0>=500){const fps=fr*1000/acc,ms=acc/fr;let extra='';try{const i=window.__R3&&window.__R3.renderer.info.render;if(i)extra=' · '+i.calls+' llam.'}catch(e){}
+   box.textContent=Math.round(fps)+' FPS · '+ms.toFixed(1)+' ms · mín '+Math.round(1000/worst)+extra;box.style.color=fps>=55?'#7dff9a':fps>=40?'#ffe27a':'#ff7a7a';fr=0;acc=0;worst=0;t0=t}};
+ const set=v=>{on=!!v;try{localStorage.setItem('ptg_fps',on?'1':'0')}catch(e){}
+  if(on){if(!box){box=document.createElement('div');box.style.cssText='position:fixed;left:50%;top:6px;transform:translateX(-50%);z-index:2147483000;font:bold 13px monospace;background:rgba(0,0,0,.78);padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.25);pointer-events:none;color:#7dff9a';document.body.appendChild(box)}box.hidden=false;last=0;fr=0;acc=0;worst=0;t0=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
+  else{if(box)box.hidden=true;cancelAnimationFrame(raf)}};
+ let s=false;try{s=localStorage.getItem('ptg_fps')==='1'}catch(e){}
+ if(s)setTimeout(()=>set(true),500);
+ return {set,get:()=>on}})();
+$('titleFpsToggle').onclick=()=>{window.__fps.set(!window.__fps.get());$('titleFpsToggle').textContent=window.__fps.get()?'VISIBLE':'OCULTO'};
 $('titleAnimToggle').onclick=()=>{animationEnabled=!animationEnabled;$('toggleAnimations').textContent='Animaciones: '+(animationEnabled?'ACTIVADAS':'DESACTIVADAS');$('titleAnimToggle').textContent=animationEnabled?'ACTIVADAS':'DESACTIVADAS'};
 $('backTitle').onclick=()=>{if(cinematicBusy||captureBusy||progressIsOpen||motion||phase==='enemy'){log('Espera a que termine la acción antes de volver al menú.');return}showTitleScreen()};

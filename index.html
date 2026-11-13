@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,interactive-widget=resizes-content"><meta name="theme-color" content="#132733"><meta name="mobile-web-app-capable" content="yes"><title>Pokémon Tactics 2.5D v664 · Escena frente a frente</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,interactive-widget=resizes-content"><meta name="theme-color" content="#132733"><meta name="mobile-web-app-capable" content="yes"><title>Pokémon Tactics 2.5D v698 · Escena frente a frente</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&family=Antonio:wght@600;700&display=swap');
 :root{--bg:#0c1520;--panel:#1c2c3b;--panel2:#273f50;--edge:#61848c;--gold:#f7d88f;--cream:#faf3d8;--teal:#7dccb0;--red:#e5877f;--blue:#78bee7}
@@ -20,7 +20,7 @@
 @media (pointer:coarse),(max-width:900px){#moveInfoCard{top:46px}}
 .moveInfo .miHead{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px}.moveInfo .miHead b{font-size:12.5px}.moveInfo .miHead i{margin-left:auto;font-style:normal;opacity:.75;font-size:10.5px}
 .moveInfo .miType{padding:1px 7px;border-radius:99px;color:#1b2430;font-size:10px;font-weight:900;text-transform:capitalize}
-.moveInfo .miStats{display:flex;justify-content:space-between;gap:6px;margin-bottom:4px}.moveInfo .miStats span{opacity:.85}.moveInfo .miStats b{color:#ffe29a}
+.moveInfo .miStats{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;margin-bottom:4px}.moveInfo .miStats span{opacity:.85}.moveInfo .miStats b{color:#ffe29a}
 .moveInfo .miRow{margin-top:3px;opacity:.92}.moveInfo .miEff span{display:block}
 .moveInfo .e2{color:#8fe3a6}.moveInfo .eh{color:#f0b38a}.moveInfo .e0{color:#ff8e8e}.moveInfo .e1{opacity:.8}.battleMenu .menuCaption{padding:5px 9px;color:#5b6f79;font-size:10px;letter-spacing:1px;font-weight:1000;border-bottom:1px solid #b6a78c;margin-bottom:4px}
 .battleMenu button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:transparent;border:0;color:#20384a;border-radius:1px;padding:9px 9px;font-weight:1000;font-size:13px;line-height:1.2}
@@ -672,10 +672,14 @@ html:has(#titleOverlay:not([hidden])),body:has(#titleOverlay:not([hidden])){over
 .battleMenu .mvInfoBtn{flex:none;display:inline-grid;place-items:center;width:24px;height:24px;margin-left:4px;border-radius:50%;border:1.5px solid #8a7a5c;font-size:14px;line-height:1;color:#5b4a2a;background:rgba(255,255,255,.35)}
 .battleMenu button.menuOff{opacity:.42}
 @media (pointer:coarse){.attackBack{right:12px!important;bottom:62px!important}.attackPrompt{transform:translateX(-50%)}}
+
+.maplabel.duel{display:flex!important;flex-direction:column;gap:2px;border-radius:12px!important;padding:7px 12px!important;max-width:min(62%,360px);line-height:1.25}
+.maplabel.duel .diLoc{font-size:11px;letter-spacing:.3px}.maplabel.duel .diWho{font-size:12px;color:#fff;font-weight:900}.maplabel.duel .diFoes{font-size:10px;color:#bcd2e4;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:560px){.maplabel.duel{max-width:68%;padding:5px 10px!important}.maplabel.duel .diLoc{font-size:9px}.maplabel.duel .diWho{font-size:10px}.maplabel.duel .diFoes{font-size:9px}}
 </style></head>
 <body>
 <div class="titleOverlay" id="titleOverlay" data-screen="home" role="dialog" aria-modal="true" aria-label="Menú principal Pokémon Tactics">
-<div id="titleHero"><canvas id="titleScene" aria-hidden="true"></canvas><div class="heroUI"><div class="heroLeft"><div class="heroLogo"><span class="hl1">POKÉMON</span><span class="hl2">TACTICS</span><span class="hl3">2.5D · UNA AVENTURA TÁCTICA EN KANTO</span></div><div class="heroMenu"><button id="hPlay" class="hBig" type="button"><i>▶</i><span><b>JUGAR</b><small></small></span></button><div class="hSide"><button id="hNew" type="button">✦ Nueva partida</button><button id="hImport" type="button">📥 Importar</button></div></div><div class="heroTiles"><button id="hReturn" type="button" hidden>↩ Volver al juego</button><button id="hOpt" type="button">⚙ Opciones</button><button id="hCred" type="button">© Créditos</button></div><p id="hNotice"></p></div><aside class="heroPanel" id="heroPanel"></aside><div class="heroFoot">v664 · VERSIÓN 2.5D · PROTOTIPO NO OFICIAL · Pokémon y sus personajes pertenecen a sus respectivos titulares</div></div></div>
+<div id="titleHero"><canvas id="titleScene" aria-hidden="true"></canvas><div class="heroUI"><div class="heroLeft"><div class="heroLogo"><span class="hl1">POKÉMON</span><span class="hl2">TACTICS</span><span class="hl3">2.5D · UNA AVENTURA TÁCTICA EN KANTO</span></div><div class="heroMenu"><button id="hPlay" class="hBig" type="button"><i>▶</i><span><b>JUGAR</b><small></small></span></button><div class="hSide"><button id="hNew" type="button">✦ Nueva partida</button><button id="hImport" type="button">📥 Importar</button></div></div><div class="heroTiles"><button id="hReturn" type="button" hidden>↩ Volver al juego</button><button id="hOpt" type="button">⚙ Opciones</button><button id="hCred" type="button">© Créditos</button></div><p id="hNotice"></p></div><aside class="heroPanel" id="heroPanel"></aside><div class="heroFoot">v698 · VERSIÓN 2.5D · PROTOTIPO NO OFICIAL · Pokémon y sus personajes pertenecen a sus respectivos titulares</div></div></div>
  <div class="titleWindow">
   <div class="titleVisual"><canvas id="titleCanvas" width="640" height="270" aria-label="Paisaje pixel art de Kanto"></canvas><div class="titleBrand"><div class="eyebrow">UNA AVENTURA TÁCTICA EN KANTO</div><h1>POKÉMON TACTICS</h1><div class="caption">KANTO · MEDALLAS ROCA Y CASCADA</div></div></div>
   <div id="titleHome" class="titleBody">
@@ -683,9 +687,9 @@ html:has(#titleOverlay:not([hidden])),body:has(#titleOverlay:not([hidden])){over
    <div class="titleActions"><button id="titleNew">✦ NUEVA PARTIDA</button><button id="titleContinue" class="secondary">▶ CONTINUAR PARTIDA</button><button id="titleReturn" class="secondary" hidden>↩ VOLVER AL JUEGO</button><button id="titleOptions" class="secondary">⚙ OPCIONES</button><button id="titleImport" class="secondary">📥 IMPORTAR PARTIDA</button><button id="titleCredits" class="secondary">© CRÉDITOS</button></div>
   </div>
   <div id="titleStarter" class="titleSubscreen" hidden><h2>PROFESOR OAK · ELIGE A TU COMPAÑERO</h2><div class="starterCards" id="starterCards"></div><div class="starterFooter"><small>Empezarás únicamente con el Pokémon elegido, en el nivel 5.<br>Los demás se conseguirán mediante capturas durante la aventura.</small><button class="starterConfirm" id="starterConfirm" disabled>¡COMENZAR AVENTURA! ▶</button></div><div style="margin-top:17px"><button class="titleBack" id="starterBack">← VOLVER</button></div></div>
-  <div id="titleOptionsPanel" class="titleSubscreen" hidden><h2>⚙ OPCIONES DEL JUEGO</h2><div class="titleOptRow"><span>🔊 Efectos de sonido originales</span><button id="titleSoundToggle">ACTIVADOS</button></div><div class="titleOptRow"><span>🎬 Escenas cinematográficas</span><button id="titleAnimToggle">ACTIVADAS</button></div><div class="titleOptRow"><span>🎵 Música de fondo</span><button id="titleMusicToggle">ACTIVADA</button></div><div class="titleOptRow"><span>⚔ Estilo de escena de combate</span><button id="titleStyleToggle">FRENTE A FRENTE</button></div><div class="titleOptRow"><span>🎨 Sprites (original / SpriteCollab)</span><button id="titlePmdToggle">ORIGINALES</button></div><div class="titleOptRow"><span>⏩ Velocidad de animaciones de combate</span><button id="titleSpeedToggle">x1</button></div><p class="tiny">El sonido se genera en el navegador mediante sintetizadores. No utilizamos música o efectos oficiales de Pokémon.</p><button class="titleBack" id="titleOptionsBack">← VOLVER</button></div>
+  <div id="titleOptionsPanel" class="titleSubscreen" hidden><h2>⚙ OPCIONES DEL JUEGO</h2><div class="titleOptRow"><span>🔊 Efectos de sonido originales</span><button id="titleSoundToggle">ACTIVADOS</button></div><div class="titleOptRow"><span>🎬 Escenas cinematográficas</span><button id="titleAnimToggle">ACTIVADAS</button></div><div class="titleOptRow"><span>🎵 Música de fondo</span><button id="titleMusicToggle">ACTIVADA</button></div><div class="titleOptRow"><span>⚔ Estilo de escena de combate</span><button id="titleStyleToggle">FRENTE A FRENTE</button></div><div class="titleOptRow"><span>🎨 Sprites (original / SpriteCollab)</span><button id="titlePmdToggle">ORIGINALES</button></div><div class="titleOptRow"><span>✨ Suavizado de sprites en combate</span><button id="titleSmoothToggle">SUAVE (NÍTIDO)</button></div><div class="titleOptRow"><span>📊 Contador de FPS</span><button id="titleFpsToggle">OCULTO</button></div><div class="titleOptRow"><span>⏩ Velocidad de animaciones de combate</span><button id="titleSpeedToggle">x1</button></div><p class="tiny">El sonido se genera en el navegador mediante sintetizadores. No utilizamos música o efectos oficiales de Pokémon.</p><button class="titleBack" id="titleOptionsBack">← VOLVER</button></div>
   <div id="titleCreditsPanel" class="titleSubscreen" hidden><h2>✦ CRÉDITOS</h2><p class="titleStory">Prototipo independiente de RPG táctico. Diseño de mecánicas y desarrollo iterativo. Escenario original en pixel art y sonidos sintetizados propios.<br>Pokémon, sus nombres y diseños pertenecen a sus titulares. Proyecto fan no oficial y sin autorización de The Pokémon Company. Datos opcionales: PokéAPI. Motor 3D: three.js (licencia MIT). Sprites alternativos: SpriteCollab (PMDCollab), licencia CC BY-NC 4.0, créditos a sus artistas en github.com/PMDCollab/SpriteCollab.</p><button class="titleBack" id="titleCreditsBack">← VOLVER</button></div>
-  <p id="titleNotice" class="titleMessage"></p><div class="titleCredits">v664 · VERSIÓN 2.5D · PROTOTIPO NO OFICIAL</div>
+  <p id="titleNotice" class="titleMessage"></p><div class="titleCredits">v698 · VERSIÓN 2.5D · PROTOTIPO NO OFICIAL</div>
  </div>
 </div>
 <div class="shell">
@@ -694,7 +698,7 @@ html:has(#titleOverlay:not([hidden])),body:has(#titleOverlay:not([hidden])){over
 <section><div id="spriteNotice" role="status" style="font-size:10px;color:#bbd7cc">🎨 Comprobando sprites…</div><div class="boardShell"><div class="canvaswrap"><canvas id="map" width="720" height="600" aria-label="Tablero táctico interactivo"></canvas><div class="turnBanner" id="turnBanner" hidden><span></span></div><span class="maplabel" id="locationLabel">🌾 RUTA 1 · KANTO</span><span class="tilehint" id="tileHint"></span><div class="battleMenu" id="battleMenu" role="menu" aria-label="Acciones del Pokémon" hidden></div><div class="forecast" id="forecast" hidden aria-live="polite"></div><div class="attackPrompt" id="attackPrompt" hidden>🎯 Selecciona un objetivo · Esc: volver</div><button class="attackBack" id="attackBack" type="button" hidden>↩ Volver a ataques</button><div class="effectivenessToast" id="effectivenessToast" aria-live="polite" hidden></div><div id="gameBag" class="gameBag" role="dialog" aria-modal="true" aria-label="Mochila del jugador" hidden><div class="gameBagBox"><div class="gameBagHeader"><div><small>MENÚ DEL JUEGO</small><h2>🎒 MOCHILA <span id="bagBadge">OBJETOS</span></h2></div><button type="button" id="bagClose" aria-label="Cerrar mochila">✕ Volver</button></div><div id="bagManager" class="gameBagContent"><div class="bagSelects"><div class="bagActorRow" hidden><label for="bagActor">QUIÉN USA EL OBJETO</label><select id="bagActor" class="mgSelect"></select></div><div class="bagSelfTarget" id="bagSelfTarget"><span>OBJETIVO DE LOS OBJETOS</span><strong id="bagSelfName">Pokémon seleccionado</strong><small>Poción y Superpoción solo para sí mismo</small></div><select id="bagMove" class="mgSelect" hidden></select><div class="bagTabs" id="bagTabs"><button type="button" data-t="items">🎒 Objetos</button><button type="button" data-t="balls">🔴 Poké Balls</button></div></div><div class="bagItems"><div id="inventoryList" class="inventoryList"></div><p id="inventoryMessage" class="managerHint"></p></div></div><div class="gameBagFooter"><span id="bagStatus">Selecciona un Pokémon y utiliza un objeto.</span><span>ESC: VOLVER A ACCIONES</span></div><div class="revivePicker" id="revivePicker" hidden role="dialog" aria-label="Elegir Pokémon para revivir"><div class="reviveBox"><div class="reviveHeading">✨ REVIVIR</div><h3>¿A quién quieres revivir?</h3><p>Elige un Pokémon debilitado. Los desplegados volverán al mapa; los de reserva se recuperarán sin entrar en batalla. Utilizarlo consume tu acción.</p><div id="reviveChoices" class="reviveChoices"></div><button type="button" class="reviveCancel" id="reviveCancel">← Cancelar</button></div></div></div></div><div class="captureScene" id="captureScene" hidden role="status" aria-live="polite"><div class="captureWindow"><div class="captureTitle" id="captureTitle">CAPTURA POKÉMON</div><div class="captureTarget" id="captureTarget"></div><div class="captureBall" id="captureBall">🔴</div><div class="captureMessage" id="captureMessage">¡Lanzando Poké Ball!</div><div class="captureHelp">Las sacudidas se determinan por los PS, estado y ratio de captura de la especie.</div></div></div><div class="cinematic" id="cinematic" hidden><canvas id="battleScene" width="720" height="600" aria-label="Escena animada de combate"></canvas></div><div class="expScene" id="expScene" hidden aria-live="polite"><div class="expTop"><div class="expIcon" id="expIcon">⚡</div><div class="expDetail"><div class="expNameRow"><span id="expPokemon">PIKACHU</span><span id="expLevel">Nv. 15</span></div><div class="expLabel">EXPERIENCIA</div><div class="expTrack"><div class="expTrackFill" id="expFill"></div><div class="expTrackShine"></div></div></div></div><div class="expFoot"><span class="expGain" id="expEarned">+0 EXP</span><span id="expCounter">0 / 500</span></div><div class="expLevelMsg" id="expLevelMsg"></div></div></div><div class="foot"><small><span class="turn" id="turnNote">Selecciona uno de tus Pokémon.</span><span class="hintKb"><br>Selecciona → mueve → Movimientos / Objeto / Esperar / Cancelar<br>🖱️ Ratón libre: clic en unidad → rango azul → clic en destino<br>⌨️ Flechas: cursor/menú · Intro: confirmar · Esc: volver · N: finalizar fase</span><span class="hintTouch"><br>👆 Toca un Pokémon → toca una casilla azul → elige acción</span></small><button id="endTurn" class="rbtn main">Terminar fase ▶</button></div></div><div class="legend" style="margin:14px 6px"><span><em style="background:#80bdff"></em>Movimiento</span><span><em style="background:#f2a55f"></em>Alcance</span><span><em style="background:#d87a88"></em>Movimiento enemigo</span><span><em style="background:#f4b36d"></em>Amenaza enemiga</span><span>🌳 Bosque: +defensa</span><span>🌊 Agua: bloquea paso</span></div></section>
 <aside class="side"><section class="panel"><div class="heading">TU EQUIPO <span class="tiny" id="remaining">3 disponibles</span></div><div id="roster"></div></section><section class="panel"><div class="heading">INFORMACIÓN <span class="tiny" id="selection">Sin selección</span></div><div class="movedetail" id="instruction">Selecciona un aliado para moverlo o un enemigo para examinar su alcance.</div><div id="enemyInfo" class="enemyInfo hide"></div><div id="moves" class="moves"></div><div style="margin-top:10px" id="moveinfo" class="tiny">Tras el desplazamiento: Movimientos / Objeto / Esperar / Cancelar.</div></section><section class="panel devOnly"><div class="heading">🎬 ANIMACIONES DE COMBATE</div><div class="tiny">Elige cualquier ataque y mira su efecto (normal o crítico), sin afectar tu partida.</div><label class="tiny" for="demoMove" style="display:block;margin-top:9px">Efecto de ataque</label><select id="demoMove" class="labSelect" aria-label="Movimiento de prueba"></select><div class="cinematicControls"><button type="button" id="demoNormal">🔥 Ataque normal</button><button type="button" class="criticalButton" id="demoCrit">💥 Golpe crítico</button></div><div class="cinematicControls"><button type="button" id="toggleAnimations">Animaciones: ACTIVADAS</button></div><div class="cinematicControls"><button type="button" id="toggleMusic">Música: ACTIVADA</button></div><div class="cinematicControls"><button type="button" id="toggleBattleStyle">Escena: FRENTE A FRENTE</button></div><div class="cinematicControls"><button type="button" id="toggleBattleSpeed">Velocidad de combate: x1</button></div><p class="cinematicNote">Los ataques reales también activan estas escenas. Crítico: probabilidad base de 1/16 y daño ×2 (fórmula Gen III).</p></section><section class="panel"><div class="heading">🧭 EQUIPO Y PARTIDA <span class="tiny" id="partyCount">3/6</span></div><div class="managementActions"><button type="button" id="openTeam">🐾 Equipo</button><button type="button" id="quickSave">💾 Guardar</button><button type="button" id="exportSave">📤 Exportar</button></div><p class="saveStatus" id="saveStatus">🎒 Objetos de uso personal: Poción, Superpoción y Éter. Revivir permite elegir al compañero debilitado. Consumir objetos gasta la acción.</p></section><section class="panel progressPanel devOnly"><div class="heading">✨ PROGRESIÓN <span class="tiny">ROJO FUEGO / VERDE HOJA</span></div><div class="tiny">Movimientos por nivel basados en Rojo Fuego / Verde Hoja. Estadísticas, experiencia y evoluciones. El laboratorio permite probar niveles sin repetir combates.</div><label class="tiny" for="labPokemon" style="display:block;margin-top:9px">Pokémon del equipo</label><select id="labPokemon" class="labSelect" aria-label="Pokémon para entrenar"><option value="0">Pikachu</option><option value="1">Charmander</option><option value="2">Bulbasaur</option></select><div class="progressStats" id="labStats">Selecciona un Pokémon.</div><div class="expBar"><i id="labXpBar" style="width:0%"></i></div><div class="trainButtons"><button type="button" id="trainOne">✨ +1 nivel (prueba)</button><button type="button" id="trainFive">✨ +5 niveles (prueba)</button><button type="button" id="useStone">⚡ Usar Piedra Trueno ×<span id="stoneCount">1</span></button></div><div class="trainNote">Las pruebas de nivel no consumen turnos. Cada Pokémon aprende sus movimientos según su nivel en Rojo Fuego / Verde Hoja. La experiencia sigue siendo individual.</div></section><section class="panel logpanel"><div class="heading">REGISTRO DE BATALLA</div><div class="log" id="log" aria-live="polite"></div><div id="apiStatus" class="tiny" style="margin-top:8px">⚙ Estadísticas base Gen III · IV individuales · daño ajustado</div></section></aside>
 <div class="shopOverlay" id="shopOverlay" hidden role="dialog" aria-modal="true" aria-label="Tienda Poké"><div class="shopBox"><div class="shopHead"><div><small id="shopPlace">TIENDA POKÉ</small><h2>🛒 TIENDA POKÉ</h2></div><div class="shopMoney" id="shopMoney">₽ 0</div></div><div class="shopList" id="shopList"></div><div class="shopFoot"><span id="shopMsg">Solo ganas dinero venciendo a entrenadores.</span><button type="button" class="rbtn" id="shopClose">← Salir</button></div></div></div>
-</main><p class="credit">v664 · Primer capítulo hasta la Medalla Roca · mapas y encuentros inspirados en Rojo Fuego / Verde Hoja · adaptación táctica no oficial · Prototipo personal no oficial · Pokémon y sus personajes pertenecen a sus respectivos titulares · Movimientos por nivel: Rojo Fuego / Verde Hoja · datos opcionales de PokéAPI</p>
+</main><p class="credit">v698 · Primer capítulo hasta la Medalla Roca · mapas y encuentros inspirados en Rojo Fuego / Verde Hoja · adaptación táctica no oficial · Prototipo personal no oficial · Pokémon y sus personajes pertenecen a sus respectivos titulares · Movimientos por nivel: Rojo Fuego / Verde Hoja · datos opcionales de PokéAPI</p>
 </div>
 <div class="managerOverlay" id="dexOverlay" hidden><div class="managerBox dexBox" role="dialog" aria-modal="true" aria-label="Pokédex"><div class="managerHead"><h2>📕 POKÉDEX <span class="tiny" id="dexCount"></span></h2><button type="button" id="dexClose" class="rbtn">✕ Cerrar</button></div><div class="dexLayout"><div id="dexGrid" class="dexGrid"></div><div id="dexDetail" class="dexDetail"></div></div></div></div>
 <div class="managerOverlay" id="managerOverlay" hidden><div class="managerBox" role="dialog" aria-modal="true" aria-label="Gestión de Pokémon Tactics"><div class="managerHead"><h2 id="managerTitle">🐾 EQUIPO POKÉMON</h2><button type="button" id="managerClose" class="rbtn">✕ Cerrar</button></div><div id="teamManager" hidden><div class="managerGrid"><div><div class="managerLabel">DESPLEGADOS · HASTA 3 EN TABLERO</div><div id="deployedList"></div><div class="managerLabel">RESERVAS · HASTA 3</div><div id="reserveList"></div><div class="managerLabel">💻 CAJA POKÉMON · <span id="boxCount">0/30</span></div><div id="boxList"></div><p class="managerHint" id="reformHint"></p></div><div><div class="managerLabel">FICHA DEL POKÉMON</div><div id="partyDetails" class="managerDetails"></div></div></div></div><div id="saveManager" hidden><p class="managerHint">El guardado local se conserva en este navegador para este archivo. Exporta un archivo JSON si quieres hacer una copia o trasladar la partida a otra versión.</p><div class="saveBtns"><button type="button" class="primary" id="saveFromPanel">💾 Guardar partida</button><button type="button" id="loadFromPanel">↩ Continuar guardado</button><button type="button" id="exportFromPanel">📤 Exportar JSON</button><button type="button" id="importFromPanel">📥 Importar JSON</button></div><p id="saveDetails" class="saveStatus"></p></div></div></div><input id="saveUpload" type="file" accept=".json,application/json" hidden>
@@ -1492,6 +1496,7 @@ function campInit(u,time){const free=[];for(let y=0;y<map.length;y++)for(let x=0
 function enterCamp(){
  if(campOn||(phase!=='win'&&currentEncounter))return;
  setupTerrain('camp');
+ map[4]=map[4].slice(0,6)+'X'+map[4].slice(7); // la fogata ocupa esta casilla
  units=units.filter(u=>u.side==='player');selected=null;inspectedEnemy=null;hovered=null;
  try{partyRecover()}catch(e){}
  for(const u of units)delete u.camp;
@@ -1992,7 +1997,7 @@ function routeTo(u,x,y){
     return path.reverse();
 }
 function previewRoute(){
-    if(phase!=='player'||locked||!selected||selected.acted||selected.moved||skill!==null||!hovered||(!usingKeyboard&&!mouseOnBoard))return null;
+    if(phase!=='player'||locked||!selected||selected.acted||selected.moved||skill!==null||actionMenu||!hovered||(!usingKeyboard&&!mouseOnBoard))return null;
     if(hovered.x===selected.x&&hovered.y===selected.y)return null;
     return routeTo(selected,hovered.x,hovered.y);
 }
@@ -2048,7 +2053,7 @@ function showForecast(u,m,targets){
  if(targets.length>3)html+='<div class="fcRow"><i>…y '+(targets.length-3)+' objetivos más</i></div>';
  if(el.dataset.key!==html){el.innerHTML=html;el.dataset.key=html}
  el.classList.toggle('right',Math.min(...targets.map(t=>t.x))<=4);
- el.hidden=false;
+ el.hidden=false;{const lb=$('locationLabel');const pr=$('attackPrompt');el.style.top=(pr&&!pr.hidden&&pr.style.left==='12px')?(pr.offsetTop+pr.offsetHeight+6)+'px':lb&&lb.offsetHeight?(lb.offsetTop+lb.offsetHeight+6)+'px':''}
 }
 function updateTileHint(){
  hideForecast();
@@ -2075,7 +2080,7 @@ function updateTileHint(){
     }
     if(u){$('tileHint').textContent=(u.side==='player'?'ALIADO · ':'ENEMIGO · ')+base[u.id].name;return}
     if(inspectedEnemy&&enemyAnalysis){let k=hovered.x+','+hovered.y;$('tileHint').textContent=enemyAnalysis.movement.has(k)?'MOVIMIENTO ENEMIGO':enemyAnalysis.danger.has(k)?'ZONA DE ATAQUE':'FUERA DE ALCANCE';return}
-    if(selected&&!selected.moved&&!selected.acted){
+    if(selected&&!selected.moved&&!selected.acted&&!actionMenu){
         let p=routeTo(selected,hovered.x,hovered.y);
         $('tileHint').textContent=p?'RUTA · '+(reachable(selected)[hovered.y][hovered.x])+' PM · '+(p.length-1)+' PASOS':(t==='X'||t==='~'?'OBSTÁCULO':'FUERA DE ALCANCE');return
     }
@@ -2121,7 +2126,9 @@ function closeBattleMenu(){actionMenu=null;$('battleMenu').hidden=true;$('battle
 function syncAttackBack(){
     const targeting=phase==='player'&&!locked&&selected&&!actionMenu&&(skill!==null||!!captureMode);
     $('attackBack').hidden=!targeting;
-    $('attackPrompt').hidden=!targeting;placePrompt();
+    {const ab=$('attackBack'),th=$('tileHint');if(th)th.style.bottom=targeting?(ab.offsetHeight+(parseFloat(getComputedStyle(ab).bottom)||0)+8)+'px':''}
+    $('attackPrompt').hidden=!targeting||!matchMedia('(pointer:coarse)').matches; // en PC el aviso es redundante: la barra inferior ya indica el objetivo
+    placePrompt();
     if(targeting){$('attackPrompt').textContent=captureMode?(captureMode.itemId?'🎯 '+ITEM_NAMES[captureMode.itemId]+' · elige a ti o a un aliado adyacente':'🎯 '+BALLS[captureMode.ballId].name+' · elige Pokémon salvaje (≤'+CAPTURE_RANGE+' casillas)'+' · menos PS, más fácil de atrapar'): '🎯 '+moveDB[selected.moves[skill].key].name+' · selecciona objetivo';$('attackBack').textContent=captureMode?'↩ Volver a objetos':'↩ Volver a ataques'}
 }
 function backFromAttack(){
@@ -2163,7 +2170,7 @@ function moveInfoHTML(mp){
     const cat=m.power?(GEN3_PHYSICAL_TYPES.has(m.type)?'Físico':'Especial'):'Estado';
     const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
     let h='<div class="miHead"><span class="miType" style="background:'+(typeColors[m.type]||'#9ca4a7')+'">'+(TYPE_EMOJI[m.type]||'')+' '+esc((FE_TYPE_ES&&FE_TYPE_ES[m.type])||m.type).toLowerCase()+'</span><b>'+esc(m.name)+'</b><i>'+cat+'</i></div>';
-    h+='<div class="miStats"><span>Potencia <b>'+(m.power?(m.multi?m.power+' ×'+m.multi[0]+(m.multi[0]===m.multi[1]?'':'–'+m.multi[1]):m.power):'—')+'</b></span><span>Precisión <b>'+(m.acc?m.acc+' %':'—')+'</b></span><span>PP <b>'+mp.pp+'/'+m.pp+'</b></span></div>';
+    const tn=esc((FE_TYPE_ES&&FE_TYPE_ES[m.type])||m.type).toLowerCase();h+='<div class="miStats"><span>Tipo <b>'+tn.charAt(0).toUpperCase()+tn.slice(1)+'</b></span><span>Potencia <b>'+(m.power?(m.multi?m.power+' ×'+m.multi[0]+(m.multi[0]===m.multi[1]?'':'–'+m.multi[1]):m.power):'—')+'</b></span><span>Precisión <b>'+(m.acc?m.acc+' %':'—')+'</b></span><span>PP <b>'+mp.pp+'/'+m.pp+'</b></span></div>';
     h+='<div class="miRow">📏 '+MOVE_SHAPE_TXT(m)+'</div>';
     const ef=MOVE_EFFECT_TXT[m.effect];
     if(ef)h+='<div class="miRow">✨ '+esc(ef)+'</div>';else if(m.detail&&!m.effect)h+='<div class="miRow">ℹ️ '+esc(m.detail)+'</div>';
@@ -2181,7 +2188,11 @@ function updateMoveInfo(){
     box.innerHTML=moveInfoHTML(mp);box.hidden=false;placePrompt();
 }
 // El aviso «selecciona objetivo» baja justo debajo de la ficha para no taparla
-function placePrompt(){const p=$('attackPrompt'),c=$('moveInfoCard');if(!p)return;p.style.top=(c&&!c.hidden&&!p.hidden)?(c.offsetTop+c.offsetHeight+6)+'px':''}
+function placePrompt(){const p=$('attackPrompt'),c=$('moveInfoCard');if(!p)return;
+    const coarse=matchMedia('(pointer:coarse)').matches,lb=$('locationLabel');
+    if(c&&!c.hidden&&!p.hidden){p.style.top=(c.offsetTop+c.offsetHeight+6)+'px';p.style.left='';p.style.transform='';return}
+    if(!coarse&&lb&&lb.offsetHeight&&!p.hidden){p.style.top=(lb.offsetTop+lb.offsetHeight+6)+'px';p.style.left='12px';p.style.transform='none';return} // PC: columna izquierda bajo la etiqueta del lugar, sin tapar nada
+    p.style.top='';p.style.left='';p.style.transform=''}
 function renderBattleMenu(){
     syncAttackBack();
     let el=$('battleMenu');
@@ -2294,6 +2305,17 @@ function updateUI(){updateMoveInfo();updateMoneyUI();dexTrack();$('openDex').sty
     $('endTurn').disabled=!isPlayer||locked||!!captureMode;
     $('openCampaign').disabled=phase==='enemy'||cinematicBusy||motion||progressIsOpen;
     let focus=selected||inspectedEnemy;
+    try{const di=$('locationLabel');if(di){const ce=currentEncounter,cd=ce&&CAMPAIGN[ce.id];
+     if(window.__campOn||stageId==='camp'){di.classList.remove('duel');if(di._h!=='camp'){di._h='camp';di.textContent='⛺ CAMPAMENTO · KANTO'}}
+     else if(!ce||!cd){di.classList.remove('duel')}else{
+      const esc=s=>String(s).replace(/[<>&]/g,''),foes=units.filter(q=>q.side==='enemy'&&q.hp>0).map(q=>esc(base[q.id].name)+' Nv.'+q.level);
+      let who;if(ce.kind==='main'&&(cd.mainKind==='trainer'||cd.mainKind==='boss')){const p=String(cd.main||'').split(' · ');who=(cd.mainKind==='boss'?'👑 ':'⚔ ')+esc(p[0]||'Entrenador')}
+      else if(ce.kind==='main'&&cd.mainKind==='event')who='📦 '+esc(cd.main);
+      else if(ce.kind==='practice')who='🥋 Entrenamiento de gimnasio';
+      else if(ce.fish)who='🎣 Pesca';
+      else who='🌿 Pokémon salvajes';
+      const html='<span class="diLoc">'+esc(cd.icon+' '+String(cd.name||'').toUpperCase())+' · KANTO</span><span class="diWho">'+who+'</span>'+(foes.length?'<span class="diFoes">'+foes.join(' · ')+'</span>':'');
+      if(di._h!==html||!di.querySelector('.diLoc')){di._h=html;di.innerHTML=html}di.classList.add('duel')}}}catch(e){}
     $('selection').textContent=focus?base[focus.id].name:'Sin selección';
     $('enemyInfo').classList.toggle('hide',!inspectedEnemy);
     $('enemyInfo').innerHTML=inspectedEnemy?'<b>🔴 ENEMIGO · '+(inspectedEnemy.shiny?'✨ ':'')+base[inspectedEnemy.id].name+'</b><br>Nivel '+inspectedEnemy.level+' · PS '+inspectedEnemy.hp+'/'+inspectedEnemy.maxHp+'<br>Movilidad '+movementAllowance(inspectedEnemy)+'/'+base[inspectedEnemy.id].move+' PM'+(inspectedEnemy.slowed?' · 👣 −2 ('+effectTurnsLeft(inspectedEnemy,'slow')+'T)':'')+statusSummary(inspectedEnemy)+'<div class="enTip">🟥 Rojo: casillas de movimiento.<br>🟧 Ámbar: zonas que puede atacar después de moverse.<br>Pulsa Esc para cerrar.</div>':'';
@@ -2680,7 +2702,7 @@ async function perform(u,index,x,y){
     if(m.shape!=='self'&&!targets.length){
         if(u.side==='player')log('✋ No hay enemigos en la zona seleccionada.');return;
     }
-    playSfx(m.category==='status'?'status':'attack');locked=true;mp.pp--;
+    playSfx(m.category==='status'?'status':'attack');locked=true;mp.pp--;syncAttackBack(); // oculta «Volver»/aviso de objetivo en cuanto empieza la acción
     let lines=[],events=[],hitCount=0,appliedStatuses=[];
     for(const v of targets){
         const before=v.hp;
@@ -4325,10 +4347,29 @@ function pmdFrame(r,ms,loop){const d=r.m.d,tot=pmdTotal(r),T=Math.max(0,ms)/16.6
 function pmdPre(r){let a=0;const h=r.m.h==null?Math.floor(r.m.d.length/2):r.m.h;for(let i=0;i<h;i++)a+=r.m.d[i];return a*16.667}
 function pmdFlatDy(r,fi,row){try{const m=r.m,ALT=!!(row&&r.alt[row]&&r.alt[row].complete&&m.bbs&&m.bbs[row]),IM=ALT?r.alt[row]:(row&&r.alt[row]&&r.alt[row].complete)?r.alt[row]:r.img;if(!IM||!IM.complete||!IM.naturalWidth)return 0;const k=ALT?'a'+row:(IM===r.img?'o':'r'+row),c=r._fb||(r._fb={});const kk=k+fi;if(c[kk]!==undefined)return c[kk];const b=ALT?m.bbs[row]:m.bb,sw=b[2]-b[0],sh=b[3]-b[1],q=document.createElement('canvas');q.width=sw;q.height=sh;const x=q.getContext('2d');const all=[];for(let f=0;f<m.d.length;f++){x.clearRect(0,0,sw,sh);x.drawImage(IM,f*m.fw+b[0],b[1],sw,sh,0,0,sw,sh);const d=x.getImageData(0,0,sw,sh).data;let yb=0,x0=sw,x1=0;for(let y=sh-1;y>=0;y--)for(let xx=0;xx<sw;xx++)if(d[(y*sw+xx)*4+3]>40){if(!yb)yb=y+1;if(xx<x0)x0=xx;if(xx>x1)x1=xx}all.push([yb,(x0+x1)/2])}const ref=all[0];for(let f=0;f<all.length;f++){c[k+f]=ref[0]-all[f][0];c[k+f+'x']=ref[1]-all[f][1]}return c[kk]}catch(e){return 0}}
 function pmdFlatDx(r,fi,row){const m=r.m,ALT=!!(row&&r.alt[row]&&r.alt[row].complete&&m.bbs&&m.bbs[row]),IM=ALT?r.alt[row]:(row&&r.alt[row]&&r.alt[row].complete)?r.alt[row]:r.img,k=ALT?'a'+row:(IM===r.img?'o':'r'+row);pmdFlatDy(r,fi,row);return (r._fb&&r._fb[k+fi+'x'])||0}
+// ---- Suavizado de sprites PMD: 'off' (píxel puro), 'sharp' (bilineal nítido), 'epx' (Scale2x ×2 dos veces) ----
+let PMD_SMOOTH='sharp';try{const s=localStorage.getItem('ptg_pmdsm');if(s==='sharp'||s==='epx'||s==='off')PMD_SMOOTH=s}catch(e){}
+const pmdSmCache=new WeakMap();
+function pmdScale2x(src,w,h){const s32=new Uint32Array(src.data.buffer),out=new ImageData(w*2,h*2),o32=new Uint32Array(out.data.buffer),W2=w*2;
+ const px=(x,y)=>(x<0||y<0||x>=w||y>=h)?0:s32[y*w+x];
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){const P=s32[y*w+x],A=px(x,y-1),B=px(x+1,y),C=px(x-1,y),D=px(x,y+1);let p1=P,p2=P,p3=P,p4=P;
+  if(C===A&&C!==D&&A!==B)p1=A;if(A===B&&A!==C&&B!==D)p2=B;if(D===C&&D!==B&&C!==A)p3=C;if(B===D&&B!==A&&D!==C)p4=D;
+  const i=y*2*W2+x*2;o32[i]=p1;o32[i+1]=p2;o32[i+W2]=p3;o32[i+W2+1]=p4}
+ return out}
+function pmdSmoothCanvas(IMG,sx,sy,sw,sh,mode){let m=pmdSmCache.get(IMG);if(!m){m=new Map();pmdSmCache.set(IMG,m)}
+ const key=mode+'|'+sx+'|'+sy+'|'+sw+'|'+sh;let c=m.get(key);if(c)return c;
+ const c0=document.createElement('canvas');c0.width=sw;c0.height=sh;const q0=c0.getContext('2d',{willReadFrequently:true});q0.imageSmoothingEnabled=false;q0.drawImage(IMG,sx,sy,sw,sh,0,0,sw,sh);
+ if(mode==='epx'){let d=q0.getImageData(0,0,sw,sh);d=pmdScale2x(d,sw,sh);d=pmdScale2x(d,sw*2,sh*2);c=document.createElement('canvas');c.width=sw*4;c.height=sh*4;c.getContext('2d').putImageData(d,0,0)}
+ else{c=document.createElement('canvas');c.width=sw*4;c.height=sh*4;const q=c.getContext('2d');q.imageSmoothingEnabled=false;q.drawImage(c0,0,0,sw*4,sh*4)}
+ m.set(key,c);return c}
+window.__setPmdSmooth=mode=>{PMD_SMOOTH=(mode==='sharp'||mode==='epx')?mode:'off';try{localStorage.setItem('ptg_pmdsm',PMD_SMOOTH)}catch(e){}
+};
+window.__getPmdSmooth=()=>PMD_SMOOTH;
 function pmdDraw(g,r,fi,scale,white,row){const ALT=!!(row&&r.alt[row]&&r.alt[row].complete&&r.m.bbs&&r.m.bbs[row]);const IMG=ALT?r.alt[row]:(row&&r.alt[row]&&r.alt[row].complete&&!(r.m.bbs&&r.m.bbs[row]))?r.alt[row]:r.img;const m=r.m,b=ALT?m.bbs[row]:m.bb,sw=b[2]-b[0],sh=b[3]-b[1];
  const dx=Math.round((b[0]-m.fw/2)*scale),dw=Math.round(sw*scale),dh=Math.round(sh*scale);
  if(white>0){const k=m.p.length+'_'+fi+'_'+(ALT?row:0);let c=pmdWhiteCache[k];if(!c){c=document.createElement('canvas');c.width=sw;c.height=sh;const q=c.getContext('2d');q.drawImage(IMG,fi*m.fw+b[0],b[1],sw,sh,0,0,sw,sh);q.globalCompositeOperation='source-in';q.fillStyle='#fff';q.fillRect(0,0,sw,sh);pmdWhiteCache[k]=c}
   g.save();g.globalAlpha*=white;g.drawImage(c,dx,-dh,dw,dh);g.restore();return}
+ if(g===sg&&PMD_SMOOTH!=='off'){const cs=pmdSmoothCanvas(IMG,fi*m.fw+b[0],b[1],sw,sh,PMD_SMOOTH),was=g.imageSmoothingEnabled;g.imageSmoothingEnabled=true;try{g.imageSmoothingQuality='high'}catch(e){}g.drawImage(cs,0,0,cs.width,cs.height,dx,-dh,dw,dh);g.imageSmoothingEnabled=was;return}
  g.drawImage(IMG,fi*m.fw+b[0],b[1],sw,sh,dx,-dh,dw,dh)}
 const POKE_H={1:7,2:10,3:20,4:6,5:11,6:17,7:5,8:10,9:16,10:3,11:7,12:11,13:3,14:6,15:10,16:3,17:11,18:15,19:3,20:7,21:3,22:12,23:9,24:16,25:4,26:8,27:6,28:10,29:4,30:8,32:5,33:9,35:6,39:5,41:8,42:16,46:3,47:10,56:5,57:10,74:4,75:10,81:3,88:9,63:9,66:8,43:3,69:5,100:5,138:4,140:5,90:3,95:88,109:6,110:12,116:4,117:12,60:6,61:10,129:9,130:65,98:4,54:8,79:12,118:6,119:13,120:8,121:11}; // estatura oficial (dm) de PokéAPI
 function feSpriteInfo(u,isLeft){
@@ -5092,7 +5133,7 @@ function drawFrame(time){
         }
     }
     if(selected&&phase==='player'&&!selected.acted){
-        if(!captureMode&&skill===null&&!selected.moved){
+        if(!captureMode&&skill===null&&!selected.moved&&!actionMenu){
             let d=reachableEnd(selected);
             for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(d[y][x]<Infinity&&!occupied(x,y)&&!(x===selected.x&&y===selected.y)){
                 drawTileMark(x,y,'rgba(24,72,220,.62)','#cfe6ff',3,time);
@@ -5424,7 +5465,7 @@ function menuScreen(name){
    $('titleContinue').disabled=!readSave();
    $('titleReturn').hidden=phase==='intro';try{heroRefresh()}catch(e){console.error(e)}
  }
- if(name==='options'){$('titlePmdToggle').textContent=pmdOn?'SPRITECOLLAB (PMD)':'ORIGINALES';$('titleSoundToggle').textContent=soundEnabled?'ACTIVADOS':'DESACTIVADOS';$('titleAnimToggle').textContent=animationEnabled?'ACTIVADAS':'DESACTIVADAS';$('titleStyleToggle').textContent=styleLabel()}
+ if(name==='options'){$('titlePmdToggle').textContent=pmdOn?'SPRITECOLLAB (PMD)':'ORIGINALES';$('titleSoundToggle').textContent=soundEnabled?'ACTIVADOS':'DESACTIVADOS';$('titleAnimToggle').textContent=animationEnabled?'ACTIVADAS':'DESACTIVADAS';$('titleFpsToggle').textContent=window.__fps&&window.__fps.get()?'VISIBLE':'OCULTO';$('titleSmoothToggle').textContent=({off:'PIXEL PURO',sharp:'SUAVE (NÍTIDO)',epx:'SUAVE (SCALE2X)'})[window.__getPmdSmooth()];$('titleStyleToggle').textContent=styleLabel()}
 }
 // ===== Pantalla de inicio: Bosque Verde animado + menú (v591) =====
 const HERO={on:false,mx:0,my:0,sx:0,sy:0,last:0,cv:null,g:null,L:null,t0:performance.now(),shinyIdx:-1};
@@ -5801,6 +5842,19 @@ $('starterBack').onclick=()=>menuScreen('home');
 $('starterConfirm').onclick=()=>{if(![1,4,7].includes(selectedStarter))return;leaveTitle();reset(true,selectedStarter);playSfx('win');try{beginCampaignEncounter('pallet','main');$('campaignOverlay').hidden=true;window.__showHelpOnce&&window.__showHelpOnce();window.__tutStart&&window.__tutStart();updateUI()}catch(e){}};
 $('titleSoundToggle').onclick=()=>{soundEnabled=!soundEnabled;try{localStorage.setItem('pokemon-tactics-sound',soundEnabled?'on':'off')}catch(e){}$('titleSoundToggle').textContent=soundEnabled?'ACTIVADOS':'DESACTIVADOS';if(soundEnabled)playSfx('select')};
 $('titlePmdToggle').onclick=()=>{pmdOn=!pmdOn;try{localStorage.setItem('ptg_pmd',pmdOn?'1':'0')}catch(e){}$('titlePmdToggle').textContent=pmdOn?'SPRITECOLLAB (PMD)':'ORIGINALES'};
+$('titleSmoothToggle').onclick=()=>{const c=window.__getPmdSmooth();window.__setPmdSmooth(c==='sharp'?'epx':c==='epx'?'off':'sharp');$('titleSmoothToggle').textContent=({off:'PIXEL PURO',sharp:'SUAVE (NÍTIDO)',epx:'SUAVE (SCALE2X)'})[window.__getPmdSmooth()]};
+// Contador de FPS (opcional): muestra FPS medios, mínimo reciente y ms por cuadro; con 3D, llamadas de dibujo.
+window.__fps=(()=>{let on=false,box=null,raf=0,last=0,fr=0,acc=0,worst=0,t0=0;
+ const loop=t=>{if(!on)return;const host=document.fullscreenElement||document.body;if(box&&box.parentNode!==host)host.appendChild(box);raf=requestAnimationFrame(loop);if(last){const d=t-last;fr++;acc+=d;if(d>worst)worst=d}last=t;
+  if(t-t0>=500){const fps=fr*1000/acc,ms=acc/fr;let extra='';try{const i=window.__R3&&window.__R3.renderer.info.render;if(i)extra=' · '+i.calls+' llam.'}catch(e){}
+   box.textContent=Math.round(fps)+' FPS · '+ms.toFixed(1)+' ms · mín '+Math.round(1000/worst)+extra;box.style.color=fps>=55?'#7dff9a':fps>=40?'#ffe27a':'#ff7a7a';fr=0;acc=0;worst=0;t0=t}};
+ const set=v=>{on=!!v;try{localStorage.setItem('ptg_fps',on?'1':'0')}catch(e){}
+  if(on){if(!box){box=document.createElement('div');box.style.cssText='position:fixed;left:50%;top:6px;transform:translateX(-50%);z-index:2147483000;font:bold 13px monospace;background:rgba(0,0,0,.78);padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.25);pointer-events:none;color:#7dff9a';document.body.appendChild(box)}box.hidden=false;last=0;fr=0;acc=0;worst=0;t0=0;cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
+  else{if(box)box.hidden=true;cancelAnimationFrame(raf)}};
+ let s=false;try{s=localStorage.getItem('ptg_fps')==='1'}catch(e){}
+ if(s)setTimeout(()=>set(true),500);
+ return {set,get:()=>on}})();
+$('titleFpsToggle').onclick=()=>{window.__fps.set(!window.__fps.get());$('titleFpsToggle').textContent=window.__fps.get()?'VISIBLE':'OCULTO'};
 $('titleAnimToggle').onclick=()=>{animationEnabled=!animationEnabled;$('toggleAnimations').textContent='Animaciones: '+(animationEnabled?'ACTIVADAS':'DESACTIVADAS');$('titleAnimToggle').textContent=animationEnabled?'ACTIVADAS':'DESACTIVADAS'};
 $('backTitle').onclick=()=>{if(cinematicBusy||captureBusy||progressIsOpen||motion||phase==='enemy'){log('Espera a que termine la acción antes de volver al menú.');return}showTitleScreen()};
 // Paisaje propio construido a partir de píxeles (sin utilizar recursos de videojuegos existentes).
@@ -6209,6 +6263,9 @@ showIntro();
 
 /* ===== v3D · Escena 2.5D (Three.js) · tablero en relieve, luces y sombras; los Pokémon (SpriteCollab) son figuras que miran a la cámara ===== */
 var R3=null;let R3fail=false;
+let _cnT=0,_cnV=false;function campNight(){if(window.__campNight===true||window.__campNight===false)return window.__campNight;const n=Date.now();if(n-_cnT>20000){_cnT=n;const h=new Date().getHours();_cnV=h>=20||h<6}return _cnV} // el campamento es de noche entre las 20:00 y las 06:00 (hora del dispositivo); se consulta como máximo cada 20 s
+const _stKind={};function stageNight(id){let k=_stKind[id];if(k===undefined){k=_stKind[id]=stageTheme(id).kind}return k==='out'&&campNight()} // solo exteriores (no gimnasios, piscina, laboratorio ni cuevas)
+function stageThemeN(id){const T=stageTheme(id);if(T.kind==='out'&&campNight())Object.assign(T,{night:true,sky:['#050a1f','#1a2a58'],hemi:[0x7f9be0,0x1a2440],hemiI:.62,sun:0x8fa8ff,sunI:.85});return T}
 function stageTheme(id){
  const T={kind:'out',a:'#5aa84a',b:'#5aa84a',path:'#f0d27a',tall:'#5aa84a',wall:'#a08a62',earth:'#8a6a47',lip:'#3f9439',tree:['#2f8a4a','#3a9c55','#46ad60'],sky:['#bfe5ff','#f4fbff'],hemi:[0xdff1ff,0x6f8f5a],hemiI:.85,sun:0xfff0d0,sunI:2.2,water:'#4fb0d8',fog:null};
  if(id==='pallet')return Object.assign(T,{kind:'lab',a:'#efecf2',b:'#e6e2ea',path:'#e6e2ea',wall:'#cfce82',earth:'#14161d',sky:['#2b4388','#1d3068'],hemi:[0xffffff,0x9aa0b0],hemiI:.95,sunI:1.7,sun:0xfff3dd});
@@ -6217,7 +6274,7 @@ function stageTheme(id){
  if(id==='mtmoon'||id==='mtmoonj'||id==='mtmoonb'||id==='mtmoonc')return Object.assign(T,{kind:'cave',a:'#938974',b:'#938974',path:'#d9c067',wall:'#6d655b',earth:'#3b3631',sky:['#3a3f63','#12162b'],hemi:[0xc7d2ff,0x6b6050],hemiI:1.15,sunI:2.0,sun:0xcfd9ff,water:'#3f8fb5'});
  if(id==='vermilionguard'||id==='vermilion')return Object.assign(T,{kind:'gym',a:'#cfc7a6',b:'#c0b894',path:'#9aa0a8',wall:'#5d6470',earth:'#3b3f48',sky:['#86a2c8','#e6eef8'],hemi:[0xffffff,0x8a8d99],hemiI:1.0,sunI:1.8,sun:0xfff4d0});
  if(id==='route3'||id==='route3b'||id==='route4'||id==='route5'||id==='route6'||id==='vermilionrival'||id==='ceruleanrival'||id==='nugget'||id==='nuggetrocket'||id==='nuggettrain'||id==='route25'||id==='route25b'||id==='route25train')return Object.assign(T,{a:'#5aa84a',b:'#5aa84a',wall:'#b0966a',tall:'#5aa84a',lip:'#3f9439',tree:['#4a8a3e','#58a048','#66b255']});
- if(id==='camp'||id==='forest'||id==='forestdoug'||id==='forestmid'||id==='forestexit'||id==='route2in'||id==='route22'||id==='route2')return Object.assign(T,{a:'#6fb460',b:'#65a957',tall:'#4c9a45',tree:['#20703d','#2a8447','#349754'],sky:['#a9d6c4','#e1f3ea'],hemiI:.75});
+ if(id==='camp'||id==='forest'||id==='forestdoug'||id==='forestmid'||id==='forestexit'||id==='route2in'||id==='route22'||id==='route2'){Object.assign(T,{a:'#6fb460',b:'#65a957',tall:'#4c9a45',tree:['#20703d','#2a8447','#349754'],sky:['#a9d6c4','#e1f3ea'],hemiI:.75});return T}
  return T;
 }
 function shade(hex,k){const c=parseInt(hex.slice(1),16);const r=Math.round(((c>>16)&255)*k),g=Math.round(((c>>8)&255)*k),b=Math.round((c&255)*k);return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)}
@@ -6336,13 +6393,15 @@ function pxaGround(th,rows,W,H,tp,bevel){bevel=bevel!==false;
 function pxaBackdrop(th,grid){grid=grid!==false;
  const w=320,h=240,cave=th.kind==='cave',indoor=th.kind!=='out'&&!cave;
  return pxaCanvas(w,h,(P)=>{
-  const c0=cave||indoor?th.sky[0]:'#43a5e6',c1=cave||indoor?th.sky[1]:'#a9defa',bands=6;
+  const c0=cave||indoor||th.night?th.sky[0]:'#43a5e6',c1=cave||indoor||th.night?th.sky[1]:'#a9defa',bands=6;
   for(let y=0;y<h;y++)for(let x=0;x<w;x++){
    const f=y/h*bands,bi=Math.floor(f),fr=f-bi,dith=0;
    const k=Math.min(bands-1,bi+dith)/(bands-1);
    const a=pxaRGB(c0),b=pxaRGB(c1),m=a.map((v,i)=>Math.round(v+(b[i]-v)*(1-k)));
    P(x,y,'#'+m.map(v=>v.toString(16).padStart(2,'0')).join(''))}
-  if(!cave&&!indoor){for(let i=0;i<5;i++){const cx=24+i*68+(pxaHash(i,1,1)*28|0),cy=28+(pxaHash(i,2,1)*120|0);for(let dy=-6;dy<=6;dy++)for(let dx=-18;dx<=18;dx++){const e=(dx*dx)/324+(dy*dy)/36;if(e<=1&&!(dy>2&&Math.abs(dx)>12)){P(cx+dx,cy+dy,dy>=4?'#dbe8f2':'#ffffff')}}for(let dx=-10;dx<=10;dx++)for(let k=0;k<2;k++)P(cx+dx,cy-7-k,'#ffffff')}}
+  if(th.night){for(let i=0;i<70;i++){const sx=(pxaHash(i,5,3)*w)|0,sy=(pxaHash(i,6,3)*h*.78)|0,big=pxaHash(i,7,3)>.86;P(sx,sy,i%5===0?'#ffe9b0':'#dfe8ff');if(big){P(sx+1,sy,'#aab8e8');P(sx-1,sy,'#aab8e8');P(sx,sy+1,'#aab8e8');P(sx,sy-1,'#aab8e8')}}
+   for(let dy=-11;dy<=11;dy++)for(let dx=-11;dx<=11;dx++){const d2=dx*dx+dy*dy;if(d2<=110){const cx=dx+4,cy=dy+4;if(cx*cx+cy*cy>72)P(250+dx,40+dy,d2>92?'#cdb98a':'#fff1b8')}}}
+  else if(!cave&&!indoor){for(let i=0;i<5;i++){const cx=24+i*68+(pxaHash(i,1,1)*28|0),cy=28+(pxaHash(i,2,1)*120|0);for(let dy=-6;dy<=6;dy++)for(let dx=-18;dx<=18;dx++){const e=(dx*dx)/324+(dy*dy)/36;if(e<=1&&!(dy>2&&Math.abs(dx)>12)){P(cx+dx,cy+dy,dy>=4?'#dbe8f2':'#ffffff')}}for(let dx=-10;dx<=10;dx++)for(let k=0;k<2;k++)P(cx+dx,cy-7-k,'#ffffff')}}
   else if(th.kind!=='pool'){for(let i=0;i<30;i++){P((pxaHash(i,3,2)*w)|0,(pxaHash(i,4,2)*h)|0,cave?'#aab8e8':'#8fa0c8')}}
   if(grid)for(let y=0;y<h;y+=20)for(let x=0;x<w;x++)P(x,y,pxaShade(c1,.975));
   if(grid)for(let x=0;x<w;x+=20)for(let y=0;y<h;y++)P(x,y,pxaShade(c1,.975));
@@ -6397,9 +6456,9 @@ function pxRun(O,renderer,scene,cam,edge,lv,overlay){
  const T=window.THREE,sz=renderer.getDrawingBufferSize(new T.Vector2());
  if(!O.px){
   const rt=new T.WebGLRenderTarget(sz.x,sz.y,{minFilter:T.NearestFilter,magFilter:T.NearestFilter,type:T.HalfFloatType,depthTexture:new T.DepthTexture(sz.x,sz.y)});
-  const mat=new T.ShaderMaterial({uniforms:{tC:{value:null},tD:{value:null},px:{value:new T.Vector2(1/sz.x,1/sz.y)},zn:{value:cam.near},zf:{value:cam.far},lv:{value:lv},edge:{value:edge},ua:{value:overlay?1:0}},
+  const mat=new T.ShaderMaterial({uniforms:{tC:{value:null},tD:{value:null},px:{value:new T.Vector2(1/sz.x,1/sz.y)},zn:{value:cam.near},zf:{value:cam.far},lv:{value:lv},edge:{value:edge},ua:{value:overlay?1:0},nt:{value:new T.Vector3(1,1,1)}},
    vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
-   fragmentShader:`uniform sampler2D tC,tD;uniform vec2 px;uniform float zn,zf,lv,edge,ua;varying vec2 vUv;
+   fragmentShader:`uniform sampler2D tC,tD;uniform vec2 px;uniform vec3 nt;uniform float zn,zf,lv,edge,ua;varying vec2 vUv;
 float lin(float d){float z=d*2.-1.;return 2.*zn*zf/(zf+zn-z*(zf-zn));}
 void main(){vec4 c=texture2D(tC,vUv);float d0=lin(texture2D(tD,vUv).x);float e=0.;
  vec2 o[4];o[0]=vec2(px.x,0.);o[1]=vec2(-px.x,0.);o[2]=vec2(0.,px.y);o[3]=vec2(0.,-px.y);
@@ -6407,6 +6466,7 @@ void main(){vec4 c=texture2D(tC,vUv);float d0=lin(texture2D(tD,vUv).x);float e=0
  gl_FragColor=vec4(c.rgb,1.);
  gl_FragColor.rgb=pow(clamp(gl_FragColor.rgb*1.12,0.,1.),vec3(1./2.2));
  {float l=dot(gl_FragColor.rgb,vec3(.3,.59,.11));gl_FragColor.rgb=clamp((mix(vec3(l),gl_FragColor.rgb,1.12)-.5)*1.1+.5,0.,1.);}
+ gl_FragColor.rgb*=nt;
  vec3 q=floor(gl_FragColor.rgb*lv+.5)/lv;if(e>0.)q*=.4;gl_FragColor=(ua>.5&&c.a<.01)?vec4(0.):vec4(q,1.);}`,depthTest:false,depthWrite:false,toneMapped:true});
   const quad=new T.Mesh(new T.PlaneGeometry(2,2),mat);quad.frustumCulled=false;
   const qs=new T.Scene();qs.add(quad);
@@ -6414,13 +6474,13 @@ void main(){vec4 c=texture2D(tC,vUv);float d0=lin(texture2D(tD,vUv).x);float e=0
  }
  const P=O.px;
  if(P.rt.width!==sz.x||P.rt.height!==sz.y){P.rt.setSize(sz.x,sz.y);P.mat.uniforms.px.value.set(1/sz.x,1/sz.y)}
- P.mat.uniforms.zn.value=cam.near;P.mat.uniforms.zf.value=cam.far;
+ P.mat.uniforms.zn.value=cam.near;P.mat.uniforms.zf.value=cam.far;{const n=O.nt||[1,1,1];P.mat.uniforms.nt.value.set(n[0],n[1],n[2])}
  const lay=cam.layers.mask;
  cam.layers.set(0);renderer.setRenderTarget(P.rt);renderer.clear();renderer.render(scene,cam);renderer.setRenderTarget(null);
  P.mat.uniforms.tC.value=P.rt.texture;P.mat.uniforms.tD.value=P.rt.depthTexture;
  renderer.render(P.qs,P.qc);
  if(overlay){const ac=renderer.autoClear;renderer.autoClear=false;renderer.clearDepth();
-  const om=P.dm||(P.dm=new window.THREE.MeshBasicMaterial({colorWrite:false}));cam.layers.set(0);const ov=scene.overrideMaterial;scene.overrideMaterial=om;renderer.render(scene,cam);scene.overrideMaterial=ov;
+  const om=P.dm||(P.dm=new window.THREE.MeshBasicMaterial({colorWrite:false}));cam.layers.set(0);const ov=scene.overrideMaterial;scene.overrideMaterial=om;const hid=O.fade?[...O.fade.map].filter(([m,s])=>s.a<.9).map(x=>x[0]):[];hid.forEach(m=>m.visible=false);renderer.render(scene,cam);hid.forEach(m=>m.visible=true);scene.overrideMaterial=ov;
   cam.layers.set(1);renderer.render(scene,cam);renderer.autoClear=ac}
  cam.layers.mask=lay;
 }
@@ -6516,7 +6576,7 @@ function r3init(){
  addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;const k=e.key.toLowerCase();if(k==='q')camStep(-Math.PI/2);else if(k==='e')camStep(Math.PI/2);else if(k==='r'){R3.yawT=Math.PI/4+Math.round((R3.yawT-Math.PI/4)/(2*Math.PI))*2*Math.PI;R3.zmT=1}else if(k==='+'||k==='=')zoomBy(1/1.25);else if(k==='-'||k==='_')zoomBy(1.25)});
  const cv=document.createElement('canvas');cv.id='map3d';cv.setAttribute('aria-label','Tablero táctico 3D');wrap.insertBefore(cv,canvas.nextSibling);
  let renderer;try{renderer=new T.WebGLRenderer({canvas:cv,antialias:false,alpha:true,powerPreference:'high-performance'})}catch(e){cv.remove();R3fail=true;console.warn('WebGL no disponible: se usa el tablero 2D.');return}
- renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
+ renderer.shadowMap.enabled=true;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
  renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
  const scene=new T.Scene(),cam=new T.PerspectiveCamera(12,1.2,20,260);
  const hemi=new T.HemisphereLight(0xffffff,0x888888,.85);scene.add(hemi);
@@ -6572,7 +6632,7 @@ function r3Bush3D(T,g,x,z,sc,sd){const G=new T.Group(),m=(r,c,px,py,pz,sy)=>{con
  G.rotation.y=sd;G.scale.setScalar(sc);G.position.set(x,0,z);g.add(G);return G}
 function r3mat(color,opts){const k=color+JSON.stringify(opts||{});let m=R3.mats.get(k);if(!m){m=new R3.T.MeshStandardMaterial(Object.assign({color,roughness:.88,metalness:0,flatShading:true},opts||{}));R3.mats.set(k,m)}return m}
 function r3build(){
- const T=R3.T,g=R3.stageGroup,th=stageTheme(stageId);
+ const T=R3.T,g=R3.stageGroup,th=stageThemeN(stageId);R3.night=!!th.night;
  while(g.children.length){const c=g.children.pop();c.traverse(o=>{if(o.geometry&&!o.userData.shared)o.geometry.dispose()})}
  R3.anim={water:[],grass:[],motes:null};R3.mats.forEach(m=>m.dispose());R3.mats.clear();
  const rnd=(x,y,k=0)=>{const s=Math.sin(x*127.1+y*311.7+k*74.7)*43758.5453;return s-Math.floor(s)};
@@ -6604,6 +6664,11 @@ function r3build(){
   mkG((x,y)=>E.has(x+','+y)?'NONE':chOf(x,y),.004);if(E.size)mkG((x,y)=>E.has(x+','+y)?chOf(x,y):'NONE',EH+.004)}
  const bb=(cv,wu,hu,x,z,y)=>{const t=new T.CanvasTexture(cv);t.colorSpace=T.SRGBColorSpace;t.magFilter=T.NearestFilter;t.minFilter=T.NearestFilter;t.generateMipmaps=false;
   const sp=new T.Sprite(new T.SpriteMaterial({map:t,transparent:true,depthTest:false,depthWrite:false,toneMapped:false}));sp.center.set(.5,0);sp.scale.set(wu,hu,1);sp.position.set(x,y||0,z);sp.layers.set(1);g.add(sp);return sp};
+ const bbd=(cv,wu,hu,x,z,ry)=>{const t=new T.CanvasTexture(cv);t.colorSpace=T.SRGBColorSpace;t.magFilter=T.NearestFilter;t.minFilter=T.NearestFilter;t.generateMipmaps=false; // objeto estático (dos planos cruzados): no gira con la cámara y los árboles/rocas lo tapan
+  if(!bbd.geo){bbd.geo=new T.PlaneGeometry(1,1);bbd.geo.translate(0,.5,0);bbd.geo.userData={shared:true}}
+  const mat=new T.MeshBasicMaterial({map:t,transparent:true,alphaTest:.5,side:T.DoubleSide,toneMapped:false}),G=new T.Group();
+  for(const a of [0,Math.PI/2]){const m=new T.Mesh(bbd.geo,mat);m.rotation.y=(ry||0)+a;m.scale.set(wu,hu,1);m.raycast=()=>{};m.userData.shared=true;G.add(m)}
+  G.position.set(x,.02,z);g.add(G);return G};
  const blob=(x,z,r)=>{const m=new T.Mesh(new T.CircleGeometry(r,14),new T.MeshBasicMaterial({color:0x0b1a10,transparent:true,opacity:.28,depthWrite:false}));m.rotation.x=-Math.PI/2;m.scale.set(1,.7,1);m.position.set(x,.012,z);g.add(m)};
  const fbox=(cv,w,h,d,x,zf,y0,sc,bh,sl,bc)=>{const t=new T.CanvasTexture(cv);t.colorSpace=T.SRGBColorSpace;t.magFilter=T.NearestFilter;t.minFilter=T.NearestFilter;t.generateMipmaps=false;
   const hh=bh||h*.97;add(box(w*.97,hh,d,sc),x,hh/2,zf-d/2-.01);
@@ -6723,10 +6788,24 @@ function r3build(){
    add(box(.22,1.2,.06,'#d7dbe3'),mx+.7,.55,fz+.02);
    for(let k=0;k<10;k++)add(box(.24,.025,.07,'#8c93a3'),mx+.7,.08+k*.115,fz+.03);
    continue}
-  if(ch==='W'&&(stageId==='route22'||stageId==='route25train'||stageId==='route25'||stageId==='route25b'||stageId==='nugget'||stageId==='nuggetrocket'||stageId==='nuggettrain'||stageId==='ceruleanrival'||stageId==='route3'||stageId==='route3b'||stageId==='route4'||stageId==='mtmoon'||stageId==='mtmoonj'||stageId==='mtmoonb'||stageId==='mtmoonc')){ // acantilado de roca con textura (tejas de piedra)
+  if(ch==='W'&&(stageId==='route2'||stageId==='route22'||stageId==='route25train'||stageId==='route25'||stageId==='route25b'||stageId==='nugget'||stageId==='nuggetrocket'||stageId==='nuggettrain'||stageId==='ceruleanrival'||stageId==='route3'||stageId==='route3b'||stageId==='route4'||stageId==='mtmoon'||stageId==='mtmoonj'||stageId==='mtmoonb'||stageId==='mtmoonc')){ // acantilado de roca con textura (tejas de piedra)
    if(!R3.rockM){const im=new Image(),tx=new T.Texture(im);tx.colorSpace=T.SRGBColorSpace;tx.wrapS=tx.wrapT=T.RepeatWrapping;tx.anisotropy=4;im.onload=()=>{tx.needsUpdate=true};im.src='data:image/jpeg;base64,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';
     R3.rockM=new T.MeshStandardMaterial({map:tx,roughness:1,vertexColors:true,emissive:0xffffff,emissiveMap:tx,emissiveIntensity:.34})}
-   const hh=stageId==='mtmoonc'?(y<=0?1.0:.62):y<=1?1.2:y<=3?.75:.5;
+   if(stageId==='route2'){ // Cueva de Diglett: montículo de dos pisos de bloques de piedra, sin juntas entre casillas (UV continuas en el mundo)
+    if(x!==9||y!==8)continue;
+    const rbk=(w,h,d,px,by,pz)=>{ // bloque con esquinas y aristas redondeadas, UV continuas en el mundo
+     const bv=.09,rr=Math.min(.24,w*.4,d*.4),hx=w/2-bv,hz=d/2-bv,sh=new T.Shape(),r0=Math.max(.02,rr-bv);
+     sh.moveTo(-hx+r0,-hz);sh.lineTo(hx-r0,-hz);sh.absarc(hx-r0,-hz+r0,r0,-Math.PI/2,0,false);sh.lineTo(hx,hz-r0);sh.absarc(hx-r0,hz-r0,r0,0,Math.PI/2,false);sh.lineTo(-hx+r0,hz);sh.absarc(-hx+r0,hz-r0,r0,Math.PI/2,Math.PI,false);sh.lineTo(-hx,-hz+r0);sh.absarc(-hx+r0,-hz+r0,r0,Math.PI,Math.PI*1.5,false);
+     const bg=new T.ExtrudeGeometry(sh,{depth:Math.max(.05,h-2*bv),bevelEnabled:true,bevelThickness:bv,bevelSize:bv,bevelSegments:3,curveSegments:6});
+     bg.rotateX(-Math.PI/2);bg.computeBoundingBox();bg.translate(0,-bg.boundingBox.min.y,0);bg.computeVertexNormals();
+     const bp=bg.attributes.position,bn=bg.attributes.normal,bu=bg.attributes.uv,K=.34,col=new Float32Array(bp.count*3).fill(1);
+     for(let k=0;k<bp.count;k++){const qx=bp.getX(k)+px,qy=bp.getY(k)+by,qz=bp.getZ(k)+pz;if(Math.abs(bn.getY(k))>.5)bu.setXY(k,qx*K,qz*K);else if(Math.abs(bn.getX(k))>Math.abs(bn.getZ(k)))bu.setXY(k,qz*K,qy*K);else bu.setXY(k,qx*K,qy*K)}
+     bg.setAttribute('color',new T.BufferAttribute(col,3));const m=new T.Mesh(bg,R3.rockM);add(m,px,by,pz)};
+    // piso 1: huella completa (9..12 × 7..10, sin la casilla 9,7); piso 2: más compacto, retranqueado en los bordes
+    rbk(3,.8,2.02,10.5,0,9);rbk(2,.8,1.02,11,0,7.5);
+    rbk(2.3,.7,1.62,10.5,.74,8.95);rbk(1.3,.7,.8,11.0,.74,7.9);
+    continue}
+   const hh=stageId==='route2'?(x<=10?1.3:.7):stageId==='mtmoonc'?(y<=0?1.0:.62):y<=1?1.2:y<=3?.75:.5; // Ruta 2: más altas y con un segundo nivel más bajo a la derecha
    const bg=(()=>{const bv=.07,r0=.13,h=.5-bv,sh=new T.Shape();sh.moveTo(-h+r0,-h);sh.lineTo(h-r0,-h);sh.absarc(h-r0,-h+r0,r0,-Math.PI/2,0,false);sh.lineTo(h,h-r0);sh.absarc(h-r0,h-r0,r0,0,Math.PI/2,false);sh.lineTo(-h+r0,h);sh.absarc(-h+r0,h-r0,r0,Math.PI/2,Math.PI,false);sh.lineTo(-h,-h+r0);sh.absarc(-h+r0,-h+r0,r0,Math.PI,Math.PI*1.5,false);
  const g=new T.ExtrudeGeometry(sh,{depth:hh-2*bv,bevelEnabled:true,bevelThickness:bv,bevelSize:bv,bevelSegments:3,curveSegments:4});g.rotateX(-Math.PI/2);g.translate(0,-hh/2+bv,0);g.computeVertexNormals();return g})(),bp=bg.attributes.position,bn=bg.attributes.normal,bu=bg.attributes.uv,K=.34;for(let k=0;k<bp.count;k++){const px=bp.getX(k)+cx,py=bp.getY(k)+hh/2,pz=bp.getZ(k)+cz;if(Math.abs(bn.getY(k))>.5)bu.setXY(k,px*K,pz*K);else if(Math.abs(bn.getX(k))>.5)bu.setXY(k,pz*K,py*K);else bu.setXY(k,px*K,py*K)}{const hs2=(a,b)=>{const v=Math.sin(a*127.1+b*311.7)*43758.5453;return v-Math.floor(v)},col=new Float32Array(bp.count*3);for(let k=0;k<bp.count;k++){const ny=bn.getY(k),ring=Math.abs(bp.getX(k))>.36||Math.abs(bp.getZ(k))>.36;let c=ny>.98?1:ny>.15?.5:.85;if(ny>.98&&ring)c=.8;col[k*3]=c;col[k*3+1]=c*.96;col[k*3+2]=c*.98;
  if(ring&&ny>-.5){const q=Math.round(bp.getX(k)*40)+'_'+Math.round(bp.getZ(k)*40);bp.setX(k,bp.getX(k)+(hs2(cx*9+Math.round(bp.getX(k)*40),cz*7+Math.round(bp.getZ(k)*40))-.5)*.1);bp.setZ(k,bp.getZ(k)+(hs2(cz*5+Math.round(bp.getZ(k)*40),cx*3+Math.round(bp.getX(k)*40))-.5)*.1)}}
@@ -6760,7 +6839,7 @@ function r3build(){
    const col=th.tree[(r*3|0)%3],sd=(x*7+y*3)|0,s1=.92+r*.2;
    tree3d(pine,cx,cz,.95*s1+.1,r*6);continue}
   if(ch==='T'){r3Grass(T,g,cx,cz,rnd(x,y)*6,R3.anim.grass);continue}
-  if(ch==='o'){for(let i=0;i<4;i++)bb(pxaFlower(['#ff7fa8','#ffffff','#9ad0ff','#ffd447'][i%4]),.5,.57,cx+(rnd(x,y,i)-.5)*.8,cz+(rnd(x,y,i+7)-.5)*.8);continue}
+  if(ch==='o'){const a0=rnd(x,y,3)*6.283,cl=['#ff7fa8','#ffffff','#9ad0ff','#ffd447'],c0=Math.floor(rnd(x,y,5)*4);for(let i=0;i<3;i++){const an=a0+i*2.094,rr=.27+(rnd(x,y,i+7)-.5)*.06;bbd(pxaFlower(cl[(c0+i)%4]),.4,.46,cx+Math.cos(an)*rr,cz+Math.sin(an)*rr,rnd(x,y,i+11)*3.14)}continue} // 3 flores a 120°: no se tapan entre sí desde ningún ángulo de cámara
   if(ch==='p'){continue}
   if(ch==='R'&&stageId==='route3'&&R3.rockM){ // peñasco grande 2x2 con la textura de roca
    if(x!==8||y!==8)continue;
@@ -6838,6 +6917,20 @@ function r3build(){
  const N=36,pos=new Float32Array(N*3);for(let i=0;i<N;i++){pos[i*3]=Math.random()*W;pos[i*3+1]=.4+Math.random()*2.4;pos[i*3+2]=Math.random()*H}
  const pg=new T.BufferGeometry();pg.setAttribute('position',new T.BufferAttribute(pos,3));
  const motes=new T.Points(pg,new T.PointsMaterial({color:th.kind==='cave'?0x9ec4ff:0xffffff,size:.06,transparent:true,opacity:.55,depthWrite:false}));if(th.kind!=='pool'){g.add(motes);R3.anim.motes=motes}
+
+ if(stageId==='camp'){ // fogata en la arena central (6,4) con brasas y resplandor
+  const fx=6.5,fz=4.5,F=new T.Group();F.position.set(fx,0,fz);F.scale.setScalar(1.55);g.add(F);
+  const warm=(c,k)=>{const m=new T.MeshBasicMaterial({color:c,toneMapped:false});m.color.multiplyScalar(k);return m};const stoneC=['#d6a878','#c2925f','#e0b88a'];for(let i=0;i<9;i++){const a=i/9*Math.PI*2,s=new T.Mesh(new T.IcosahedronGeometry(.1+.02*(i%3),0),warm(stoneC[i%3],1.6));s.position.set(Math.cos(a)*.34,.07,Math.sin(a)*.34);s.scale.set(1.15,.75,1);s.rotation.y=i;s.castShadow=true;F.add(s)}
+  for(let i=0;i<4;i++){const l=new T.Mesh(new T.CylinderGeometry(.045,.05,.5,6),warm(i%2?'#8a5a30':'#6e4524',1.7));l.rotation.z=Math.PI/2;l.rotation.y=i*Math.PI/4+.3;l.position.y=.1+(i%2)*.05;F.add(l)}
+  const fm=(c,o)=>{const m=new T.MeshBasicMaterial({color:c,transparent:true,opacity:o,toneMapped:false,depthWrite:false});m.color.multiplyScalar(2.6);return m};
+  const flames=[[.2,.62,'#e8531a',.9,0],[.15,.5,'#ff9a2a',.95,1.7],[.1,.38,'#ffe27a',.95,3.1]].map(([r,h,c,o,ph])=>{const m=new T.Mesh(new T.ConeGeometry(r,h,7),fm(c,o));m.position.y=.12+h/2;m.userData={ph,h};F.add(m);return m});
+  const gc=document.createElement('canvas');gc.width=gc.height=64;{const q=gc.getContext('2d'),gr=q.createRadialGradient(32,32,2,32,32,32);gr.addColorStop(0,'rgba(255,170,70,.85)');gr.addColorStop(.35,'rgba(255,120,40,.38)');gr.addColorStop(1,'rgba(255,100,30,0)');q.fillStyle=gr;q.fillRect(0,0,64,64)}
+  const gt=new T.CanvasTexture(gc);gt.colorSpace=T.SRGBColorSpace;
+  const glow=new T.Mesh(new T.PlaneGeometry(5.4,5.4),new T.MeshBasicMaterial({map:gt,transparent:true,blending:T.AdditiveBlending,depthWrite:false,toneMapped:false,color:new T.Color(2,1.6,1.2)}));glow.rotation.x=-Math.PI/2;glow.position.y=.075;glow.renderOrder=3;F.add(glow);
+  const N=16,ep=new Float32Array(N*3),ed=[];for(let i=0;i<N;i++){ed.push({a:Math.random()*6.28,r:Math.random()*.12,sp:.35+Math.random()*.5,ph:Math.random()*5,dr:(Math.random()-.5)*.3})}
+  const eg=new T.BufferGeometry();eg.setAttribute('position',new T.BufferAttribute(ep,3));
+  const embers=new T.Points(eg,new T.PointsMaterial({color:0xffb347,size:.07,transparent:true,opacity:.9,depthWrite:false,toneMapped:false}));embers.frustumCulled=false;F.add(embers);
+  R3.anim.fire={flames,glow,embers,ed,ep}}
  // luz y fondo del escenario
  R3.hemi.color.setHex(th.hemi[0]);R3.hemi.groundColor.setHex(th.hemi[1]);R3.hemi.intensity=th.hemiI;R3.sun.color.setHex(th.sun);R3.sun.intensity=th.sunI;
  {{const bgc=pxaBackdrop(th,false);R3.wrap.style.background='url('+bgc.toDataURL()+') center/100% 100%';R3.wrap.style.imageRendering='pixelated'}}
@@ -6858,6 +6951,9 @@ function r3unit(u){
 }
 function r3elev(px,pz){const E=R3.elev;if(!E||!E.size)return 0;const x0=Math.floor(px),z0=Math.floor(pz),fx=px-x0,fz=pz-z0,e=(a,b)=>E.has(a+','+b)?R3.eh:0;return e(x0,z0)*(1-fx)*(1-fz)+e(x0+1,z0)*fx*(1-fz)+e(x0,z0+1)*(1-fx)*fz+e(x0+1,z0+1)*fx*fz}
 function r3paintUnit(rec,u,time,walking,fdx,fdy,selectedNow){
+ // reposo: si no cambió nada y pasaron <50 ms, se reutiliza la textura (evita redibujar y subir a la GPU 60 veces por segundo)
+ {const sig=[u.hp,u.acted,u.asleep,u.poisoned,u.trapped,u.critUp,u.paralyzed,u.burned,u.x,u.y,u.shiny,R3.yaw.toFixed(3),selectedNow,window.__campOn,rec.grass,rec.gAmt,u._fv,u._fr].join('|');
+  if(!walking&&!u.trapped&&!rec.grass&&!u.shiny&&rec._sig===sig&&time-rec._pt<50&&time>=rec._pt)return;rec._sig=sig;rec._pt=time}
  const g=rec.g;g.clearRect(0,0,168,168);g.imageSmoothingEnabled=false;let topY=60;rec.K=1;
  const pr=pmdOk(pkId(u));
  if(walking){if(fdx!==0){u._fr=fdx>0;u._fv=0}else if(fdy!==0)u._fv=fdy>0?1:2}
@@ -6917,6 +7013,38 @@ function r3paintUnit(rec,u,time,walking,fdx,fdy,selectedNow){
 }
 
 /* ===== Cursor unificado (ratón, teclado, mando y táctil) ===== */
+
+// ---- Objetos que tapan a un Pokémon: se vuelven translúcidos ----
+// Cada ~110 ms se lanza un rayo desde la cámara a cada Pokémon; lo que cruza (árboles, rocas, estantes…) baja su opacidad con transición suave.
+// Los objetos atenuados no escriben profundidad en el pase de los sprites, así el Pokémon se ve completo detrás.
+function r3Occlude(){
+ const T=R3.T;if(!R3.fade)R3.fade={map:new Map(),last:0,ray:new T.Raycaster(),list:null,count:-1,want:new Set(),now:performance.now()};
+ const F=R3.fade,now=performance.now(),dt=Math.min(.1,(now-F.now)/1000);F.now=now;
+ if(window.__fadeOff){for(const [m,s] of F.map){m.material=s.orig;if(s.mat)s.mat.dispose()}F.map.clear();return}
+ const G=R3.stageGroup;
+ const bb=m=>{if(!m.userData.bb){m.updateWorldMatrix(true,false);m.userData.bb=new T.Box3().setFromObject(m)}return m.userData.bb};
+ const ok=m=>{if(!m.isMesh||m.isInstancedMesh||!m.material||Array.isArray(m.material)||m.userData.noFade||m.visible===false)return false;
+  if(R3.anim.grass.includes(m)||(R3.labWalls&&R3.labWalls.some(w=>w.m===m)))return false;
+  const b=bb(m);if(b.max.y<.5)return false;const sx=b.max.x-b.min.x,sz=b.max.z-b.min.z;if(sx>9||sz>9)return false;
+  const mt=m.material;if(mt.transparent&&mt.opacity<.95&&!F.map.has(m))return false;return true};
+ if(now-F.last>(matchMedia('(pointer:coarse)').matches?160:110)){F.last=now;
+  if(!F.list||F.count!==G.children.length){F.list=[];G.traverse(o=>{if(o.isMesh&&ok(o))F.list.push(o)});F.count=G.children.length}
+  const want=new Set(),cam=R3.cam.position,dir=new T.Vector3(),tp=new T.Vector3();
+  for(const [u,rec] of R3.units){if(!rec.sp.visible)continue;
+   for(const oy of (matchMedia('(pointer:coarse)').matches?[.1,.65]:[.1,.55,1.05])){ // pies, torso y cabeza: el Pokémon puede estar tapado solo de las patas
+   tp.copy(rec.sp.position);tp.y+=oy;dir.subVectors(tp,cam);const dist=dir.length();dir.normalize();F.ray.set(cam,dir);F.ray.far=dist-.5;
+   for(const h of F.ray.intersectObjects(G.children,true)){const m=h.object;if(!ok(m))continue;
+    let top=m;while(top.parent&&top.parent!==G)top=top.parent;
+    if(top!==m){top.traverse(o=>{if(o.isMesh&&ok(o))want.add(o)});continue}
+    want.add(m);const b=bb(m),c=b.getCenter(new T.Vector3()),ex=b.clone().expandByScalar(.06);
+    for(const o of F.list){if(o===m||want.has(o))continue;const ob=bb(o);if(ex.containsPoint(ob.getCenter(new T.Vector3()))||ob.clone().expandByScalar(.06).containsPoint(c))want.add(o)}}}}
+  F.want=want;for(const m of want)if(!F.map.has(m))F.map.set(m,{a:1,orig:m.material,mat:null});
+ }
+ for(const [m,s] of F.map){const tg=F.want.has(m)?.26:1;s.a+=(tg-s.a)*Math.min(1,dt*9);
+  if(s.a<.985){if(!s.mat){s.mat=s.orig.clone();s.mat.transparent=true;m.material=s.mat}s.mat.opacity=s.a}
+  else if(!F.want.has(m)){m.material=s.orig;if(s.mat)s.mat.dispose();F.map.delete(m)}}
+}
+
 function r3MakeCursor(){const T=R3.T,g=new T.Group(),mk=(w,h,d,c,x,y,z,ro)=>{const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshBasicMaterial({color:c,depthTest:false,depthWrite:false,toneMapped:false,transparent:true}));m.position.set(x,y,z);m.renderOrder=ro-1100;return m};
  const arms=[];for(const [sx,sz] of [[-1,-1],[1,-1],[-1,1],[1,1]]){const cg=new T.Group();
   for(const [ex,ez,w,d] of [[0,.5,.34,.09],[.5,0,.09,.34]]){}
@@ -6956,7 +7084,7 @@ window.__r3dir=function(v){try{if(!R3||!R3.cam)return v;const T=R3.T,cx=W/2,cz=H
  try{if(navigator.getGamepads)requestAnimationFrame(poll)}catch(e){}})();
 function render3D(time){
  if(!R3){r3init();return}
- const sig=stageId+'|'+visKey(stageId)+'|'+map.join('/');
+ const sig=stageId+'|'+visKey(stageId)+'|'+map.join('/')+(stageNight(stageId)?'|n':'|d');
  if(R3.sig!==sig){R3.sig=sig;R3.zmT=1;R3.zm=1;r3build()}
  const T=R3.T,t=time/1000;
  // cámara: encuadre fijo con ligero paralaje según el ratón
@@ -6980,7 +7108,7 @@ function render3D(time){
   r3paintUnit(rec,u,time,walking,fdx,fdy,sel);{const K=rec.K||1;rec.sp.scale.set(2.4*K,2.4*K,1)}
   const el=r3elev(px,pz);rec.sp.position.set(px+.5,.02+hop+el,pz+.5);rec.sp.visible=true;rec.hs.position.copy(rec.sp.position);rec.hs.visible=true;
   rec.sh.position.set(px+.5,.055+el,pz+.5);rec.sh.visible=true;rec.sh.scale.set(1-hop*2,.62*(1-hop*2),1);
-  rec.ring.position.set(px+.5,.058+el,pz+.5);rec.ring.visible=!window.__campOn;
+  rec.ring.position.set(px+.5,.058+el,pz+.5);{const nc=R3.night?0xa9b8e8:0xffffff;if(rec.sp.material.color.getHex()!==nc)rec.sp.material.color.setHex(nc)}rec.ring.visible=!window.__campOn;
   const pulse=.5+.5*Math.sin(t*5);
   if(sel){rec.ring.material.color.setHex(0xffe08a);rec.ring.material.opacity=.9;rec.ring.scale.setScalar(1.05+pulse*.12)}
   else if(inspectedEnemy===u){rec.ring.material.color.setHex(0xff8a8a);rec.ring.material.opacity=.9;rec.ring.scale.setScalar(1+pulse*.08)}
@@ -6993,9 +7121,15 @@ function render3D(time){
   for(const p of R3.upos||[]){const dx=b.position.x-p.x,dz=b.position.z-p.z,d=Math.hypot(dx,dz);if(d<.95){const k=(1-d/.95),w=p.w?1:.35,nx=dx/(d||1),nz=dz/(d||1),wob=Math.sin(t*16+b.userData.ph*3)*.16*w;rx+=nz*k*.55*w+wob*.6;rz+=-nx*k*.55*w+wob;sc-=k*.42}}
   b.rotation.x=rx;b.rotation.z=rz;b.scale.setScalar(Math.max(.26,sc))}
  if(R3.anim.motes){const p=R3.anim.motes.geometry.attributes.position;for(let i=0;i<p.count;i++){p.array[i*3+1]+=Math.sin(t*.7+i)*.0016+.0006;if(p.array[i*3+1]>2.9)p.array[i*3+1]=.3;p.array[i*3]+=Math.sin(t*.3+i*1.7)*.0012}p.needsUpdate=true}
+ {const FR=R3.anim.fire;if(FR){for(const m of FR.flames){const ph=m.userData.ph,k=.82+.22*Math.sin(t*9+ph)+.1*Math.sin(t*17+ph*2);m.scale.set(.9+.12*Math.sin(t*11+ph),k,.9+.12*Math.cos(t*13+ph));m.position.y=.12+m.userData.h*k/2;m.rotation.z=Math.sin(t*5+ph)*.08}
+   FR.glow.material.opacity=(.82+.14*Math.sin(t*7)+.06*Math.sin(t*19))*(campNight()?1:.3);FR.glow.scale.setScalar(1+.04*Math.sin(t*6));
+   for(let i=0;i<FR.ed.length;i++){const e=FR.ed[i],life=((t*e.sp+e.ph)%1.6)/1.6;FR.ep[i*3]=Math.cos(e.a)*e.r+e.dr*life+Math.sin(t*2+i)*.04*life;FR.ep[i*3+1]=.25+life*1.5;FR.ep[i*3+2]=Math.sin(e.a)*e.r+Math.cos(t*1.7+i)*.04*life}FR.embers.geometry.attributes.position.needsUpdate=true;FR.embers.material.opacity=.9}}
  r3UpdateCursor(t);
  R3.decalTex.needsUpdate=true;
  if(R3.labWalls&&R3.labWalls.length){const dx=R3.cam.position.x-tx,dz=R3.cam.position.z-tz,l=Math.hypot(dx,dz)||1;for(const w of R3.labWalls)w.m.visible=(w.nx*dx+w.nz*dz)/l<.35}
+ try{r3Occlude()}catch(e){}
+ {const sk=R3.stageGroup.uuid+'|'+R3.stageGroup.children.length+'|'+(R3.labWalls?R3.labWalls.filter(w=>w.m.visible).length:0);R3._shF=(R3._shF||0)+1;if(sk!==R3._shK||R3._shF%30===0){R3._shK=sk;R3.renderer.shadowMap.needsUpdate=true}} // sombras estáticas: solo se recalculan al cambiar el escenario (y cada ~0,5 s por seguridad)
+ R3.nt=R3.night?[.56,.66,.98]:null; // noche del campamento: se enfría y oscurece la imagen final
  pxRun(R3,R3.renderer,R3.scene,R3.cam,.7,255,true);
 }
 
@@ -7682,5 +7816,56 @@ requestAnimationFrame(draw);loadPokeAPI();
  // la rueda del ratón sobre el fondo oscuro de una ventana no debe mover la página
  addEventListener('wheel',e=>{if(!document.documentElement.classList.contains('ptLock'))return;let t=e.target;while(t&&t!==document.body){const cs=getComputedStyle(t);if(/(auto|scroll)/.test(cs.overflowY)&&t.scrollHeight>t.clientHeight+1)return;t=t.parentElement}e.preventDefault()},{passive:false});
  check();
+})();
+
+/* Mapa de Kanto con zoom: botones ＋ － ⟲, rueda del ratón, pellizco y arrastre. Los puntos y rótulos mantienen su tamaño (solo se separan). */
+;(()=>{
+const KZ={s:1,x:0,y:0},MAXZ=3.5;
+const st=document.createElement('style');st.textContent=`
+.kmapHolder .kmZoom{position:absolute;inset:0;transform-origin:0 0;will-change:transform}
+.kmapHolder.kmZoomed{touch-action:none;cursor:grab}
+.kmZoom .kmNode{transform:translate(-50%,-50%) scale(calc(1/var(--z,1)))}
+.kmZoom .kmNode.avail{animation-name:kmPulseZ}
+@keyframes kmPulseZ{50%{transform:translate(-50%,-50%) scale(calc(1.25/var(--z,1)))}}
+.kmZoom .kmLbl{transform:translate(-50%,0) scale(calc(1/var(--z,1)));transform-origin:50% 0}
+.kmZoomCtl{position:absolute;right:8px;top:8px;z-index:6;display:flex;flex-direction:column;gap:5px}
+.kmZoomCtl button{width:32px;height:32px;border-radius:8px;border:2px solid #1d2f46;background:#10212fdd;color:#ffe9a8;font:900 16px/1 system-ui,sans-serif;padding:0;cursor:pointer;display:grid;place-items:center}
+.kmZoomCtl button:disabled{opacity:.4;cursor:default}
+`;document.head.appendChild(st);
+const orig=window.__kmap;if(typeof orig!=='function')return;
+window.__kmap=function(holder){orig.apply(this,arguments);try{kmZoomify(holder)}catch(e){console.warn('zoom del mapa:',e)}};
+function kmZoomify(h){
+ const inner=document.createElement('div');inner.className='kmZoom';
+ [...h.children].filter(c=>!c.classList.contains('kmBanner')).forEach(c=>inner.append(c));h.prepend(inner);
+ const bPlus=document.createElement('button'),bMinus=document.createElement('button'),bReset=document.createElement('button'),ctl=document.createElement('div');
+ ctl.className='kmZoomCtl';[[bPlus,'＋','Acercar el mapa'],[bMinus,'－','Alejar el mapa'],[bReset,'⟲','Restablecer el zoom']].forEach(([b,t,l])=>{b.type='button';b.textContent=t;b.title=l;b.setAttribute('aria-label',l);ctl.append(b)});h.append(ctl);
+ const apply=()=>{const w=h.clientWidth,hh=h.clientHeight;KZ.s=Math.max(1,Math.min(MAXZ,KZ.s));KZ.x=Math.min(0,Math.max(w-w*KZ.s,KZ.x));KZ.y=Math.min(0,Math.max(hh-hh*KZ.s,KZ.y));
+  inner.style.transform='translate('+KZ.x+'px,'+KZ.y+'px) scale('+KZ.s+')';inner.style.setProperty('--z',KZ.s);h.classList.toggle('kmZoomed',KZ.s>1.001);bPlus.disabled=KZ.s>=MAXZ-.001;bMinus.disabled=bReset.disabled=KZ.s<=1.001};
+ const zoomAt=(f,cx,cy)=>{const s0=KZ.s;KZ.s=Math.max(1,Math.min(MAXZ,s0*f));const k=KZ.s/s0;KZ.x=cx-(cx-KZ.x)*k;KZ.y=cy-(cy-KZ.y)*k;apply()};
+ const mid=()=>[h.clientWidth/2,h.clientHeight/2];
+ // los botones acercan hacia el punto activo (tu etapa actual); si no hay, al centro
+ const focus=()=>{const n=h.querySelector('.kmNode.active')||h.querySelector('.kmNode.avail');if(!n)return null;const w=h.clientWidth,hh=h.clientHeight;return [parseFloat(n.style.left)/100*w,parseFloat(n.style.top)/100*hh]};
+ const step=f=>{const s0=KZ.s,fc=focus();if(!fc||isNaN(fc[0])){zoomAt(f,...mid());return}
+  KZ.s=Math.max(1,Math.min(MAXZ,s0*f));KZ.x=h.clientWidth/2-fc[0]*KZ.s;KZ.y=h.clientHeight/2-fc[1]*KZ.s;apply()};
+ bPlus.onclick=()=>step(1.5);bMinus.onclick=()=>step(1/1.5);bReset.onclick=()=>{KZ.s=1;KZ.x=KZ.y=0;apply()};
+ h.addEventListener('wheel',e=>{e.preventDefault();const r=h.getBoundingClientRect();zoomAt(e.deltaY<0?1.2:1/1.2,e.clientX-r.left,e.clientY-r.top)},{passive:false});
+ let drag=null,dragged=false;
+ h.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'||KZ.s<=1.001||e.target.closest('.kmZoomCtl'))return;drag={x:e.clientX,y:e.clientY,moved:0};dragged=false});
+ addEventListener('pointermove',e=>{if(!drag||!h.isConnected)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;drag.moved+=Math.abs(dx)+Math.abs(dy);if(drag.moved>6){dragged=true;KZ.x+=dx;KZ.y+=dy;apply()}});
+ addEventListener('pointerup',()=>{drag=null;setTimeout(()=>{dragged=false},0)});
+ h.addEventListener('click',e=>{if(dragged){e.stopPropagation();e.preventDefault()}},true);
+ // táctil: pellizco con dos dedos y arrastre con uno cuando hay zoom
+ let tp=null;
+ const pts=t=>[...t].map(q=>[q.clientX,q.clientY]);
+ h.addEventListener('touchstart',e=>{const p=pts(e.touches);tp={n:p.length,p,moved:0};dragged=false},{passive:true});
+ h.addEventListener('touchmove',e=>{if(!tp)return;const p=pts(e.touches),r=h.getBoundingClientRect();
+  if(p.length>=2&&tp.p.length>=2){e.preventDefault();const d0=Math.hypot(tp.p[0][0]-tp.p[1][0],tp.p[0][1]-tp.p[1][1]),d1=Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1]);
+   const c0=[(tp.p[0][0]+tp.p[1][0])/2,(tp.p[0][1]+tp.p[1][1])/2],c1=[(p[0][0]+p[1][0])/2,(p[0][1]+p[1][1])/2];
+   KZ.x+=c1[0]-c0[0];KZ.y+=c1[1]-c0[1];if(d0>0)zoomAt(d1/d0,c1[0]-r.left,c1[1]-r.top);else apply();dragged=true}
+  else if(p.length===1&&tp.p.length===1&&KZ.s>1.001){e.preventDefault();const dx=p[0][0]-tp.p[0][0],dy=p[0][1]-tp.p[0][1];tp.moved+=Math.abs(dx)+Math.abs(dy);if(tp.moved>6){dragged=true;KZ.x+=dx;KZ.y+=dy;apply()}}
+  tp.p=p},{passive:false});
+ h.addEventListener('touchend',e=>{if(!e.touches.length){tp=null;setTimeout(()=>{dragged=false},60)}else tp={n:e.touches.length,p:pts(e.touches),moved:99}},{passive:true});
+ apply();requestAnimationFrame(apply);
+}
 })();
 </script></body></html>

@@ -12,10 +12,29 @@ function pmdFrame(r,ms,loop){const d=r.m.d,tot=pmdTotal(r),T=Math.max(0,ms)/16.6
 function pmdPre(r){let a=0;const h=r.m.h==null?Math.floor(r.m.d.length/2):r.m.h;for(let i=0;i<h;i++)a+=r.m.d[i];return a*16.667}
 function pmdFlatDy(r,fi,row){try{const m=r.m,ALT=!!(row&&r.alt[row]&&r.alt[row].complete&&m.bbs&&m.bbs[row]),IM=ALT?r.alt[row]:(row&&r.alt[row]&&r.alt[row].complete)?r.alt[row]:r.img;if(!IM||!IM.complete||!IM.naturalWidth)return 0;const k=ALT?'a'+row:(IM===r.img?'o':'r'+row),c=r._fb||(r._fb={});const kk=k+fi;if(c[kk]!==undefined)return c[kk];const b=ALT?m.bbs[row]:m.bb,sw=b[2]-b[0],sh=b[3]-b[1],q=document.createElement('canvas');q.width=sw;q.height=sh;const x=q.getContext('2d');const all=[];for(let f=0;f<m.d.length;f++){x.clearRect(0,0,sw,sh);x.drawImage(IM,f*m.fw+b[0],b[1],sw,sh,0,0,sw,sh);const d=x.getImageData(0,0,sw,sh).data;let yb=0,x0=sw,x1=0;for(let y=sh-1;y>=0;y--)for(let xx=0;xx<sw;xx++)if(d[(y*sw+xx)*4+3]>40){if(!yb)yb=y+1;if(xx<x0)x0=xx;if(xx>x1)x1=xx}all.push([yb,(x0+x1)/2])}const ref=all[0];for(let f=0;f<all.length;f++){c[k+f]=ref[0]-all[f][0];c[k+f+'x']=ref[1]-all[f][1]}return c[kk]}catch(e){return 0}}
 function pmdFlatDx(r,fi,row){const m=r.m,ALT=!!(row&&r.alt[row]&&r.alt[row].complete&&m.bbs&&m.bbs[row]),IM=ALT?r.alt[row]:(row&&r.alt[row]&&r.alt[row].complete)?r.alt[row]:r.img,k=ALT?'a'+row:(IM===r.img?'o':'r'+row);pmdFlatDy(r,fi,row);return (r._fb&&r._fb[k+fi+'x'])||0}
+// ---- Suavizado de sprites PMD: 'off' (píxel puro), 'sharp' (bilineal nítido), 'epx' (Scale2x ×2 dos veces) ----
+let PMD_SMOOTH='sharp';try{const s=localStorage.getItem('ptg_pmdsm');if(s==='sharp'||s==='epx'||s==='off')PMD_SMOOTH=s}catch(e){}
+const pmdSmCache=new WeakMap();
+function pmdScale2x(src,w,h){const s32=new Uint32Array(src.data.buffer),out=new ImageData(w*2,h*2),o32=new Uint32Array(out.data.buffer),W2=w*2;
+ const px=(x,y)=>(x<0||y<0||x>=w||y>=h)?0:s32[y*w+x];
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){const P=s32[y*w+x],A=px(x,y-1),B=px(x+1,y),C=px(x-1,y),D=px(x,y+1);let p1=P,p2=P,p3=P,p4=P;
+  if(C===A&&C!==D&&A!==B)p1=A;if(A===B&&A!==C&&B!==D)p2=B;if(D===C&&D!==B&&C!==A)p3=C;if(B===D&&B!==A&&D!==C)p4=D;
+  const i=y*2*W2+x*2;o32[i]=p1;o32[i+1]=p2;o32[i+W2]=p3;o32[i+W2+1]=p4}
+ return out}
+function pmdSmoothCanvas(IMG,sx,sy,sw,sh,mode){let m=pmdSmCache.get(IMG);if(!m){m=new Map();pmdSmCache.set(IMG,m)}
+ const key=mode+'|'+sx+'|'+sy+'|'+sw+'|'+sh;let c=m.get(key);if(c)return c;
+ const c0=document.createElement('canvas');c0.width=sw;c0.height=sh;const q0=c0.getContext('2d',{willReadFrequently:true});q0.imageSmoothingEnabled=false;q0.drawImage(IMG,sx,sy,sw,sh,0,0,sw,sh);
+ if(mode==='epx'){let d=q0.getImageData(0,0,sw,sh);d=pmdScale2x(d,sw,sh);d=pmdScale2x(d,sw*2,sh*2);c=document.createElement('canvas');c.width=sw*4;c.height=sh*4;c.getContext('2d').putImageData(d,0,0)}
+ else{c=document.createElement('canvas');c.width=sw*4;c.height=sh*4;const q=c.getContext('2d');q.imageSmoothingEnabled=false;q.drawImage(c0,0,0,sw*4,sh*4)}
+ m.set(key,c);return c}
+window.__setPmdSmooth=mode=>{PMD_SMOOTH=(mode==='sharp'||mode==='epx')?mode:'off';try{localStorage.setItem('ptg_pmdsm',PMD_SMOOTH)}catch(e){}
+};
+window.__getPmdSmooth=()=>PMD_SMOOTH;
 function pmdDraw(g,r,fi,scale,white,row){const ALT=!!(row&&r.alt[row]&&r.alt[row].complete&&r.m.bbs&&r.m.bbs[row]);const IMG=ALT?r.alt[row]:(row&&r.alt[row]&&r.alt[row].complete&&!(r.m.bbs&&r.m.bbs[row]))?r.alt[row]:r.img;const m=r.m,b=ALT?m.bbs[row]:m.bb,sw=b[2]-b[0],sh=b[3]-b[1];
  const dx=Math.round((b[0]-m.fw/2)*scale),dw=Math.round(sw*scale),dh=Math.round(sh*scale);
  if(white>0){const k=m.p.length+'_'+fi+'_'+(ALT?row:0);let c=pmdWhiteCache[k];if(!c){c=document.createElement('canvas');c.width=sw;c.height=sh;const q=c.getContext('2d');q.drawImage(IMG,fi*m.fw+b[0],b[1],sw,sh,0,0,sw,sh);q.globalCompositeOperation='source-in';q.fillStyle='#fff';q.fillRect(0,0,sw,sh);pmdWhiteCache[k]=c}
   g.save();g.globalAlpha*=white;g.drawImage(c,dx,-dh,dw,dh);g.restore();return}
+ if(g===sg&&PMD_SMOOTH!=='off'){const cs=pmdSmoothCanvas(IMG,fi*m.fw+b[0],b[1],sw,sh,PMD_SMOOTH),was=g.imageSmoothingEnabled;g.imageSmoothingEnabled=true;try{g.imageSmoothingQuality='high'}catch(e){}g.drawImage(cs,0,0,cs.width,cs.height,dx,-dh,dw,dh);g.imageSmoothingEnabled=was;return}
  g.drawImage(IMG,fi*m.fw+b[0],b[1],sw,sh,dx,-dh,dw,dh)}
 const POKE_H={1:7,2:10,3:20,4:6,5:11,6:17,7:5,8:10,9:16,10:3,11:7,12:11,13:3,14:6,15:10,16:3,17:11,18:15,19:3,20:7,21:3,22:12,23:9,24:16,25:4,26:8,27:6,28:10,29:4,30:8,32:5,33:9,35:6,39:5,41:8,42:16,46:3,47:10,56:5,57:10,74:4,75:10,81:3,88:9,63:9,66:8,43:3,69:5,100:5,138:4,140:5,90:3,95:88,109:6,110:12,116:4,117:12,60:6,61:10,129:9,130:65,98:4,54:8,79:12,118:6,119:13,120:8,121:11}; // estatura oficial (dm) de PokéAPI
 function feSpriteInfo(u,isLeft){

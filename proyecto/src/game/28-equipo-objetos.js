@@ -227,6 +227,9 @@ showIntro();
 
 /* ===== v3D · Escena 2.5D (Three.js) · tablero en relieve, luces y sombras; los Pokémon (SpriteCollab) son figuras que miran a la cámara ===== */
 var R3=null;let R3fail=false;
+let _cnT=0,_cnV=false;function campNight(){if(window.__campNight===true||window.__campNight===false)return window.__campNight;const n=Date.now();if(n-_cnT>20000){_cnT=n;const h=new Date().getHours();_cnV=h>=20||h<6}return _cnV} // el campamento es de noche entre las 20:00 y las 06:00 (hora del dispositivo); se consulta como máximo cada 20 s
+const _stKind={};function stageNight(id){let k=_stKind[id];if(k===undefined){k=_stKind[id]=stageTheme(id).kind}return k==='out'&&campNight()} // solo exteriores (no gimnasios, piscina, laboratorio ni cuevas)
+function stageThemeN(id){const T=stageTheme(id);if(T.kind==='out'&&campNight())Object.assign(T,{night:true,sky:['#050a1f','#1a2a58'],hemi:[0x7f9be0,0x1a2440],hemiI:.62,sun:0x8fa8ff,sunI:.85});return T}
 function stageTheme(id){
  const T={kind:'out',a:'#5aa84a',b:'#5aa84a',path:'#f0d27a',tall:'#5aa84a',wall:'#a08a62',earth:'#8a6a47',lip:'#3f9439',tree:['#2f8a4a','#3a9c55','#46ad60'],sky:['#bfe5ff','#f4fbff'],hemi:[0xdff1ff,0x6f8f5a],hemiI:.85,sun:0xfff0d0,sunI:2.2,water:'#4fb0d8',fog:null};
  if(id==='pallet')return Object.assign(T,{kind:'lab',a:'#efecf2',b:'#e6e2ea',path:'#e6e2ea',wall:'#cfce82',earth:'#14161d',sky:['#2b4388','#1d3068'],hemi:[0xffffff,0x9aa0b0],hemiI:.95,sunI:1.7,sun:0xfff3dd});
@@ -235,7 +238,7 @@ function stageTheme(id){
  if(id==='mtmoon'||id==='mtmoonj'||id==='mtmoonb'||id==='mtmoonc')return Object.assign(T,{kind:'cave',a:'#938974',b:'#938974',path:'#d9c067',wall:'#6d655b',earth:'#3b3631',sky:['#3a3f63','#12162b'],hemi:[0xc7d2ff,0x6b6050],hemiI:1.15,sunI:2.0,sun:0xcfd9ff,water:'#3f8fb5'});
  if(id==='vermilionguard'||id==='vermilion')return Object.assign(T,{kind:'gym',a:'#cfc7a6',b:'#c0b894',path:'#9aa0a8',wall:'#5d6470',earth:'#3b3f48',sky:['#86a2c8','#e6eef8'],hemi:[0xffffff,0x8a8d99],hemiI:1.0,sunI:1.8,sun:0xfff4d0});
  if(id==='route3'||id==='route3b'||id==='route4'||id==='route5'||id==='route6'||id==='vermilionrival'||id==='ceruleanrival'||id==='nugget'||id==='nuggetrocket'||id==='nuggettrain'||id==='route25'||id==='route25b'||id==='route25train')return Object.assign(T,{a:'#5aa84a',b:'#5aa84a',wall:'#b0966a',tall:'#5aa84a',lip:'#3f9439',tree:['#4a8a3e','#58a048','#66b255']});
- if(id==='camp'||id==='forest'||id==='forestdoug'||id==='forestmid'||id==='forestexit'||id==='route2in'||id==='route22'||id==='route2')return Object.assign(T,{a:'#6fb460',b:'#65a957',tall:'#4c9a45',tree:['#20703d','#2a8447','#349754'],sky:['#a9d6c4','#e1f3ea'],hemiI:.75});
+ if(id==='camp'||id==='forest'||id==='forestdoug'||id==='forestmid'||id==='forestexit'||id==='route2in'||id==='route22'||id==='route2'){Object.assign(T,{a:'#6fb460',b:'#65a957',tall:'#4c9a45',tree:['#20703d','#2a8447','#349754'],sky:['#a9d6c4','#e1f3ea'],hemiI:.75});return T}
  return T;
 }
 function shade(hex,k){const c=parseInt(hex.slice(1),16);const r=Math.round(((c>>16)&255)*k),g=Math.round(((c>>8)&255)*k),b=Math.round((c&255)*k);return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)}

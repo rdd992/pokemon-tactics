@@ -95,13 +95,15 @@ function pxaGround(th,rows,W,H,tp,bevel){bevel=bevel!==false;
 function pxaBackdrop(th,grid){grid=grid!==false;
  const w=320,h=240,cave=th.kind==='cave',indoor=th.kind!=='out'&&!cave;
  return pxaCanvas(w,h,(P)=>{
-  const c0=cave||indoor?th.sky[0]:'#43a5e6',c1=cave||indoor?th.sky[1]:'#a9defa',bands=6;
+  const c0=cave||indoor||th.night?th.sky[0]:'#43a5e6',c1=cave||indoor||th.night?th.sky[1]:'#a9defa',bands=6;
   for(let y=0;y<h;y++)for(let x=0;x<w;x++){
    const f=y/h*bands,bi=Math.floor(f),fr=f-bi,dith=0;
    const k=Math.min(bands-1,bi+dith)/(bands-1);
    const a=pxaRGB(c0),b=pxaRGB(c1),m=a.map((v,i)=>Math.round(v+(b[i]-v)*(1-k)));
    P(x,y,'#'+m.map(v=>v.toString(16).padStart(2,'0')).join(''))}
-  if(!cave&&!indoor){for(let i=0;i<5;i++){const cx=24+i*68+(pxaHash(i,1,1)*28|0),cy=28+(pxaHash(i,2,1)*120|0);for(let dy=-6;dy<=6;dy++)for(let dx=-18;dx<=18;dx++){const e=(dx*dx)/324+(dy*dy)/36;if(e<=1&&!(dy>2&&Math.abs(dx)>12)){P(cx+dx,cy+dy,dy>=4?'#dbe8f2':'#ffffff')}}for(let dx=-10;dx<=10;dx++)for(let k=0;k<2;k++)P(cx+dx,cy-7-k,'#ffffff')}}
+  if(th.night){for(let i=0;i<70;i++){const sx=(pxaHash(i,5,3)*w)|0,sy=(pxaHash(i,6,3)*h*.78)|0,big=pxaHash(i,7,3)>.86;P(sx,sy,i%5===0?'#ffe9b0':'#dfe8ff');if(big){P(sx+1,sy,'#aab8e8');P(sx-1,sy,'#aab8e8');P(sx,sy+1,'#aab8e8');P(sx,sy-1,'#aab8e8')}}
+   for(let dy=-11;dy<=11;dy++)for(let dx=-11;dx<=11;dx++){const d2=dx*dx+dy*dy;if(d2<=110){const cx=dx+4,cy=dy+4;if(cx*cx+cy*cy>72)P(250+dx,40+dy,d2>92?'#cdb98a':'#fff1b8')}}}
+  else if(!cave&&!indoor){for(let i=0;i<5;i++){const cx=24+i*68+(pxaHash(i,1,1)*28|0),cy=28+(pxaHash(i,2,1)*120|0);for(let dy=-6;dy<=6;dy++)for(let dx=-18;dx<=18;dx++){const e=(dx*dx)/324+(dy*dy)/36;if(e<=1&&!(dy>2&&Math.abs(dx)>12)){P(cx+dx,cy+dy,dy>=4?'#dbe8f2':'#ffffff')}}for(let dx=-10;dx<=10;dx++)for(let k=0;k<2;k++)P(cx+dx,cy-7-k,'#ffffff')}}
   else if(th.kind!=='pool'){for(let i=0;i<30;i++){P((pxaHash(i,3,2)*w)|0,(pxaHash(i,4,2)*h)|0,cave?'#aab8e8':'#8fa0c8')}}
   if(grid)for(let y=0;y<h;y+=20)for(let x=0;x<w;x++)P(x,y,pxaShade(c1,.975));
   if(grid)for(let x=0;x<w;x+=20)for(let y=0;y<h;y++)P(x,y,pxaShade(c1,.975));
@@ -156,9 +158,9 @@ function pxRun(O,renderer,scene,cam,edge,lv,overlay){
  const T=window.THREE,sz=renderer.getDrawingBufferSize(new T.Vector2());
  if(!O.px){
   const rt=new T.WebGLRenderTarget(sz.x,sz.y,{minFilter:T.NearestFilter,magFilter:T.NearestFilter,type:T.HalfFloatType,depthTexture:new T.DepthTexture(sz.x,sz.y)});
-  const mat=new T.ShaderMaterial({uniforms:{tC:{value:null},tD:{value:null},px:{value:new T.Vector2(1/sz.x,1/sz.y)},zn:{value:cam.near},zf:{value:cam.far},lv:{value:lv},edge:{value:edge},ua:{value:overlay?1:0}},
+  const mat=new T.ShaderMaterial({uniforms:{tC:{value:null},tD:{value:null},px:{value:new T.Vector2(1/sz.x,1/sz.y)},zn:{value:cam.near},zf:{value:cam.far},lv:{value:lv},edge:{value:edge},ua:{value:overlay?1:0},nt:{value:new T.Vector3(1,1,1)}},
    vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
-   fragmentShader:`uniform sampler2D tC,tD;uniform vec2 px;uniform float zn,zf,lv,edge,ua;varying vec2 vUv;
+   fragmentShader:`uniform sampler2D tC,tD;uniform vec2 px;uniform vec3 nt;uniform float zn,zf,lv,edge,ua;varying vec2 vUv;
 float lin(float d){float z=d*2.-1.;return 2.*zn*zf/(zf+zn-z*(zf-zn));}
 void main(){vec4 c=texture2D(tC,vUv);float d0=lin(texture2D(tD,vUv).x);float e=0.;
  vec2 o[4];o[0]=vec2(px.x,0.);o[1]=vec2(-px.x,0.);o[2]=vec2(0.,px.y);o[3]=vec2(0.,-px.y);
@@ -166,6 +168,7 @@ void main(){vec4 c=texture2D(tC,vUv);float d0=lin(texture2D(tD,vUv).x);float e=0
  gl_FragColor=vec4(c.rgb,1.);
  gl_FragColor.rgb=pow(clamp(gl_FragColor.rgb*1.12,0.,1.),vec3(1./2.2));
  {float l=dot(gl_FragColor.rgb,vec3(.3,.59,.11));gl_FragColor.rgb=clamp((mix(vec3(l),gl_FragColor.rgb,1.12)-.5)*1.1+.5,0.,1.);}
+ gl_FragColor.rgb*=nt;
  vec3 q=floor(gl_FragColor.rgb*lv+.5)/lv;if(e>0.)q*=.4;gl_FragColor=(ua>.5&&c.a<.01)?vec4(0.):vec4(q,1.);}`,depthTest:false,depthWrite:false,toneMapped:true});
   const quad=new T.Mesh(new T.PlaneGeometry(2,2),mat);quad.frustumCulled=false;
   const qs=new T.Scene();qs.add(quad);
@@ -173,13 +176,13 @@ void main(){vec4 c=texture2D(tC,vUv);float d0=lin(texture2D(tD,vUv).x);float e=0
  }
  const P=O.px;
  if(P.rt.width!==sz.x||P.rt.height!==sz.y){P.rt.setSize(sz.x,sz.y);P.mat.uniforms.px.value.set(1/sz.x,1/sz.y)}
- P.mat.uniforms.zn.value=cam.near;P.mat.uniforms.zf.value=cam.far;
+ P.mat.uniforms.zn.value=cam.near;P.mat.uniforms.zf.value=cam.far;{const n=O.nt||[1,1,1];P.mat.uniforms.nt.value.set(n[0],n[1],n[2])}
  const lay=cam.layers.mask;
  cam.layers.set(0);renderer.setRenderTarget(P.rt);renderer.clear();renderer.render(scene,cam);renderer.setRenderTarget(null);
  P.mat.uniforms.tC.value=P.rt.texture;P.mat.uniforms.tD.value=P.rt.depthTexture;
  renderer.render(P.qs,P.qc);
  if(overlay){const ac=renderer.autoClear;renderer.autoClear=false;renderer.clearDepth();
-  const om=P.dm||(P.dm=new window.THREE.MeshBasicMaterial({colorWrite:false}));cam.layers.set(0);const ov=scene.overrideMaterial;scene.overrideMaterial=om;renderer.render(scene,cam);scene.overrideMaterial=ov;
+  const om=P.dm||(P.dm=new window.THREE.MeshBasicMaterial({colorWrite:false}));cam.layers.set(0);const ov=scene.overrideMaterial;scene.overrideMaterial=om;const hid=O.fade?[...O.fade.map].filter(([m,s])=>s.a<.9).map(x=>x[0]):[];hid.forEach(m=>m.visible=false);renderer.render(scene,cam);hid.forEach(m=>m.visible=true);scene.overrideMaterial=ov;
   cam.layers.set(1);renderer.render(scene,cam);renderer.autoClear=ac}
  cam.layers.mask=lay;
 }
@@ -275,7 +278,7 @@ function r3init(){
  addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target&&e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;const k=e.key.toLowerCase();if(k==='q')camStep(-Math.PI/2);else if(k==='e')camStep(Math.PI/2);else if(k==='r'){R3.yawT=Math.PI/4+Math.round((R3.yawT-Math.PI/4)/(2*Math.PI))*2*Math.PI;R3.zmT=1}else if(k==='+'||k==='=')zoomBy(1/1.25);else if(k==='-'||k==='_')zoomBy(1.25)});
  const cv=document.createElement('canvas');cv.id='map3d';cv.setAttribute('aria-label','Tablero táctico 3D');wrap.insertBefore(cv,canvas.nextSibling);
  let renderer;try{renderer=new T.WebGLRenderer({canvas:cv,antialias:false,alpha:true,powerPreference:'high-performance'})}catch(e){cv.remove();R3fail=true;console.warn('WebGL no disponible: se usa el tablero 2D.');return}
- renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
+ renderer.shadowMap.enabled=true;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
  renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
  const scene=new T.Scene(),cam=new T.PerspectiveCamera(12,1.2,20,260);
  const hemi=new T.HemisphereLight(0xffffff,0x888888,.85);scene.add(hemi);
@@ -331,7 +334,7 @@ function r3Bush3D(T,g,x,z,sc,sd){const G=new T.Group(),m=(r,c,px,py,pz,sy)=>{con
  G.rotation.y=sd;G.scale.setScalar(sc);G.position.set(x,0,z);g.add(G);return G}
 function r3mat(color,opts){const k=color+JSON.stringify(opts||{});let m=R3.mats.get(k);if(!m){m=new R3.T.MeshStandardMaterial(Object.assign({color,roughness:.88,metalness:0,flatShading:true},opts||{}));R3.mats.set(k,m)}return m}
 function r3build(){
- const T=R3.T,g=R3.stageGroup,th=stageTheme(stageId);
+ const T=R3.T,g=R3.stageGroup,th=stageThemeN(stageId);R3.night=!!th.night;
  while(g.children.length){const c=g.children.pop();c.traverse(o=>{if(o.geometry&&!o.userData.shared)o.geometry.dispose()})}
  R3.anim={water:[],grass:[],motes:null};R3.mats.forEach(m=>m.dispose());R3.mats.clear();
  const rnd=(x,y,k=0)=>{const s=Math.sin(x*127.1+y*311.7+k*74.7)*43758.5453;return s-Math.floor(s)};
@@ -363,6 +366,11 @@ function r3build(){
   mkG((x,y)=>E.has(x+','+y)?'NONE':chOf(x,y),.004);if(E.size)mkG((x,y)=>E.has(x+','+y)?chOf(x,y):'NONE',EH+.004)}
  const bb=(cv,wu,hu,x,z,y)=>{const t=new T.CanvasTexture(cv);t.colorSpace=T.SRGBColorSpace;t.magFilter=T.NearestFilter;t.minFilter=T.NearestFilter;t.generateMipmaps=false;
   const sp=new T.Sprite(new T.SpriteMaterial({map:t,transparent:true,depthTest:false,depthWrite:false,toneMapped:false}));sp.center.set(.5,0);sp.scale.set(wu,hu,1);sp.position.set(x,y||0,z);sp.layers.set(1);g.add(sp);return sp};
+ const bbd=(cv,wu,hu,x,z,ry)=>{const t=new T.CanvasTexture(cv);t.colorSpace=T.SRGBColorSpace;t.magFilter=T.NearestFilter;t.minFilter=T.NearestFilter;t.generateMipmaps=false; // objeto estático (dos planos cruzados): no gira con la cámara y los árboles/rocas lo tapan
+  if(!bbd.geo){bbd.geo=new T.PlaneGeometry(1,1);bbd.geo.translate(0,.5,0);bbd.geo.userData={shared:true}}
+  const mat=new T.MeshBasicMaterial({map:t,transparent:true,alphaTest:.5,side:T.DoubleSide,toneMapped:false}),G=new T.Group();
+  for(const a of [0,Math.PI/2]){const m=new T.Mesh(bbd.geo,mat);m.rotation.y=(ry||0)+a;m.scale.set(wu,hu,1);m.raycast=()=>{};m.userData.shared=true;G.add(m)}
+  G.position.set(x,.02,z);g.add(G);return G};
  const blob=(x,z,r)=>{const m=new T.Mesh(new T.CircleGeometry(r,14),new T.MeshBasicMaterial({color:0x0b1a10,transparent:true,opacity:.28,depthWrite:false}));m.rotation.x=-Math.PI/2;m.scale.set(1,.7,1);m.position.set(x,.012,z);g.add(m)};
  const fbox=(cv,w,h,d,x,zf,y0,sc,bh,sl,bc)=>{const t=new T.CanvasTexture(cv);t.colorSpace=T.SRGBColorSpace;t.magFilter=T.NearestFilter;t.minFilter=T.NearestFilter;t.generateMipmaps=false;
   const hh=bh||h*.97;add(box(w*.97,hh,d,sc),x,hh/2,zf-d/2-.01);
@@ -482,10 +490,24 @@ function r3build(){
    add(box(.22,1.2,.06,'#d7dbe3'),mx+.7,.55,fz+.02);
    for(let k=0;k<10;k++)add(box(.24,.025,.07,'#8c93a3'),mx+.7,.08+k*.115,fz+.03);
    continue}
-  if(ch==='W'&&(stageId==='route22'||stageId==='route25train'||stageId==='route25'||stageId==='route25b'||stageId==='nugget'||stageId==='nuggetrocket'||stageId==='nuggettrain'||stageId==='ceruleanrival'||stageId==='route3'||stageId==='route3b'||stageId==='route4'||stageId==='mtmoon'||stageId==='mtmoonj'||stageId==='mtmoonb'||stageId==='mtmoonc')){ // acantilado de roca con textura (tejas de piedra)
+  if(ch==='W'&&(stageId==='route2'||stageId==='route22'||stageId==='route25train'||stageId==='route25'||stageId==='route25b'||stageId==='nugget'||stageId==='nuggetrocket'||stageId==='nuggettrain'||stageId==='ceruleanrival'||stageId==='route3'||stageId==='route3b'||stageId==='route4'||stageId==='mtmoon'||stageId==='mtmoonj'||stageId==='mtmoonb'||stageId==='mtmoonc')){ // acantilado de roca con textura (tejas de piedra)
    if(!R3.rockM){const im=new Image(),tx=new T.Texture(im);tx.colorSpace=T.SRGBColorSpace;tx.wrapS=tx.wrapT=T.RepeatWrapping;tx.anisotropy=4;im.onload=()=>{tx.needsUpdate=true};im.src='data:image/jpeg;base64,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';
     R3.rockM=new T.MeshStandardMaterial({map:tx,roughness:1,vertexColors:true,emissive:0xffffff,emissiveMap:tx,emissiveIntensity:.34})}
-   const hh=stageId==='mtmoonc'?(y<=0?1.0:.62):y<=1?1.2:y<=3?.75:.5;
+   if(stageId==='route2'){ // Cueva de Diglett: montículo de dos pisos de bloques de piedra, sin juntas entre casillas (UV continuas en el mundo)
+    if(x!==9||y!==8)continue;
+    const rbk=(w,h,d,px,by,pz)=>{ // bloque con esquinas y aristas redondeadas, UV continuas en el mundo
+     const bv=.09,rr=Math.min(.24,w*.4,d*.4),hx=w/2-bv,hz=d/2-bv,sh=new T.Shape(),r0=Math.max(.02,rr-bv);
+     sh.moveTo(-hx+r0,-hz);sh.lineTo(hx-r0,-hz);sh.absarc(hx-r0,-hz+r0,r0,-Math.PI/2,0,false);sh.lineTo(hx,hz-r0);sh.absarc(hx-r0,hz-r0,r0,0,Math.PI/2,false);sh.lineTo(-hx+r0,hz);sh.absarc(-hx+r0,hz-r0,r0,Math.PI/2,Math.PI,false);sh.lineTo(-hx,-hz+r0);sh.absarc(-hx+r0,-hz+r0,r0,Math.PI,Math.PI*1.5,false);
+     const bg=new T.ExtrudeGeometry(sh,{depth:Math.max(.05,h-2*bv),bevelEnabled:true,bevelThickness:bv,bevelSize:bv,bevelSegments:3,curveSegments:6});
+     bg.rotateX(-Math.PI/2);bg.computeBoundingBox();bg.translate(0,-bg.boundingBox.min.y,0);bg.computeVertexNormals();
+     const bp=bg.attributes.position,bn=bg.attributes.normal,bu=bg.attributes.uv,K=.34,col=new Float32Array(bp.count*3).fill(1);
+     for(let k=0;k<bp.count;k++){const qx=bp.getX(k)+px,qy=bp.getY(k)+by,qz=bp.getZ(k)+pz;if(Math.abs(bn.getY(k))>.5)bu.setXY(k,qx*K,qz*K);else if(Math.abs(bn.getX(k))>Math.abs(bn.getZ(k)))bu.setXY(k,qz*K,qy*K);else bu.setXY(k,qx*K,qy*K)}
+     bg.setAttribute('color',new T.BufferAttribute(col,3));const m=new T.Mesh(bg,R3.rockM);add(m,px,by,pz)};
+    // piso 1: huella completa (9..12 × 7..10, sin la casilla 9,7); piso 2: más compacto, retranqueado en los bordes
+    rbk(3,.8,2.02,10.5,0,9);rbk(2,.8,1.02,11,0,7.5);
+    rbk(2.3,.7,1.62,10.5,.74,8.95);rbk(1.3,.7,.8,11.0,.74,7.9);
+    continue}
+   const hh=stageId==='route2'?(x<=10?1.3:.7):stageId==='mtmoonc'?(y<=0?1.0:.62):y<=1?1.2:y<=3?.75:.5; // Ruta 2: más altas y con un segundo nivel más bajo a la derecha
    const bg=(()=>{const bv=.07,r0=.13,h=.5-bv,sh=new T.Shape();sh.moveTo(-h+r0,-h);sh.lineTo(h-r0,-h);sh.absarc(h-r0,-h+r0,r0,-Math.PI/2,0,false);sh.lineTo(h,h-r0);sh.absarc(h-r0,h-r0,r0,0,Math.PI/2,false);sh.lineTo(-h+r0,h);sh.absarc(-h+r0,h-r0,r0,Math.PI/2,Math.PI,false);sh.lineTo(-h,-h+r0);sh.absarc(-h+r0,-h+r0,r0,Math.PI,Math.PI*1.5,false);
  const g=new T.ExtrudeGeometry(sh,{depth:hh-2*bv,bevelEnabled:true,bevelThickness:bv,bevelSize:bv,bevelSegments:3,curveSegments:4});g.rotateX(-Math.PI/2);g.translate(0,-hh/2+bv,0);g.computeVertexNormals();return g})(),bp=bg.attributes.position,bn=bg.attributes.normal,bu=bg.attributes.uv,K=.34;for(let k=0;k<bp.count;k++){const px=bp.getX(k)+cx,py=bp.getY(k)+hh/2,pz=bp.getZ(k)+cz;if(Math.abs(bn.getY(k))>.5)bu.setXY(k,px*K,pz*K);else if(Math.abs(bn.getX(k))>.5)bu.setXY(k,pz*K,py*K);else bu.setXY(k,px*K,py*K)}{const hs2=(a,b)=>{const v=Math.sin(a*127.1+b*311.7)*43758.5453;return v-Math.floor(v)},col=new Float32Array(bp.count*3);for(let k=0;k<bp.count;k++){const ny=bn.getY(k),ring=Math.abs(bp.getX(k))>.36||Math.abs(bp.getZ(k))>.36;let c=ny>.98?1:ny>.15?.5:.85;if(ny>.98&&ring)c=.8;col[k*3]=c;col[k*3+1]=c*.96;col[k*3+2]=c*.98;
  if(ring&&ny>-.5){const q=Math.round(bp.getX(k)*40)+'_'+Math.round(bp.getZ(k)*40);bp.setX(k,bp.getX(k)+(hs2(cx*9+Math.round(bp.getX(k)*40),cz*7+Math.round(bp.getZ(k)*40))-.5)*.1);bp.setZ(k,bp.getZ(k)+(hs2(cz*5+Math.round(bp.getZ(k)*40),cx*3+Math.round(bp.getX(k)*40))-.5)*.1)}}
@@ -519,7 +541,7 @@ function r3build(){
    const col=th.tree[(r*3|0)%3],sd=(x*7+y*3)|0,s1=.92+r*.2;
    tree3d(pine,cx,cz,.95*s1+.1,r*6);continue}
   if(ch==='T'){r3Grass(T,g,cx,cz,rnd(x,y)*6,R3.anim.grass);continue}
-  if(ch==='o'){for(let i=0;i<4;i++)bb(pxaFlower(['#ff7fa8','#ffffff','#9ad0ff','#ffd447'][i%4]),.5,.57,cx+(rnd(x,y,i)-.5)*.8,cz+(rnd(x,y,i+7)-.5)*.8);continue}
+  if(ch==='o'){const a0=rnd(x,y,3)*6.283,cl=['#ff7fa8','#ffffff','#9ad0ff','#ffd447'],c0=Math.floor(rnd(x,y,5)*4);for(let i=0;i<3;i++){const an=a0+i*2.094,rr=.27+(rnd(x,y,i+7)-.5)*.06;bbd(pxaFlower(cl[(c0+i)%4]),.4,.46,cx+Math.cos(an)*rr,cz+Math.sin(an)*rr,rnd(x,y,i+11)*3.14)}continue} // 3 flores a 120°: no se tapan entre sí desde ningún ángulo de cámara
   if(ch==='p'){continue}
   if(ch==='R'&&stageId==='route3'&&R3.rockM){ // peñasco grande 2x2 con la textura de roca
    if(x!==8||y!==8)continue;
@@ -597,6 +619,20 @@ function r3build(){
  const N=36,pos=new Float32Array(N*3);for(let i=0;i<N;i++){pos[i*3]=Math.random()*W;pos[i*3+1]=.4+Math.random()*2.4;pos[i*3+2]=Math.random()*H}
  const pg=new T.BufferGeometry();pg.setAttribute('position',new T.BufferAttribute(pos,3));
  const motes=new T.Points(pg,new T.PointsMaterial({color:th.kind==='cave'?0x9ec4ff:0xffffff,size:.06,transparent:true,opacity:.55,depthWrite:false}));if(th.kind!=='pool'){g.add(motes);R3.anim.motes=motes}
+
+ if(stageId==='camp'){ // fogata en la arena central (6,4) con brasas y resplandor
+  const fx=6.5,fz=4.5,F=new T.Group();F.position.set(fx,0,fz);F.scale.setScalar(1.55);g.add(F);
+  const warm=(c,k)=>{const m=new T.MeshBasicMaterial({color:c,toneMapped:false});m.color.multiplyScalar(k);return m};const stoneC=['#d6a878','#c2925f','#e0b88a'];for(let i=0;i<9;i++){const a=i/9*Math.PI*2,s=new T.Mesh(new T.IcosahedronGeometry(.1+.02*(i%3),0),warm(stoneC[i%3],1.6));s.position.set(Math.cos(a)*.34,.07,Math.sin(a)*.34);s.scale.set(1.15,.75,1);s.rotation.y=i;s.castShadow=true;F.add(s)}
+  for(let i=0;i<4;i++){const l=new T.Mesh(new T.CylinderGeometry(.045,.05,.5,6),warm(i%2?'#8a5a30':'#6e4524',1.7));l.rotation.z=Math.PI/2;l.rotation.y=i*Math.PI/4+.3;l.position.y=.1+(i%2)*.05;F.add(l)}
+  const fm=(c,o)=>{const m=new T.MeshBasicMaterial({color:c,transparent:true,opacity:o,toneMapped:false,depthWrite:false});m.color.multiplyScalar(2.6);return m};
+  const flames=[[.2,.62,'#e8531a',.9,0],[.15,.5,'#ff9a2a',.95,1.7],[.1,.38,'#ffe27a',.95,3.1]].map(([r,h,c,o,ph])=>{const m=new T.Mesh(new T.ConeGeometry(r,h,7),fm(c,o));m.position.y=.12+h/2;m.userData={ph,h};F.add(m);return m});
+  const gc=document.createElement('canvas');gc.width=gc.height=64;{const q=gc.getContext('2d'),gr=q.createRadialGradient(32,32,2,32,32,32);gr.addColorStop(0,'rgba(255,170,70,.85)');gr.addColorStop(.35,'rgba(255,120,40,.38)');gr.addColorStop(1,'rgba(255,100,30,0)');q.fillStyle=gr;q.fillRect(0,0,64,64)}
+  const gt=new T.CanvasTexture(gc);gt.colorSpace=T.SRGBColorSpace;
+  const glow=new T.Mesh(new T.PlaneGeometry(5.4,5.4),new T.MeshBasicMaterial({map:gt,transparent:true,blending:T.AdditiveBlending,depthWrite:false,toneMapped:false,color:new T.Color(2,1.6,1.2)}));glow.rotation.x=-Math.PI/2;glow.position.y=.075;glow.renderOrder=3;F.add(glow);
+  const N=16,ep=new Float32Array(N*3),ed=[];for(let i=0;i<N;i++){ed.push({a:Math.random()*6.28,r:Math.random()*.12,sp:.35+Math.random()*.5,ph:Math.random()*5,dr:(Math.random()-.5)*.3})}
+  const eg=new T.BufferGeometry();eg.setAttribute('position',new T.BufferAttribute(ep,3));
+  const embers=new T.Points(eg,new T.PointsMaterial({color:0xffb347,size:.07,transparent:true,opacity:.9,depthWrite:false,toneMapped:false}));embers.frustumCulled=false;F.add(embers);
+  R3.anim.fire={flames,glow,embers,ed,ep}}
  // luz y fondo del escenario
  R3.hemi.color.setHex(th.hemi[0]);R3.hemi.groundColor.setHex(th.hemi[1]);R3.hemi.intensity=th.hemiI;R3.sun.color.setHex(th.sun);R3.sun.intensity=th.sunI;
  {{const bgc=pxaBackdrop(th,false);R3.wrap.style.background='url('+bgc.toDataURL()+') center/100% 100%';R3.wrap.style.imageRendering='pixelated'}}
@@ -617,6 +653,9 @@ function r3unit(u){
 }
 function r3elev(px,pz){const E=R3.elev;if(!E||!E.size)return 0;const x0=Math.floor(px),z0=Math.floor(pz),fx=px-x0,fz=pz-z0,e=(a,b)=>E.has(a+','+b)?R3.eh:0;return e(x0,z0)*(1-fx)*(1-fz)+e(x0+1,z0)*fx*(1-fz)+e(x0,z0+1)*(1-fx)*fz+e(x0+1,z0+1)*fx*fz}
 function r3paintUnit(rec,u,time,walking,fdx,fdy,selectedNow){
+ // reposo: si no cambió nada y pasaron <50 ms, se reutiliza la textura (evita redibujar y subir a la GPU 60 veces por segundo)
+ {const sig=[u.hp,u.acted,u.asleep,u.poisoned,u.trapped,u.critUp,u.paralyzed,u.burned,u.x,u.y,u.shiny,R3.yaw.toFixed(3),selectedNow,window.__campOn,rec.grass,rec.gAmt,u._fv,u._fr].join('|');
+  if(!walking&&!u.trapped&&!rec.grass&&!u.shiny&&rec._sig===sig&&time-rec._pt<50&&time>=rec._pt)return;rec._sig=sig;rec._pt=time}
  const g=rec.g;g.clearRect(0,0,168,168);g.imageSmoothingEnabled=false;let topY=60;rec.K=1;
  const pr=pmdOk(pkId(u));
  if(walking){if(fdx!==0){u._fr=fdx>0;u._fv=0}else if(fdy!==0)u._fv=fdy>0?1:2}
@@ -676,6 +715,38 @@ function r3paintUnit(rec,u,time,walking,fdx,fdy,selectedNow){
 }
 
 /* ===== Cursor unificado (ratón, teclado, mando y táctil) ===== */
+
+// ---- Objetos que tapan a un Pokémon: se vuelven translúcidos ----
+// Cada ~110 ms se lanza un rayo desde la cámara a cada Pokémon; lo que cruza (árboles, rocas, estantes…) baja su opacidad con transición suave.
+// Los objetos atenuados no escriben profundidad en el pase de los sprites, así el Pokémon se ve completo detrás.
+function r3Occlude(){
+ const T=R3.T;if(!R3.fade)R3.fade={map:new Map(),last:0,ray:new T.Raycaster(),list:null,count:-1,want:new Set(),now:performance.now()};
+ const F=R3.fade,now=performance.now(),dt=Math.min(.1,(now-F.now)/1000);F.now=now;
+ if(window.__fadeOff){for(const [m,s] of F.map){m.material=s.orig;if(s.mat)s.mat.dispose()}F.map.clear();return}
+ const G=R3.stageGroup;
+ const bb=m=>{if(!m.userData.bb){m.updateWorldMatrix(true,false);m.userData.bb=new T.Box3().setFromObject(m)}return m.userData.bb};
+ const ok=m=>{if(!m.isMesh||m.isInstancedMesh||!m.material||Array.isArray(m.material)||m.userData.noFade||m.visible===false)return false;
+  if(R3.anim.grass.includes(m)||(R3.labWalls&&R3.labWalls.some(w=>w.m===m)))return false;
+  const b=bb(m);if(b.max.y<.5)return false;const sx=b.max.x-b.min.x,sz=b.max.z-b.min.z;if(sx>9||sz>9)return false;
+  const mt=m.material;if(mt.transparent&&mt.opacity<.95&&!F.map.has(m))return false;return true};
+ if(now-F.last>(matchMedia('(pointer:coarse)').matches?160:110)){F.last=now;
+  if(!F.list||F.count!==G.children.length){F.list=[];G.traverse(o=>{if(o.isMesh&&ok(o))F.list.push(o)});F.count=G.children.length}
+  const want=new Set(),cam=R3.cam.position,dir=new T.Vector3(),tp=new T.Vector3();
+  for(const [u,rec] of R3.units){if(!rec.sp.visible)continue;
+   for(const oy of (matchMedia('(pointer:coarse)').matches?[.1,.65]:[.1,.55,1.05])){ // pies, torso y cabeza: el Pokémon puede estar tapado solo de las patas
+   tp.copy(rec.sp.position);tp.y+=oy;dir.subVectors(tp,cam);const dist=dir.length();dir.normalize();F.ray.set(cam,dir);F.ray.far=dist-.5;
+   for(const h of F.ray.intersectObjects(G.children,true)){const m=h.object;if(!ok(m))continue;
+    let top=m;while(top.parent&&top.parent!==G)top=top.parent;
+    if(top!==m){top.traverse(o=>{if(o.isMesh&&ok(o))want.add(o)});continue}
+    want.add(m);const b=bb(m),c=b.getCenter(new T.Vector3()),ex=b.clone().expandByScalar(.06);
+    for(const o of F.list){if(o===m||want.has(o))continue;const ob=bb(o);if(ex.containsPoint(ob.getCenter(new T.Vector3()))||ob.clone().expandByScalar(.06).containsPoint(c))want.add(o)}}}}
+  F.want=want;for(const m of want)if(!F.map.has(m))F.map.set(m,{a:1,orig:m.material,mat:null});
+ }
+ for(const [m,s] of F.map){const tg=F.want.has(m)?.26:1;s.a+=(tg-s.a)*Math.min(1,dt*9);
+  if(s.a<.985){if(!s.mat){s.mat=s.orig.clone();s.mat.transparent=true;m.material=s.mat}s.mat.opacity=s.a}
+  else if(!F.want.has(m)){m.material=s.orig;if(s.mat)s.mat.dispose();F.map.delete(m)}}
+}
+
 function r3MakeCursor(){const T=R3.T,g=new T.Group(),mk=(w,h,d,c,x,y,z,ro)=>{const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshBasicMaterial({color:c,depthTest:false,depthWrite:false,toneMapped:false,transparent:true}));m.position.set(x,y,z);m.renderOrder=ro-1100;return m};
  const arms=[];for(const [sx,sz] of [[-1,-1],[1,-1],[-1,1],[1,1]]){const cg=new T.Group();
   for(const [ex,ez,w,d] of [[0,.5,.34,.09],[.5,0,.09,.34]]){}
@@ -715,7 +786,7 @@ window.__r3dir=function(v){try{if(!R3||!R3.cam)return v;const T=R3.T,cx=W/2,cz=H
  try{if(navigator.getGamepads)requestAnimationFrame(poll)}catch(e){}})();
 function render3D(time){
  if(!R3){r3init();return}
- const sig=stageId+'|'+visKey(stageId)+'|'+map.join('/');
+ const sig=stageId+'|'+visKey(stageId)+'|'+map.join('/')+(stageNight(stageId)?'|n':'|d');
  if(R3.sig!==sig){R3.sig=sig;R3.zmT=1;R3.zm=1;r3build()}
  const T=R3.T,t=time/1000;
  // cámara: encuadre fijo con ligero paralaje según el ratón
@@ -739,7 +810,7 @@ function render3D(time){
   r3paintUnit(rec,u,time,walking,fdx,fdy,sel);{const K=rec.K||1;rec.sp.scale.set(2.4*K,2.4*K,1)}
   const el=r3elev(px,pz);rec.sp.position.set(px+.5,.02+hop+el,pz+.5);rec.sp.visible=true;rec.hs.position.copy(rec.sp.position);rec.hs.visible=true;
   rec.sh.position.set(px+.5,.055+el,pz+.5);rec.sh.visible=true;rec.sh.scale.set(1-hop*2,.62*(1-hop*2),1);
-  rec.ring.position.set(px+.5,.058+el,pz+.5);rec.ring.visible=!window.__campOn;
+  rec.ring.position.set(px+.5,.058+el,pz+.5);{const nc=R3.night?0xa9b8e8:0xffffff;if(rec.sp.material.color.getHex()!==nc)rec.sp.material.color.setHex(nc)}rec.ring.visible=!window.__campOn;
   const pulse=.5+.5*Math.sin(t*5);
   if(sel){rec.ring.material.color.setHex(0xffe08a);rec.ring.material.opacity=.9;rec.ring.scale.setScalar(1.05+pulse*.12)}
   else if(inspectedEnemy===u){rec.ring.material.color.setHex(0xff8a8a);rec.ring.material.opacity=.9;rec.ring.scale.setScalar(1+pulse*.08)}
@@ -752,9 +823,15 @@ function render3D(time){
   for(const p of R3.upos||[]){const dx=b.position.x-p.x,dz=b.position.z-p.z,d=Math.hypot(dx,dz);if(d<.95){const k=(1-d/.95),w=p.w?1:.35,nx=dx/(d||1),nz=dz/(d||1),wob=Math.sin(t*16+b.userData.ph*3)*.16*w;rx+=nz*k*.55*w+wob*.6;rz+=-nx*k*.55*w+wob;sc-=k*.42}}
   b.rotation.x=rx;b.rotation.z=rz;b.scale.setScalar(Math.max(.26,sc))}
  if(R3.anim.motes){const p=R3.anim.motes.geometry.attributes.position;for(let i=0;i<p.count;i++){p.array[i*3+1]+=Math.sin(t*.7+i)*.0016+.0006;if(p.array[i*3+1]>2.9)p.array[i*3+1]=.3;p.array[i*3]+=Math.sin(t*.3+i*1.7)*.0012}p.needsUpdate=true}
+ {const FR=R3.anim.fire;if(FR){for(const m of FR.flames){const ph=m.userData.ph,k=.82+.22*Math.sin(t*9+ph)+.1*Math.sin(t*17+ph*2);m.scale.set(.9+.12*Math.sin(t*11+ph),k,.9+.12*Math.cos(t*13+ph));m.position.y=.12+m.userData.h*k/2;m.rotation.z=Math.sin(t*5+ph)*.08}
+   FR.glow.material.opacity=(.82+.14*Math.sin(t*7)+.06*Math.sin(t*19))*(campNight()?1:.3);FR.glow.scale.setScalar(1+.04*Math.sin(t*6));
+   for(let i=0;i<FR.ed.length;i++){const e=FR.ed[i],life=((t*e.sp+e.ph)%1.6)/1.6;FR.ep[i*3]=Math.cos(e.a)*e.r+e.dr*life+Math.sin(t*2+i)*.04*life;FR.ep[i*3+1]=.25+life*1.5;FR.ep[i*3+2]=Math.sin(e.a)*e.r+Math.cos(t*1.7+i)*.04*life}FR.embers.geometry.attributes.position.needsUpdate=true;FR.embers.material.opacity=.9}}
  r3UpdateCursor(t);
  R3.decalTex.needsUpdate=true;
  if(R3.labWalls&&R3.labWalls.length){const dx=R3.cam.position.x-tx,dz=R3.cam.position.z-tz,l=Math.hypot(dx,dz)||1;for(const w of R3.labWalls)w.m.visible=(w.nx*dx+w.nz*dz)/l<.35}
+ try{r3Occlude()}catch(e){}
+ {const sk=R3.stageGroup.uuid+'|'+R3.stageGroup.children.length+'|'+(R3.labWalls?R3.labWalls.filter(w=>w.m.visible).length:0);R3._shF=(R3._shF||0)+1;if(sk!==R3._shK||R3._shF%30===0){R3._shK=sk;R3.renderer.shadowMap.needsUpdate=true}} // sombras estáticas: solo se recalculan al cambiar el escenario (y cada ~0,5 s por seguridad)
+ R3.nt=R3.night?[.56,.66,.98]:null; // noche del campamento: se enfría y oscurece la imagen final
  pxRun(R3,R3.renderer,R3.scene,R3.cam,.7,255,true);
 }
 
@@ -1441,4 +1518,55 @@ requestAnimationFrame(draw);loadPokeAPI();
  // la rueda del ratón sobre el fondo oscuro de una ventana no debe mover la página
  addEventListener('wheel',e=>{if(!document.documentElement.classList.contains('ptLock'))return;let t=e.target;while(t&&t!==document.body){const cs=getComputedStyle(t);if(/(auto|scroll)/.test(cs.overflowY)&&t.scrollHeight>t.clientHeight+1)return;t=t.parentElement}e.preventDefault()},{passive:false});
  check();
+})();
+
+/* Mapa de Kanto con zoom: botones ＋ － ⟲, rueda del ratón, pellizco y arrastre. Los puntos y rótulos mantienen su tamaño (solo se separan). */
+;(()=>{
+const KZ={s:1,x:0,y:0},MAXZ=3.5;
+const st=document.createElement('style');st.textContent=`
+.kmapHolder .kmZoom{position:absolute;inset:0;transform-origin:0 0;will-change:transform}
+.kmapHolder.kmZoomed{touch-action:none;cursor:grab}
+.kmZoom .kmNode{transform:translate(-50%,-50%) scale(calc(1/var(--z,1)))}
+.kmZoom .kmNode.avail{animation-name:kmPulseZ}
+@keyframes kmPulseZ{50%{transform:translate(-50%,-50%) scale(calc(1.25/var(--z,1)))}}
+.kmZoom .kmLbl{transform:translate(-50%,0) scale(calc(1/var(--z,1)));transform-origin:50% 0}
+.kmZoomCtl{position:absolute;right:8px;top:8px;z-index:6;display:flex;flex-direction:column;gap:5px}
+.kmZoomCtl button{width:32px;height:32px;border-radius:8px;border:2px solid #1d2f46;background:#10212fdd;color:#ffe9a8;font:900 16px/1 system-ui,sans-serif;padding:0;cursor:pointer;display:grid;place-items:center}
+.kmZoomCtl button:disabled{opacity:.4;cursor:default}
+`;document.head.appendChild(st);
+const orig=window.__kmap;if(typeof orig!=='function')return;
+window.__kmap=function(holder){orig.apply(this,arguments);try{kmZoomify(holder)}catch(e){console.warn('zoom del mapa:',e)}};
+function kmZoomify(h){
+ const inner=document.createElement('div');inner.className='kmZoom';
+ [...h.children].filter(c=>!c.classList.contains('kmBanner')).forEach(c=>inner.append(c));h.prepend(inner);
+ const bPlus=document.createElement('button'),bMinus=document.createElement('button'),bReset=document.createElement('button'),ctl=document.createElement('div');
+ ctl.className='kmZoomCtl';[[bPlus,'＋','Acercar el mapa'],[bMinus,'－','Alejar el mapa'],[bReset,'⟲','Restablecer el zoom']].forEach(([b,t,l])=>{b.type='button';b.textContent=t;b.title=l;b.setAttribute('aria-label',l);ctl.append(b)});h.append(ctl);
+ const apply=()=>{const w=h.clientWidth,hh=h.clientHeight;KZ.s=Math.max(1,Math.min(MAXZ,KZ.s));KZ.x=Math.min(0,Math.max(w-w*KZ.s,KZ.x));KZ.y=Math.min(0,Math.max(hh-hh*KZ.s,KZ.y));
+  inner.style.transform='translate('+KZ.x+'px,'+KZ.y+'px) scale('+KZ.s+')';inner.style.setProperty('--z',KZ.s);h.classList.toggle('kmZoomed',KZ.s>1.001);bPlus.disabled=KZ.s>=MAXZ-.001;bMinus.disabled=bReset.disabled=KZ.s<=1.001};
+ const zoomAt=(f,cx,cy)=>{const s0=KZ.s;KZ.s=Math.max(1,Math.min(MAXZ,s0*f));const k=KZ.s/s0;KZ.x=cx-(cx-KZ.x)*k;KZ.y=cy-(cy-KZ.y)*k;apply()};
+ const mid=()=>[h.clientWidth/2,h.clientHeight/2];
+ // los botones acercan hacia el punto activo (tu etapa actual); si no hay, al centro
+ const focus=()=>{const n=h.querySelector('.kmNode.active')||h.querySelector('.kmNode.avail');if(!n)return null;const w=h.clientWidth,hh=h.clientHeight;return [parseFloat(n.style.left)/100*w,parseFloat(n.style.top)/100*hh]};
+ const step=f=>{const s0=KZ.s,fc=focus();if(!fc||isNaN(fc[0])){zoomAt(f,...mid());return}
+  KZ.s=Math.max(1,Math.min(MAXZ,s0*f));KZ.x=h.clientWidth/2-fc[0]*KZ.s;KZ.y=h.clientHeight/2-fc[1]*KZ.s;apply()};
+ bPlus.onclick=()=>step(1.5);bMinus.onclick=()=>step(1/1.5);bReset.onclick=()=>{KZ.s=1;KZ.x=KZ.y=0;apply()};
+ h.addEventListener('wheel',e=>{e.preventDefault();const r=h.getBoundingClientRect();zoomAt(e.deltaY<0?1.2:1/1.2,e.clientX-r.left,e.clientY-r.top)},{passive:false});
+ let drag=null,dragged=false;
+ h.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'||KZ.s<=1.001||e.target.closest('.kmZoomCtl'))return;drag={x:e.clientX,y:e.clientY,moved:0};dragged=false});
+ addEventListener('pointermove',e=>{if(!drag||!h.isConnected)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;drag.moved+=Math.abs(dx)+Math.abs(dy);if(drag.moved>6){dragged=true;KZ.x+=dx;KZ.y+=dy;apply()}});
+ addEventListener('pointerup',()=>{drag=null;setTimeout(()=>{dragged=false},0)});
+ h.addEventListener('click',e=>{if(dragged){e.stopPropagation();e.preventDefault()}},true);
+ // táctil: pellizco con dos dedos y arrastre con uno cuando hay zoom
+ let tp=null;
+ const pts=t=>[...t].map(q=>[q.clientX,q.clientY]);
+ h.addEventListener('touchstart',e=>{const p=pts(e.touches);tp={n:p.length,p,moved:0};dragged=false},{passive:true});
+ h.addEventListener('touchmove',e=>{if(!tp)return;const p=pts(e.touches),r=h.getBoundingClientRect();
+  if(p.length>=2&&tp.p.length>=2){e.preventDefault();const d0=Math.hypot(tp.p[0][0]-tp.p[1][0],tp.p[0][1]-tp.p[1][1]),d1=Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1]);
+   const c0=[(tp.p[0][0]+tp.p[1][0])/2,(tp.p[0][1]+tp.p[1][1])/2],c1=[(p[0][0]+p[1][0])/2,(p[0][1]+p[1][1])/2];
+   KZ.x+=c1[0]-c0[0];KZ.y+=c1[1]-c0[1];if(d0>0)zoomAt(d1/d0,c1[0]-r.left,c1[1]-r.top);else apply();dragged=true}
+  else if(p.length===1&&tp.p.length===1&&KZ.s>1.001){e.preventDefault();const dx=p[0][0]-tp.p[0][0],dy=p[0][1]-tp.p[0][1];tp.moved+=Math.abs(dx)+Math.abs(dy);if(tp.moved>6){dragged=true;KZ.x+=dx;KZ.y+=dy;apply()}}
+  tp.p=p},{passive:false});
+ h.addEventListener('touchend',e=>{if(!e.touches.length){tp=null;setTimeout(()=>{dragged=false},60)}else tp={n:e.touches.length,p:pts(e.touches),moved:99}},{passive:true});
+ apply();requestAnimationFrame(apply);
+}
 })();

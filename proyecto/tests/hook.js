@@ -3,3 +3,5 @@ window.__T.openMoves=(i)=>{selected=units.find(u=>u.side==='player');phase='play
 window.__T.setMenu=(i)=>{menuIndex=i;renderMenuHighlight()};
 window.__T.makeSave=()=>makeSave();window.__T.validateSave=d=>validateSave(d);
 window.__T.openActions=()=>{selected=units.find(u=>u.side==='player');phase='player';locked=false;actionMenu='actions';menuIndex=0;renderBattleMenu()};
+window.__T.R3=()=>R3;
+window.__T.enterCamp=()=>{phase='win';currentEncounter=null;enterCamp()};

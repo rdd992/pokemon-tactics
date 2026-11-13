@@ -32,5 +32,5 @@ function menuScreen(name){
    $('titleContinue').disabled=!readSave();
    $('titleReturn').hidden=phase==='intro';try{heroRefresh()}catch(e){console.error(e)}
  }
- if(name==='options'){$('titlePmdToggle').textContent=pmdOn?'SPRITECOLLAB (PMD)':'ORIGINALES';$('titleSoundToggle').textContent=soundEnabled?'ACTIVADOS':'DESACTIVADOS';$('titleAnimToggle').textContent=animationEnabled?'ACTIVADAS':'DESACTIVADAS';$('titleStyleToggle').textContent=styleLabel()}
+ if(name==='options'){$('titlePmdToggle').textContent=pmdOn?'SPRITECOLLAB (PMD)':'ORIGINALES';$('titleSoundToggle').textContent=soundEnabled?'ACTIVADOS':'DESACTIVADOS';$('titleAnimToggle').textContent=animationEnabled?'ACTIVADAS':'DESACTIVADAS';$('titleFpsToggle').textContent=window.__fps&&window.__fps.get()?'VISIBLE':'OCULTO';$('titleSmoothToggle').textContent=({off:'PIXEL PURO',sharp:'SUAVE (NÍTIDO)',epx:'SUAVE (SCALE2X)'})[window.__getPmdSmooth()];$('titleStyleToggle').textContent=styleLabel()}
 }

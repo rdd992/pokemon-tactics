@@ -77,7 +77,7 @@ function drawFrame(time){
         }
     }
     if(selected&&phase==='player'&&!selected.acted){
-        if(!captureMode&&skill===null&&!selected.moved){
+        if(!captureMode&&skill===null&&!selected.moved&&!actionMenu){
             let d=reachableEnd(selected);
             for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(d[y][x]<Infinity&&!occupied(x,y)&&!(x===selected.x&&y===selected.y)){
                 drawTileMark(x,y,'rgba(24,72,220,.62)','#cfe6ff',3,time);

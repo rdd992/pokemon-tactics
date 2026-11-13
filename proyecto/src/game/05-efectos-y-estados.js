@@ -47,6 +47,7 @@ function campInit(u,time){const free=[];for(let y=0;y<map.length;y++)for(let x=0
 function enterCamp(){
  if(campOn||(phase!=='win'&&currentEncounter))return;
  setupTerrain('camp');
+ map[4]=map[4].slice(0,6)+'X'+map[4].slice(7); // la fogata ocupa esta casilla
  units=units.filter(u=>u.side==='player');selected=null;inspectedEnemy=null;hovered=null;
  try{partyRecover()}catch(e){}
  for(const u of units)delete u.camp;
