@@ -674,3 +674,16 @@ html:has(#titleOverlay:not([hidden])),body:has(#titleOverlay:not([hidden])){over
 @media(max-width:560px){.maplabel.duel{max-width:68%;padding:5px 10px!important}.maplabel.duel .diLoc{font-size:9px}.maplabel.duel .diWho{font-size:10px}.maplabel.duel .diFoes{font-size:9px}}
 
 @media (pointer:coarse){.tilehint{right:auto!important;left:50%;transform:translateX(-50%);max-width:58%;text-align:center;white-space:normal}}
+
+/* móvil horizontal (pantalla baja): ficha compacta a la izquierda y sin aviso central, para no tapar el tablero */
+@media (pointer:coarse) and (orientation:landscape) and (max-height:560px){
+ #moveInfoCard{left:10px!important;transform:scale(.78)!important;transform-origin:0 0;width:min(300px,42%)!important}
+ .attackPrompt{display:none!important}
+ .tilehint{max-width:40%}
+}
+
+@media (pointer:coarse){.forecast{left:50%!important;right:auto!important;transform:translateX(-50%);width:min(292px,calc(100% - 16px))!important;font-size:11px}}
+@media (pointer:coarse) and (orientation:landscape) and (max-height:560px){.forecast{left:auto!important;right:70px!important;top:12px!important;transform:none;width:250px!important}}
+
+@media (pointer:coarse) and (orientation:portrait){.canvaswrap.fcOn #moveInfoCard{display:none!important}}
+@media (pointer:coarse){.canvaswrap.fcOn .tilehint{display:none!important}}

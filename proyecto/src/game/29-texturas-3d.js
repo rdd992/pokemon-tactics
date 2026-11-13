@@ -1541,6 +1541,8 @@ const st=document.createElement('style');st.textContent=`
 const orig=window.__kmap;if(typeof orig!=='function')return;
 window.__kmap=function(holder){orig.apply(this,arguments);try{kmZoomify(holder)}catch(e){console.warn('zoom del mapa:',e)}};
 function kmZoomify(h){
+ if(h._kmOff)for(const [tg,ty,f,o] of h._kmOff)tg.removeEventListener(ty,f,o); // al volver al mapa se reconstruye: se quitan los oyentes anteriores (si no, cada visita sumaba otro y el zoom se multiplicaba)
+ const offs=h._kmOff=[],on=(tg,ty,f,o)=>{tg.addEventListener(ty,f,o);offs.push([tg,ty,f,o])};
  const inner=document.createElement('div');inner.className='kmZoom';
  [...h.children].filter(c=>!c.classList.contains('kmBanner')).forEach(c=>inner.append(c));h.prepend(inner);
  const bPlus=document.createElement('button'),bMinus=document.createElement('button'),bReset=document.createElement('button'),ctl=document.createElement('div');
@@ -1554,23 +1556,23 @@ function kmZoomify(h){
  const step=f=>{const s0=KZ.s,fc=focus();if(!fc||isNaN(fc[0])){zoomAt(f,...mid(),true);return}
   KZ.s=Math.max(1,Math.min(MAXZ,s0*f));KZ.x=h.clientWidth/2-fc[0]*KZ.s;KZ.y=h.clientHeight/2-fc[1]*KZ.s;apply(true)};
  bPlus.onclick=()=>step(1.3);bMinus.onclick=()=>step(1/1.3);bReset.onclick=()=>{KZ.s=1;KZ.x=KZ.y=0;apply(true)};
- h.addEventListener('wheel',e=>{e.preventDefault();const r=h.getBoundingClientRect();const dy=Math.max(-100,Math.min(100,e.deltaY*(e.deltaMode===1?33:1)));zoomAt(Math.exp(-dy*.0007),e.clientX-r.left,e.clientY-r.top,true)},{passive:false}); // proporcional al giro: la rueda avanza ~12 % por muesca y el panel táctil va fino
+ on(h,'wheel',e=>{e.preventDefault();const r=h.getBoundingClientRect();const dy=Math.max(-100,Math.min(100,e.deltaY*(e.deltaMode===1?33:1)));zoomAt(Math.exp(-dy*.0007),e.clientX-r.left,e.clientY-r.top,true)},{passive:false}); // proporcional al giro: la rueda avanza ~12 % por muesca y el panel táctil va fino
  let drag=null,dragged=false;
- h.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'||KZ.s<=1.001||e.target.closest('.kmZoomCtl'))return;drag={x:e.clientX,y:e.clientY,moved:0};dragged=false});
- addEventListener('pointermove',e=>{if(!drag||!h.isConnected)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;drag.moved+=Math.abs(dx)+Math.abs(dy);if(drag.moved>6){dragged=true;KZ.x+=dx;KZ.y+=dy;apply()}});
- addEventListener('pointerup',()=>{drag=null;setTimeout(()=>{dragged=false},0)});
- h.addEventListener('click',e=>{if(dragged){e.stopPropagation();e.preventDefault()}},true);
+ on(h,'pointerdown',e=>{if(e.pointerType==='touch'||KZ.s<=1.001||e.target.closest('.kmZoomCtl'))return;drag={x:e.clientX,y:e.clientY,moved:0};dragged=false});
+ on(window,'pointermove',e=>{if(!drag||!h.isConnected)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;drag.moved+=Math.abs(dx)+Math.abs(dy);if(drag.moved>6){dragged=true;KZ.x+=dx;KZ.y+=dy;apply()}});
+ on(window,'pointerup',()=>{drag=null;setTimeout(()=>{dragged=false},0)});
+ on(h,'click',e=>{if(dragged){e.stopPropagation();e.preventDefault()}},true);
  // táctil: pellizco con dos dedos y arrastre con uno cuando hay zoom
  let tp=null;
  const pts=t=>[...t].map(q=>[q.clientX,q.clientY]);
- h.addEventListener('touchstart',e=>{const p=pts(e.touches);tp={n:p.length,p,moved:0};dragged=false},{passive:true});
- h.addEventListener('touchmove',e=>{if(!tp)return;const p=pts(e.touches),r=h.getBoundingClientRect();
+ on(h,'touchstart',e=>{const p=pts(e.touches);tp={n:p.length,p,moved:0};dragged=false},{passive:true});
+ on(h,'touchmove',e=>{if(!tp)return;const p=pts(e.touches),r=h.getBoundingClientRect();
   if(p.length>=2&&tp.p.length>=2){e.preventDefault();const d0=Math.hypot(tp.p[0][0]-tp.p[1][0],tp.p[0][1]-tp.p[1][1]),d1=Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1]);
    const c0=[(tp.p[0][0]+tp.p[1][0])/2,(tp.p[0][1]+tp.p[1][1])/2],c1=[(p[0][0]+p[1][0])/2,(p[0][1]+p[1][1])/2];
    KZ.x+=c1[0]-c0[0];KZ.y+=c1[1]-c0[1];if(d0>0)zoomAt(d1/d0,c1[0]-r.left,c1[1]-r.top);else apply();dragged=true}
   else if(p.length===1&&tp.p.length===1&&KZ.s>1.001){e.preventDefault();const dx=p[0][0]-tp.p[0][0],dy=p[0][1]-tp.p[0][1];tp.moved+=Math.abs(dx)+Math.abs(dy);if(tp.moved>6){dragged=true;KZ.x+=dx;KZ.y+=dy;apply()}}
   tp.p=p},{passive:false});
- h.addEventListener('touchend',e=>{if(!e.touches.length){tp=null;setTimeout(()=>{dragged=false},60)}else tp={n:e.touches.length,p:pts(e.touches),moved:99}},{passive:true});
+ on(h,'touchend',e=>{if(!e.touches.length){tp=null;setTimeout(()=>{dragged=false},60)}else tp={n:e.touches.length,p:pts(e.touches),moved:99}},{passive:true});
  apply();requestAnimationFrame(apply);
 }
 })();

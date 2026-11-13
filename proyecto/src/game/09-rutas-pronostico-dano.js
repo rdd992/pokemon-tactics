@@ -52,7 +52,7 @@ function counterForecast(u,v,m){
  const mx=eff===0?0:Math.max(1,Math.floor(damage(v,u,cm,false,false,true)*f)),mn=mx?Math.max(1,Math.floor(mx*.85)):0;
  return{name:cm.name,min:mn,max:mx,acc:Math.max(0,Math.min(100,cm.acc-v.accuracyDown*18)),eff};
 }
-function hideForecast(){const el=$('forecast');if(el&&!el.hidden){el.hidden=true;el.dataset.key=''}}
+function hideForecast(){const el=$('forecast');if(el&&!el.hidden){el.hidden=true;el.dataset.key='';const w=document.querySelector('.canvaswrap');if(w){w.classList.remove('fcOn');try{placePrompt()}catch(e){}}}}
 function showForecast(u,m,targets){
  const el=$('forecast');if(!el)return;
  if(!targets.length){hideForecast();return}
@@ -88,7 +88,9 @@ function showForecast(u,m,targets){
  if(targets.length>3)html+='<div class="fcRow"><i>…y '+(targets.length-3)+' objetivos más</i></div>';
  if(el.dataset.key!==html){el.innerHTML=html;el.dataset.key=html}
  el.classList.toggle('right',Math.min(...targets.map(t=>t.x))<=4);
- el.hidden=false;{const lb=$('locationLabel');const pr=$('attackPrompt');el.style.top=(pr&&!pr.hidden&&pr.style.left==='12px')?(pr.offsetTop+pr.offsetHeight+6)+'px':lb&&lb.offsetHeight?(lb.offsetTop+lb.offsetHeight+6)+'px':''}
+ el.hidden=false;{const w=document.querySelector('.canvaswrap');if(w&&!w.classList.contains('fcOn')){w.classList.add('fcOn');try{placePrompt()}catch(e){}}}{const lb=$('locationLabel');const pr=$('attackPrompt'),mc=$('moveInfoCard'),co=matchMedia('(pointer:coarse)').matches;
+  if(co){const b=(pr&&!pr.hidden)?pr:(mc&&!mc.hidden)?mc:lb;el.style.top=b&&b.offsetHeight?(b.offsetTop+b.offsetHeight+6)+'px':''} // táctil: bajo el aviso/ficha
+  else el.style.top=(pr&&!pr.hidden&&pr.style.left==='12px')?(pr.offsetTop+pr.offsetHeight+6)+'px':lb&&lb.offsetHeight?(lb.offsetTop+lb.offsetHeight+6)+'px':''}
 }
 function updateTileHint(){
  hideForecast();
@@ -161,7 +163,8 @@ function closeBattleMenu(){actionMenu=null;$('battleMenu').hidden=true;$('battle
 function syncAttackBack(){
     const targeting=phase==='player'&&!locked&&selected&&!actionMenu&&(skill!==null||!!captureMode);
     $('attackBack').hidden=!targeting;
-    {const ab=$('attackBack'),th=$('tileHint');if(th)th.style.bottom=targeting?(ab.offsetHeight+(parseFloat(getComputedStyle(ab).bottom)||0)+8)+'px':''}
+    if(!targeting)window.__aim2=null;
+    {const ab=$('attackBack'),th=$('tileHint');if(th)th.style.bottom=targeting&&!matchMedia('(pointer:coarse)').matches?(ab.offsetHeight+(parseFloat(getComputedStyle(ab).bottom)||0)+8)+'px':''}
     $('attackPrompt').hidden=!targeting||!matchMedia('(pointer:coarse)').matches; // en PC el aviso es redundante: la barra inferior ya indica el objetivo
     placePrompt();
     if(targeting){$('attackPrompt').textContent=captureMode?(captureMode.itemId?'🎯 '+ITEM_NAMES[captureMode.itemId]+' · elige a ti o a un aliado adyacente':'🎯 '+BALLS[captureMode.ballId].name+' · elige Pokémon salvaje (≤'+CAPTURE_RANGE+' casillas)'+' · menos PS, más fácil de atrapar'): '🎯 '+moveDB[selected.moves[skill].key].name+' · selecciona objetivo';$('attackBack').textContent=captureMode?'↩ Volver a objetos':'↩ Volver a ataques'}
@@ -208,7 +211,7 @@ function moveInfoHTML(mp){
     const tn=esc((FE_TYPE_ES&&FE_TYPE_ES[m.type])||m.type).toLowerCase();h+='<div class="miStats"><span>Tipo <b>'+tn.charAt(0).toUpperCase()+tn.slice(1)+'</b></span><span>Potencia <b>'+(m.power?(m.multi?m.power+' ×'+m.multi[0]+(m.multi[0]===m.multi[1]?'':'–'+m.multi[1]):m.power):'—')+'</b></span><span>Precisión <b>'+(m.acc?m.acc+' %':'—')+'</b></span><span>PP <b>'+mp.pp+'/'+m.pp+'</b></span></div>';
     h+='<div class="miRow">📏 '+MOVE_SHAPE_TXT(m)+'</div>';
     const ef=MOVE_EFFECT_TXT[m.effect];
-    if(ef)h+='<div class="miRow">✨ '+esc(ef)+'</div>';else if(m.detail&&!m.effect)h+='<div class="miRow">ℹ️ '+esc(m.detail)+'</div>';
+    if(ef)h+='<div class="miRow">✨ '+esc(ef)+'</div>';else if(m.detail&&!m.effect){const xtra=String(m.detail).split(' · ').filter(s=>!/(casilla|adyacente|cuerpo a cuerpo|línea|objetivo a|^área)/i.test(s)).join(' · ');if(xtra)h+='<div class="miRow">ℹ️ '+esc(xtra.charAt(0).toUpperCase()+xtra.slice(1))+'</div>'} // solo detalles que aportan algo: el alcance ya aparece en la línea 📏
     return h;
 }
 function updateMoveInfo(){
@@ -226,7 +229,8 @@ function updateMoveInfo(){
 function placePrompt(){const p=$('attackPrompt'),c=$('moveInfoCard');if(!p)return;
     const coarse=matchMedia('(pointer:coarse)').matches,lb=$('locationLabel');
     if(c&&lb&&lb.offsetHeight)c.style.top=(lb.offsetTop+lb.offsetHeight+6)+'px'; // la ficha del movimiento va bajo la etiqueta de lugar/rival
-    if(c&&!c.hidden&&!p.hidden){p.style.top=(c.offsetTop+c.offsetHeight+6)+'px';p.style.left='';p.style.transform='';return}
+    if(c&&!c.hidden&&c.offsetHeight&&!p.hidden){p.style.top=(c.offsetTop+c.offsetHeight+6)+'px';p.style.left='';p.style.transform='';return}
+    if(coarse&&lb&&lb.offsetHeight&&!p.hidden&&c&&!c.offsetHeight){p.style.top=(lb.offsetTop+lb.offsetHeight+6)+'px';p.style.left='';p.style.transform='';return}
     if(!coarse&&lb&&lb.offsetHeight&&!p.hidden){p.style.top=(lb.offsetTop+lb.offsetHeight+6)+'px';p.style.left='12px';p.style.transform='none';return} // PC: columna izquierda bajo la etiqueta del lugar, sin tapar nada
     p.style.top='';p.style.left='';p.style.transform=''}
 function renderBattleMenu(){
