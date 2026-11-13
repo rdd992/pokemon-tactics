@@ -167,12 +167,12 @@ function syncAttackBack(){
     {const ab=$('attackBack'),th=$('tileHint');if(th)th.style.bottom=targeting&&!matchMedia('(pointer:coarse)').matches?(ab.offsetHeight+(parseFloat(getComputedStyle(ab).bottom)||0)+8)+'px':''}
     $('attackPrompt').hidden=!targeting||!matchMedia('(pointer:coarse)').matches; // en PC el aviso es redundante: la barra inferior ya indica el objetivo
     placePrompt();
-    if(targeting){$('attackPrompt').textContent=captureMode?(captureMode.itemId?'🎯 '+ITEM_NAMES[captureMode.itemId]+' · elige a ti o a un aliado adyacente':'🎯 '+BALLS[captureMode.ballId].name+' · elige Pokémon salvaje (≤'+CAPTURE_RANGE+' casillas)'+' · menos PS, más fácil de atrapar'): '🎯 '+moveDB[selected.moves[skill].key].name+' · selecciona objetivo';$('attackBack').textContent=captureMode?'↩ Volver a objetos':'↩ Volver a ataques'}
+    if(targeting){$('attackPrompt').textContent=captureMode?(captureMode.itemId?'🎯 '+ITEM_NAMES[captureMode.itemId]+' · elige a ti o a un aliado adyacente':'🎯 '+BALLS[captureMode.ballId].name+' · elige Pokémon salvaje (≤'+CAPTURE_RANGE+' casillas)'+' · menos PS, más fácil de atrapar'): '🎯 '+moveDB[selected.moves[skill].key].name+' · selecciona objetivo';$('attackBack').textContent=captureMode?'↩ Volver a objetos':'↩ Volver a movimientos'}
 }
 function backFromAttack(){
     if(captureMode){cancelCaptureAim();return}
     if(phase!=='player'||locked||!selected)return;
-    if(skill!==null){skill=null;actionMenu='moves';menuIndex=0;updateUI();renderBattleMenu();return}
+    if(skill!==null){skill=null;window.__aim2=null;if(matchMedia('(pointer:coarse)').matches)hovered=null;try{hideForecast()}catch(e){}try{$('tileHint').textContent=''}catch(e){}actionMenu='moves';menuIndex=0;updateUI();renderBattleMenu();return}
     if(actionMenu==='moves'){actionMenu='actions';menuIndex=0;renderBattleMenu()}
 }
 $('attackBack').addEventListener('click',backFromAttack);
@@ -221,7 +221,7 @@ function updateMoveInfo(){
     // Móvil: no hay ficha al abrir la lista; aparece al tocar un movimiento (queda elegido) y se ve mientras apuntas al objetivo.
     // PC: la ficha sigue al movimiento resaltado.
     const touch=matchMedia('(pointer:coarse)').matches;
-    const mp=touch?(skill!==null&&selected&&phase==='player'&&selected.moves[skill]):(actionMenu==='moves'&&selected&&selected.moves[menuIndex]);
+    const mp=locked?null:touch?(skill!==null&&selected&&phase==='player'&&selected.moves[skill]):(actionMenu==='moves'&&selected&&selected.moves[menuIndex]);
     if(!mp){box.hidden=true;placePrompt();return}
     box.innerHTML=moveInfoHTML(mp);box.hidden=false;placePrompt();
 }
