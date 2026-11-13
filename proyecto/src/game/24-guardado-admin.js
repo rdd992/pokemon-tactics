@@ -27,7 +27,7 @@ function restoreUnit(data,side){
     if((data.id===11||data.id===14)&&keys.length<4&&!keys.some(k=>moveDB[k]&&moveDB[k].power>0))keys.push(data.id===11?'tackle':'poisonsting');
     let x=Number.isInteger(data.x)?data.x:-1,y=Number.isInteger(data.y)?data.y:-1;
     const u=unit(data.id,side,x,y,level,keys,normalizeIVs(data.ivs));
-    u.moves=keys.map((key,i)=>({key,pp:Math.max(0,Math.min(moveDB[key].pp,Math.floor(Number(data.moves[i].pp)||0)))}));
+    u.moves=keys.map((key,i)=>{const sv=data.moves[i];return {key,pp:sv&&sv.key===key?Math.max(0,Math.min(moveDB[key].pp,Math.floor(Number(sv.pp)||0))):moveDB[key].pp}});
     u.hp=Math.max(0,Math.min(u.maxHp,Math.floor(Number(data.hp)||0)));u.asleep=Math.max(0,Math.min(4,Math.floor(Number(data.asleep)||0)));
     u.xp=Math.max(0,Math.min(xpRequired(u.level,u.id)-1,Math.floor(Number(data.xp)||0)));
     ['moved','acted','paralyzed','burned','seeded','poisoned','slowed','trapped','critUp','counterUsed'].forEach(k=>u[k]=!!data[k]);

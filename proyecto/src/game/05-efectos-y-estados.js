@@ -56,7 +56,7 @@ function enterCamp(){
 }
 function openLunarPrompt(){ // la grieta de luz del campamento lleva al mapa «???»
  if(!campOn||!$('modal').hidden)return;
- showModal('🌑 ???','Una grieta de luz pálida se abre en el suelo del campamento. Al otro lado hay un lugar que no figura en ningún mapa… y algo te espera.\n\nEl combate es contra Pokémon salvajes y su nivel se ajusta al de tu equipo. ¿Quieres entrar?','🌑 ✨',[{text:'ENTRAR',fn:()=>{$('modal').hidden=true;beginCampaignEncounter('lunar','wild')}},{text:'QUEDARME',fn:()=>{$('modal').hidden=true}}]);
+ showModal('🌑 ???','Una grieta de luz pálida se abre en el suelo del campamento. Al otro lado hay un lugar que no figura en ningún mapa… y algo te espera.\n\nEl combate es contra Pokémon salvajes y su nivel es 10. ¿Quieres entrar?','🌑 ✨',[{text:'ENTRAR',fn:()=>{$('modal').hidden=true;beginCampaignEncounter('lunar','wild')}},{text:'QUEDARME',fn:()=>{$('modal').hidden=true}}]);
 }
 function campTick(time){
  if(!campOn)return;

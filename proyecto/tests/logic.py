@@ -71,6 +71,9 @@ for(const id of [11,14]){const mv=T.movesForLevel?T.movesForLevel(id,5):[];ok('e
  for(const id of [725,443]){const mv=T.movesForLevel(id,30);ok('especie '+id+' tiene movimientos válidos',mv.length>=2&&mv.every(k=>T.moveDB[k]),mv.join(','))}
  ok('Garra Dragón es de tipo Dragón',T.moveDB.dragonclaw.type==='dragon'&&T.chart.dragon.dragon===2);
  const q=P(443,20);T.statCalc(q);ok('Gible calcula stats',q.maxHp>0&&q.speed>0);}
+// partida con Metapod que solo conoce Fortaleza (reparación al cargar no debe fallar)
+{let err='';try{const m1=P(11,10),e1=P(19,5,'enemy');m1.x=1;m1.y=6;e1.x=9;e1.y=2;T.units=[m1,e1];const q=JSON.parse(JSON.stringify(T.makeSave()));q.party[0].moves=[{key:'harden',pp:20}];q.phase='player';T.validateSave(q)}catch(e){err=String(e)}
+ ok('cargar Metapod solo con Fortaleza no falla',err==='',err)}
 return R}
 """
 async def m():

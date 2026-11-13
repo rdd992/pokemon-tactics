@@ -109,8 +109,8 @@ const CAMPAIGN={
  '............','..X..X......','....X.......','..X....X....','............','....X....X..','..X.........','......X.....','..X.........','............'],wild:[{id:21,w:35,min:6,max:8},{id:16,w:30,min:6,max:7},{id:29,w:8,min:6,max:7},{id:32,w:8,min:6,max:7},{id:39,w:9,min:3,max:7},{id:56,w:10,min:7,max:7}],main:'Joven Ben · Ruta 3',mainKind:'trainer',team:[{id:19,level:10},{id:23,level:10},{id:21,level:10}]},
  route3b:{recommended:[11,14],name:'Ruta 3 · Sendero',icon:'⛰️',desc:'Otra entrenadora vigila el paso hacia el Monte Moon.',terrain:[
  '............','..X..X......','....X.......','..X....X....','............','....X....X..','..X.........','......X.....','..X.........','............'],wild:[],main:'Chica Robin · Jigglypuff Nv. 14',mainKind:'trainer',team:[{id:39,level:14}]},
- lunar:{recommended:[10,30],name:'???',icon:'🌑',desc:'Un lugar que no figura en ningún mapa.',terrain:[
- 'XXXXXXXXXXXX','XX........XX','X..X....X..X','X..........X','X...XX.....X','X..........X','X.....X....X','X..........X','XX.......X.X','XXXXXXXXXXXX'],wild:[{id:725,w:50,min:5,max:60},{id:443,w:50,min:5,max:60}],main:'???',mainKind:'wild'},
+ lunar:{recommended:[10,10],name:'???',icon:'🌑',desc:'Un lugar que no figura en ningún mapa.',terrain:[
+ 'XXXXXXXXXXXX','XX........XX','X..X....X..X','X..........X','X...XX.....X','X..........X','X.....X....X','X..........X','XX.......X.X','XXXXXXXXXXXX'],wild:[{id:725,w:50,min:10,max:10},{id:443,w:50,min:10,max:10}],main:'???',mainKind:'wild'},
  camp:{recommended:[11,14],name:'Campamento',icon:'⛺',desc:'Zona de descanso del equipo.',terrain:[
  '............','..X..X......','....X.......','..X....X....','............','....X....X..','..X.........','......X.....','..X.........','............'],wild:[],main:'',mainKind:'trainer',team:[]},
  mtmoonj:{recommended:[11,13],name:'Monte Moon',icon:'🌙',desc:'La cueva que cruza la montaña. Está llena de Zubat, Geodude y Paras, y de entrenadores que cuidan sus túneles. Con suerte, verás un Clefairy.',terrain:[

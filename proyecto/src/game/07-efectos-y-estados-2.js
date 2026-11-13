@@ -90,7 +90,7 @@ function beginCampaignEncounter0(id,kind){
  const originalParty=units.filter(u=>u.side==='player');
  const deployed=originalParty.map((old,i)=>{const q=restoreUnit(unitSnapshot(old),'player');const nb=id==='nugget'||id==='nuggetrocket'||id==='route25'||id==='route25b',nbw=id==='nugget'&&kind==='wild';q.x=(id==='route22'?[5,6,7,8]:nbw?[3,4,5,6]:nb?[4,5,6,7]:id==='route2'?[9,10,9,10]:[1,1,2,2])[i];q.y=(id==='route22'?[9,9,9,9]:nb?[8,8,8,8]:id==='route2'?[5,5,6,6]:[6,7,8,6])[i];q.moved=false;q.acted=false;q.counterUsed=false;q.origin=null;return q});
  let enemies;
- if(id==='lunar'){const av=Math.round(originalParty.reduce((s,u)=>s+u.level,0)/Math.max(1,originalParty.length)),L=Math.max(5,Math.min(60,av||5));enemies=[{id:725,level:L},{id:443,level:L}]} // ???: siempre Litten y Gabite, al nivel medio de tu equipo
+ if(id==='lunar'){const L=10;enemies=[{id:725,level:L},{id:443,level:L}]} // ???: siempre Litten y Gabite, nivel 10 fijo
  else if(kind==='main'&&id==='pallet')enemies=[{id:starterChoice===1?4:starterChoice===4?7:starterChoice===7?1:7,level:5}];
  else if(kind==='main'&&id==='route22')enemies=[{id:16,level:9},{id:starterChoice===1?4:starterChoice===4?7:starterChoice===7?1:7,level:9}];
  else if(kind==='main'&&id==='route1')enemies=[{id:16,level:3}];
