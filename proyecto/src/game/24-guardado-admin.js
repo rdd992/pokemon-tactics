@@ -50,7 +50,7 @@ function restoreUnit(data,side){
 }
 function makeSave(){
     return {schema:15,starterChoice,game:'pokemon-tactics-gba',savedAt:new Date().toISOString(),
-        chapter:stageId,unlocked:stageUnlocked,cleared:[...stageCleared],optionalCleared:[...optionalCleared],dexSeen:[...dexSeen],dexCaught:[...dexCaught],encounter:currentEncounter,phase,round,wins,thunderStones,money,moneyPaid:[...moneyPaid],bag:{...bag},fm:1,rod:fishRods,ro:1,r3:1,mj:1,mc:1,cr:1,nb:1,r25:1,fo:fossilChoice||'',fr:fossilRevived?1:0,tc:window.__tutCT||0,animationEnabled,
+        chapter:stageId,unlocked:stageUnlocked,cleared:[...stageCleared],optionalCleared:[...optionalCleared],dexSeen:[...dexSeen],dexCaught:[...dexCaught],encounter:currentEncounter,phase,round,wins,thunderStones,money,moneyPaid:[...moneyPaid],bag:{...bag},fm:1,rod:fishRods,ro:1,r3:1,mj:1,mc:1,cr:1,nb:1,r25:1,r6:1,fo:fossilChoice||'',fr:fossilRevived?1:0,tc:window.__tutCT||0,animationEnabled,
         storageBox:storageBox.map(unitSnapshot),
         party:units.filter(u=>u.side==='player').map(unitSnapshot),
         reserves:reserves.map(unitSnapshot),
@@ -121,6 +121,7 @@ function restoreSave(data){exitCamp();window.__tutCT=data&&data.tc!=null?data.tc
       if(!data.fm&&stageCleared.has('forestexit')){stageCleared.add('forestdoug');stageUnlocked=Math.min(STAGE_ORDER.length-1,stageUnlocked+1)}
       if(!data.mj){if(stageCleared.has('mtmoon'))stageCleared.add('mtmoonj');stageUnlocked=0;while(stageUnlocked<STAGE_ORDER.length-1&&stageCleared.has(STAGE_ORDER[stageUnlocked]))stageUnlocked++}
       if(!data.mc){if(stageCleared.has('mtmoonb'))stageCleared.add('mtmoonc');stageUnlocked=0;while(stageUnlocked<STAGE_ORDER.length-1&&stageCleared.has(STAGE_ORDER[stageUnlocked]))stageUnlocked++}
+      if(!data.r6){if(stageCleared.has('route6')){stageCleared.add('route6b');stageCleared.add('route6c')}stageUnlocked=0;while(stageUnlocked<STAGE_ORDER.length-1&&stageCleared.has(STAGE_ORDER[stageUnlocked]))stageUnlocked++}
       if(!data.r25){stageUnlocked=0;while(stageUnlocked<STAGE_ORDER.length-1&&stageCleared.has(STAGE_ORDER[stageUnlocked]))stageUnlocked++}
       if(!data.nb){stageUnlocked=0;while(stageUnlocked<STAGE_ORDER.length-1&&stageCleared.has(STAGE_ORDER[stageUnlocked]))stageUnlocked++}
       if(!data.cr){if(stageCleared.has('ceruleanguard')||stageCleared.has('cerulean'))stageCleared.add('ceruleanrival');stageUnlocked=0;while(stageUnlocked<STAGE_ORDER.length-1&&stageCleared.has(STAGE_ORDER[stageUnlocked]))stageUnlocked++}

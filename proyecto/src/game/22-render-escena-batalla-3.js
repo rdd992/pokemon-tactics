@@ -449,7 +449,7 @@ $('demoCrit').onclick=()=>previewAnimation(true);
 const styleLabel=()=>battleStyle==='face'?'FRENTE A FRENTE':'CLÁSICA (ESPALDAS)';
 function setBattleStyle(v){battleStyle=v;try{localStorage.setItem('pokemon-tactics-battle-style',v)}catch(e){}$('toggleBattleStyle').textContent='Escena: '+styleLabel();$('titleStyleToggle').textContent=styleLabel()}
 $('toggleBattleStyle').onclick=()=>setBattleStyle(battleStyle==='face'?'classic':'face');
-function setAnimSpeed(v){animSpeed=v;try{localStorage.setItem('pokemon-tactics-anim-speed',String(v))}catch(e){}$('toggleBattleSpeed').textContent='Velocidad de combate: '+speedLabel(v);{const cb=$('cinSpeed');if(cb)cb.textContent='⏩ Velocidad x'+String(v).replace('.',',')}$('titleSpeedToggle').textContent='x'+speedLabel(v).slice(1).toUpperCase()}
+function setAnimSpeed(v){animSpeed=v;try{localStorage.setItem('pokemon-tactics-anim-speed',String(v))}catch(e){}$('toggleBattleSpeed').textContent='Velocidad de combate: '+speedLabel(v);{const cb=$('cinSpeed');if(cb)cb.textContent='⏩ x'+String(v).replace('.',',')}$('titleSpeedToggle').textContent='x'+speedLabel(v).slice(1).toUpperCase()}
 {const cb=document.createElement('button');cb.type='button';cb.id='cinSpeed';cb.className='cinSpeed';cb.title='Cambiar la velocidad de las animaciones de combate';cb.onclick=e=>{e.stopPropagation();setAnimSpeed(nextAnimSpeed())};$('cinematic').append(cb)}
 $('toggleBattleSpeed').onclick=()=>setAnimSpeed(nextAnimSpeed());
 $('titleSpeedToggle').onclick=()=>setAnimSpeed(nextAnimSpeed());

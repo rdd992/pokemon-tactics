@@ -327,8 +327,15 @@ function fxDrawImpact(plan,delta,dur,crit,ex,ey){
    break}
   case 'fang':case 'fangGreen':{bigStar=false;const close=Math.min(1,k/.3),gap=44*(1-close)+4,col=plan.hit==='fang'?'#ffffff':'#d6f5a0';
    if(k<.85){fxTeeth(ex,ey-gap-18,ey-gap,5,15,col);fxTeeth(ex,ey+gap+18,ey+gap,5,15,col)}break}
-  case 'wing':{bigStar=false;const prog=Math.min(1,k/.4);
-   if(k<.85)for(let i=0;i<3;i++){const r=28+i*15;for(let a=-1.25;a<=-1.25+2.5*prog;a+=.14)fxSq(ex+Math.cos(a)*r*(ex<360?1:-1),ey+Math.sin(a)*r,i===1?7:5,i===1?'#ffffff':'#bfe3f2')}
+  case 'wing':{bigStar=false; // dos alas cruzadas: borde blanco + plumas en abanico (celeste), y plumas sueltas que caen
+   for(let i=0;i<2;i++){const p=Math.min(1,Math.max(0,(k-i*.2)/.3));if(p<=0||k>.84)continue;
+    const d=i?-1:1,A=[ex-56*d,ey-52],C=[ex+14*d,ey-14],B=[ex+50*d,ey+50],bz=(s,a,b,c)=>(1-s)*(1-s)*a+2*(1-s)*s*b+s*s*c,
+     pt=s=>[bz(s,A[0],C[0],B[0]),bz(s,A[1],C[1],B[1])],tg=s=>{const e=.01,a=pt(Math.max(0,s-e)),b=pt(Math.min(1,s+e)),l=Math.hypot(b[0]-a[0],b[1]-a[1])||1;return[(b[0]-a[0])/l,(b[1]-a[1])/l]};
+    for(let j=0;j<=10;j++){const s=j/10*p,P=pt(s),T=tg(s),N=[-T[1]*d,T[0]*d],L=46*(1-.55*j/10)*(.4+.6*Math.min(1,p*1.6));
+     fxLine(P[0],P[1],P[0]+N[0]*L,P[1]+N[1]*L,8,'#8fc4e6');fxLine(P[0],P[1],P[0]+N[0]*L*.93,P[1]+N[1]*L*.93,5,'#bfe3f2');fxLine(P[0],P[1],P[0]+N[0]*L*.8,P[1]+N[1]*L*.8,2,'#ffffff')}
+    for(let q=0;q<=p;q+=.025){const P=pt(q);fxSq(P[0],P[1],11,'#8fc4e6')}for(let q=0;q<=p;q+=.025){const P=pt(q);fxSq(P[0],P[1],7,'#ffffff')}}
+   if(k<.22)blit('star',ex,ey,Math.round(6*(1-k*4)),false,false);
+   for(let j=0;j<8;j++){const t=k-.2-j*.025;if(t<=0||k>.97)continue;const fx=ex+(j-3.5)*13+Math.sin(j*2.3+k*7)*9,fy=ey-26+t*80;fxSq(fx,fy,6,'#bfe3f2');fxSq(fx,fy,4,'#ffffff')}
    break}
   case 'dash':{bigStar=false;const dr=ex<360?1:-1;
    if(k<.4)blit('star',ex,ey,Math.round(6*(1-k*1.8)),false,false);break}

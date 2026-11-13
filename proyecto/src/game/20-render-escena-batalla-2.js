@@ -36,7 +36,7 @@ function pmdDraw(g,r,fi,scale,white,row){const ALT=!!(row&&r.alt[row]&&r.alt[row
   g.save();g.globalAlpha*=white;g.drawImage(c,dx,-dh,dw,dh);g.restore();return}
  if(g===sg&&PMD_SMOOTH!=='off'){const cs=pmdSmoothCanvas(IMG,fi*m.fw+b[0],b[1],sw,sh,PMD_SMOOTH),was=g.imageSmoothingEnabled;g.imageSmoothingEnabled=true;try{g.imageSmoothingQuality='high'}catch(e){}g.drawImage(cs,0,0,cs.width,cs.height,dx,-dh,dw,dh);g.imageSmoothingEnabled=was;return}
  g.drawImage(IMG,fi*m.fw+b[0],b[1],sw,sh,dx,-dh,dw,dh)}
-const POKE_H={725:4,443:7,1:7,2:10,3:20,4:6,5:11,6:17,7:5,8:10,9:16,10:3,11:7,12:11,13:3,14:6,15:10,16:3,17:11,18:15,19:3,20:7,21:3,22:12,23:9,24:16,25:4,26:8,27:6,28:10,29:4,30:8,32:5,33:9,35:6,39:5,41:8,42:16,46:3,47:10,56:5,57:10,74:4,75:10,81:3,88:9,63:9,66:8,43:3,69:5,100:5,138:4,140:5,90:3,95:88,109:6,110:12,116:4,117:12,60:6,61:10,129:9,130:65,98:4,54:8,79:12,118:6,119:13,120:8,121:11}; // estatura oficial (dm) de PokéAPI
+const POKE_H={52:4,725:4,443:7,1:7,2:10,3:20,4:6,5:11,6:17,7:5,8:10,9:16,10:3,11:7,12:11,13:3,14:6,15:10,16:3,17:11,18:15,19:3,20:7,21:3,22:12,23:9,24:16,25:4,26:8,27:6,28:10,29:4,30:8,32:5,33:9,35:6,39:5,41:8,42:16,46:3,47:10,56:5,57:10,74:4,75:10,81:3,88:9,63:9,66:8,43:3,69:5,100:5,138:4,140:5,90:3,95:88,109:6,110:12,116:4,117:12,60:6,61:10,129:9,130:65,98:4,54:8,79:12,118:6,119:13,120:8,121:11}; // estatura oficial (dm) de PokéAPI
 function feSpriteInfo(u,isLeft){
  const pr=pmdOk(pkId(u));if(pr){const b=pr.m.bb,bw=b[2]-b[0],bh=b[3]-b[1];let sc=Math.min(6,240/bh)*Math.max(.75,Math.min(1,Math.pow(Math.sqrt(bw*bh)/26,.7)))*(u.id===74?.84:1)*(Math.sqrt(bw*bh)>40?1.15:.88);{const H=POKE_H[u.id];if(H){const big=H>=30,hug=H>=60;sc=Math.min(Math.max(85,Math.min(hug?400:big?330:270,190*Math.pow(H/7,.6)))/bh,(hug?390:big?330:260)/bw)}}return {sprite:null,ready:true,local:false,pmd:pr,bb:{sw:bw,sh:bh},scale:sc*.74,half:bw*sc*.74/2}}
  const sprite=fetchSprite(u.id),ready=!!(sprite&&sprite.ready),local=!ready||sprite.source==='local';
@@ -118,14 +118,20 @@ function drawFECreature(u,isLeft,t,ev,plan,reach){
   sg.restore();sg.save();sg.globalAlpha=alpha;sg.translate(Math.round(x),Math.round(y));const pT=isTarget&&!ev.miss&&t>=hitAt&&t<hitAt+330;sg.rotate(pT?idleRot*.5:0);sg.scale(zoom*(pT?idleSX:1)*(isLeft?1:-1),zoom*(pT?idleSY:1));sg.imageSmoothingEnabled=false;
   const baseX=feSolo?360:(isLeft?FE.pX:FE.eX),moving=Math.abs(x-baseX)>3||(isAttacker&&!isStatus&&plan&&plan.hop&&t>impact-340&&t<impact+700);
   let an='Idle',ms=t+(ev.idleOff||0)+u.id*97,loop=true,hopLift=0;
-  const SR=pmdGet(pkId(u),'Shoot'),ShR=(plan&&(plan.key==='shock'||plan.key==='bolt'))?pmdGet(pkId(u),'Shock'):null,KR=pmdGet(pkId(u),'Strike'),claw=['scratch','slash','metalclaw','furyswipes','crushclaw'].includes(fxMoveKey(ev.move)),AR=(ShR&&ShR.ready)?ShR:(plan&&plan.proj&&SR&&SR.ready)?SR:(claw&&KR&&KR.ready)?KR:pmdGet(pkId(u),'Attack'),HR=pmdGet(pkId(u),'Hurt');
+  const SR=pmdGet(pkId(u),'Shoot'),ShR=(plan&&(plan.key==='shock'||plan.key==='bolt'))?pmdGet(pkId(u),'Shock'):null,KR=pmdGet(pkId(u),'Strike'),claw=['scratch','slash','metalclaw','furyswipes','crushclaw','wing'].includes(fxMoveKey(ev.move)),AR=(ShR&&ShR.ready)?ShR:(plan&&plan.proj&&SR&&SR.ready)?SR:(claw&&KR&&KR.ready)?KR:pmdGet(pkId(u),'Attack'),HR=pmdGet(pkId(u),'Hurt');
   const WR=pmdGet(pkId(u),'Walk'),s0r=crit?1500:760,mel=isAttacker&&!isStatus&&plan&&!plan.proj&&!plan.dash&&!plan.hop&&!plan.still&&ev.move.shape==='melee',wEnd=(AR&&AR.ready)?Math.min(impact-110,impact-pmdPre(AR)/(AR===KR?.6:1)):impact-110;
-  const WD=pmdGet(pkId(u),'Withdraw');
+  const WD=pmdGet(pkId(u),'Withdraw'),HWG=(isAttacker&&fxMoveKey(ev.move)==='wing')?pmdGet(pkId(u),'Hop'):null;
   const HP=(isAttacker&&!isStatus&&plan&&(plan.key==='shock'||plan.key==='bolt'))?pmdGet(pkId(u),'Hop'):null,HSa=!!(HP&&HP.ready&&ShR&&ShR.ready&&AR===ShR),hsS=(crit?1490:980)-(HSa?pmdPre(ShR):0),hsE=impact+150;
   const CRG=(crit&&isAttacker&&!isStatus&&!ev.miss)?pmdGet(pkId(u),'Charge'):null,crgEnd=Math.min(1180,HSa?hsS-220:1180);
   if(CRG&&CRG.ready&&t>=430&&t<crgEnd){an='Charge';ms=t-430;loop=true;white=Math.max(white,.12+.16*(.5+.5*Math.sin(t/45)))} // v653: crítico ⇒ se agacha y junta energía
   else if(HSa&&t>=hsS-200&&t<hsE+134){if(t<hsS){an='Hop';ms=t-(hsS-200);loop=false}else if(t<hsE){an='Shock';ms=t-hsS;loop=true;hopLift=HP.m.lift||25}else{an='Hop';ms=266.7+(t-hsE);loop=false}}
   else if(isAttacker&&isStatus&&fxMoveKey(ev.move)==='withdraw'&&WD&&WD.ready&&t>=560&&t<1700){an='Withdraw';ms=t-560;loop=true;white=Math.max(0,1-(t-560)/130,1-(1700-t)/130)}
+  else if(isAttacker&&!isStatus&&plan&&plan.key==='wing'&&HWG&&HWG.ready&&KR&&KR.ready&&t>=s0r-300&&t<impact+420){ // Ataque Ala: salto (Hop) → vuelo horizontal (Strike) hasta el rival → aletazo
+   const fst=(R,f)=>{let a=0;for(let q=0;q<f;q++)a+=R.m.d[q];return a*16.667},tA=s0r+150,ease=Math.min(1,Math.max(0,(t-tA+100)/160))*(1-Math.min(1,Math.max(0,(t-impact-120)/260)));
+   if(t<tA){an='Hop';ms=Math.min(1,(t-(s0r-300))/(tA-(s0r-300)))*fst(HWG,5);loop=false}
+   else if(t<impact-40){an='Strike';ms=fst(KR,6)+((t-tA)*.9)%(fst(KR,11)-fst(KR,6));loop=false;hopLift=5*ease}
+   else if(t<impact+200){an='Strike';ms=fst(KR,5)+(t-(impact-40))*.25;loop=false;hopLift=5*ease}
+   else{an='Strike';ms=fst(KR,11);loop=false;hopLift=5*ease}}
   else if(mel&&WR&&WR.ready&&t>=s0r&&t<wEnd){an='Walk';ms=(t-s0r)*2.3;loop=true}
   else if(isAttacker&&!isStatus&&AR&&AR.ready){const mc2=fxMoveKey(ev.move)==='metalclaw'&&AR===KR&&!ev.miss;const fs=(AR===KR&&!mc2)?.6:1;let st=(plan&&plan.proj?(crit?1490:980):impact)-pmdPre(AR)/fs;if(mc2&&t>=st+370)st+=370;if(t>=st&&t<st+pmdTotal(AR)*16.667/fs+120+(mc2?370:0)){an=(ShR&&AR===ShR?'Shock':AR===SR?'Shoot':AR===KR?'Strike':'Attack');ms=(t-st)*fs;loop=false;if(AR!==SR&&AR!==KR&&ev.move.shape==='melee')ms=Math.min(pmdTotal(AR)*16.667*.999,t>=impact?pmdPre(AR)+(t-impact):Math.max(0,Math.pow(Math.max(0,Math.min(1,(t-(crit?1500:760))/(impact-(crit?1500:760)))),2)*pmdPre(AR)))}else if(AR!==SR&&AR!==KR&&ev.move.shape==='melee'&&t>=(crit?1200:460)&&t<st){an='Attack';ms=Math.max(0,Math.pow(Math.max(0,Math.min(1,(t-(crit?1500:760))/(impact-(crit?1500:760)))),2)*pmdPre(AR));loop=false}}
   else if(isTarget&&!ev.miss&&HR&&HR.ready&&t>=hitAt&&t<hitAt+700){an='Hurt';ms=t-hitAt;loop=false}
@@ -181,7 +187,7 @@ function drawFEFrame(ev,t,duration){
  const healK=ev.heal?Math.max(0,Math.min(1,(t-impact-250)/600)):0;
  const hpOf=u=>u===ev.target?hpNow:(u===ev.attacker?ev.from+Math.round((ev.heal||0)*healK):u.hp);
  const aInfo=feSpriteInfo(ev.attacker,attackerIsPlayer),tInfo=feSpriteInfo(ev.target,!attackerIsPlayer);
- const reach=Math.max(50,(FE.eX-FE.pX)-aInfo.half-tInfo.half+8+(aInfo.pmd?(['scratch','slash','metalclaw','furyswipes','crushclaw'].includes(fxMoveKey(ev.move))&&pmdGet(pkId(ev.attacker),'Strike')?-26:52):0)+((ev.move&&(ev.move.shape==='melee'||ev.move.range<=1))?(['scratch','slash','metalclaw','furyswipes','crushclaw'].includes(fxMoveKey(ev.move))?62:(aInfo.pmd?-6:20)):0)-(fxMoveKey(ev.move)==='lowkick'?135:fxMoveKey(ev.move)==='karate'?70:0));
+ const reach=Math.max(50,(FE.eX-FE.pX)-aInfo.half-tInfo.half+8+(aInfo.pmd?(['scratch','slash','metalclaw','furyswipes','crushclaw','wing'].includes(fxMoveKey(ev.move))&&pmdGet(pkId(ev.attacker),'Strike')?-26:52):0)+((ev.move&&(ev.move.shape==='melee'||ev.move.range<=1))?(['scratch','slash','metalclaw','furyswipes','crushclaw','wing'].includes(fxMoveKey(ev.move))?62:(aInfo.pmd?-6:20)):0)-(fxMoveKey(ev.move)==='lowkick'?135:fxMoveKey(ev.move)==='karate'?70:0));
  const shaking=t>impact&&t<impact+(crit?460:220)&&!ev.miss;
  sg.save();if(shaking)sg.translate((Math.sin(t*.67)*(crit?12:5))|0,(Math.cos(t*.54)*(crit?9:3))|0);
  if(!ev.miss&&t>impact&&t<impact+260){const z=1+(crit?.055:.03)*Math.sin((t-impact)/260*Math.PI);sg.translate(360,330);sg.scale(z,z);sg.translate(-360,-330)}
@@ -201,10 +207,10 @@ function drawFEFrame(ev,t,duration){
  drawFEPanel(370,486,336,102,enemy,false,hpOf(enemy),ev,ev.attacker===enemy);
  // cinta superior con el ataque
  const title=(ev.counter?'CONTRAATAQUE · ':'')+base[ev.attacker.id].name.toUpperCase()+' · '+ev.move.name.toUpperCase();
- sg.font='900 17px monospace';const rw=Math.min(700,Math.ceil(sg.measureText(title).width)+70);
+ let tfs=17;sg.font='900 17px monospace';while(tfs>11&&Math.ceil(sg.measureText(title).width)+70>540){tfs--;sg.font='900 '+tfs+'px monospace'}const rw=Math.min(540,Math.ceil(sg.measureText(title).width)+70); // el título no llega a la esquina del botón de velocidad
  px(360-rw/2+4,22,rw,38,'#08121c');px(360-rw/2,18,rw,38,'#0f1c2e');px(360-rw/2+3,21,rw-6,32,'#27425c');
  px(360-rw/2+3,21,10,32,(FX_TYPE[ev.move.type]||FX_TYPE.normal)[0]);
- textPixel(title,360+5,38,17,'#fff3cf','center');
+ textPixel(title,360+5,38,tfs,'#fff3cf','center');
  // resultado del golpe
  sg.save();if(ev.seamOut)sg.globalAlpha=Math.max(0,Math.min(1,(duration-t)/220));
  if(t>impact){

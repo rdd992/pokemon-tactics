@@ -7,3 +7,5 @@ window.__T.R3=()=>R3;
 window.__T.enterCamp=()=>{phase='win';currentEncounter=null;enterCamp()};
 window.__T.beginEnemy=()=>beginEnemy();window.__T.phase=()=>phase;
 window.__T.openLunarPrompt=()=>openLunarPrompt();window.__T.setLevels=n=>{for(const u of units)if(u.side==='player')u.level=n};
+window.__T.fxFrame=(plan,delta,dur,ex,ey)=>{sg.save();sg.clearRect(0,0,sceneCanvas.width,sceneCanvas.height);sg.fillStyle='#7fb8e0';sg.fillRect(0,0,sceneCanvas.width,sceneCanvas.height);fxDrawImpact(plan,delta,dur,false,ex,ey);sg.restore();return sceneCanvas.toDataURL()};
+window.__T.feFrame=(a,t,dm)=>{const at=units.find(u=>u.side==='player'),tg=units.find(u=>u.side==='enemy');const ev={attacker:at,target:tg,move:moveDB[a],miss:false,critical:false,damage:20,defBefore:tg.hp,defAfter:Math.max(1,tg.hp-20),from:at.hp,eff:1,hits:1,idleOff:0};drawFEFrame(ev,t,3000);return sceneCanvas.toDataURL()};

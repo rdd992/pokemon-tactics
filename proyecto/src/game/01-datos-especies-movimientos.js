@@ -1,5 +1,6 @@
 // Especies encontrables en las primeras rutas de Kanto, con estadísticas base de Gen III.
 Object.assign(base,{
+52:{name:'Meowth',types:['normal'],stats:[40,45,35,40,40,90],emoji:'🐱',move:3},
 725:{name:'Litten',types:['fire'],stats:[45,65,40,60,40,70],emoji:'🐈‍⬛',move:4},
 443:{name:'Gible',types:['dragon','ground'],stats:[58,70,45,40,45,42],emoji:'🦈',move:4},
 19:{name:'Rattata',types:['normal'],stats:[30,56,35,25,35,72],emoji:'🐭',move:5},
@@ -161,6 +162,7 @@ function useEvoStone(u){
 // Tabla local FireRed / LeafGreen para los Pokémon del primer arco (incluye cada nivel inicial).
 // Cada fila corresponde a un aprendizaje por nivel. No hay ataques adelantados por comodidad.
 const learnsets={
+ 52:[[1,'scratch'],[1,'growl'],[11,'bite'],[41,'slash']],
  725:[[1,'scratch'],[1,'ember'],[1,'growl'],[4,'leer'],[7,'bite'],[16,'slash'],[28,'flame']],
  443:[[1,'tackle'],[3,'sand'],[7,'dragonrage'],[23,'slash'],[28,'dragonclaw'],[34,'rock']],
  25:[[1,'growl'],[1,'shock'],[6,'tailwhip'],[8,'wave'],[11,'quick'],[15,'doubleteam'],[20,'slam'],[26,'bolt']],

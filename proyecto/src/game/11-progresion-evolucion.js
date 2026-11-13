@@ -132,7 +132,9 @@ function evolvePokemon(u,to){
     u.lastEvoOffer=u.level;
     fetchSprite(to);
     log('🌟 ¡'+name+' evolucionó a '+base[to].name+'!');
-    for(const row of (learnsets[to]||[]))if(row.level<=1&&moveDB[row.key]&&!u.moves.some(z=>z.key===row.key))pendingProgress.push({kind:'learn',u,key:row.key});
+    // Como en FRLG: al evolucionar solo se aprende el movimiento del nivel exacto. Excepción: si no conoce ningún ataque (Metapod/Kakuna), se ofrecen los ataques de nivel 1 de la nueva especie.
+    {const hasAtk=u.moves.some(z=>moveDB[z.key]&&moveDB[z.key].power>0);
+     for(const row of (learnsets[to]||[]))if(moveDB[row.key]&&!u.moves.some(z=>z.key===row.key)&&(row.level===u.level||(!hasAtk&&row.level<=1&&moveDB[row.key].power>0)))pendingProgress.push({kind:'learn',u,key:row.key})}
     updateUI();
 }
 // Todas las decisiones (aprender, olvidar, evolucionar, cancelar) se resuelven antes de reanudar combate.

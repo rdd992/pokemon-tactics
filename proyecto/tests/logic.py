@@ -68,7 +68,7 @@ for(const id of [11,14]){const mv=T.movesForLevel?T.movesForLevel(id,5):[];ok('e
 {const L=T.base[725],G=T.base[443];
  ok('Litten y Gible existen',L&&G&&L.types[0]==='fire'&&G.types.join()==='dragon,ground');
  ok('??? no está en la campaña',!T.STAGE_ORDER.includes('lunar')&&T.CAMPAIGN.lunar&&T.CAMPAIGN.lunar.name==='???');
- for(const id of [725,443]){const mv=T.movesForLevel(id,30);ok('especie '+id+' tiene movimientos válidos',mv.length>=2&&mv.every(k=>T.moveDB[k]),mv.join(','))}
+ for(const id of [725,443,52]){const mv=T.movesForLevel(id,30);ok('especie '+id+' tiene movimientos válidos',mv.length>=2&&mv.every(k=>T.moveDB[k]),mv.join(','))}
  ok('Garra Dragón es de tipo Dragón',T.moveDB.dragonclaw.type==='dragon'&&T.chart.dragon.dragon===2);
  const q=P(443,20);T.statCalc(q);ok('Gible calcula stats',q.maxHp>0&&q.speed>0);}
 // partida con Metapod que solo conoce Fortaleza (reparación al cargar no debe fallar)

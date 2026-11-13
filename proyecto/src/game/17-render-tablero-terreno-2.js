@@ -1,4 +1,4 @@
-const EXTRA_STAGES=new Set(['route3','route3b','mtmoonj','mtmoon','mtmoonc','ceruleanrival','mtmoonb','route4','ceruleanguard','cerulean','nugget','nuggetrocket','nuggettrain','route25','route25b','route25train','route5','route6','vermilionrival','vermilionguard','vermilion']);
+const EXTRA_STAGES=new Set(['route3','route3b','mtmoonj','mtmoon','mtmoonc','ceruleanrival','mtmoonb','route4','ceruleanguard','cerulean','nugget','nuggetrocket','nuggettrain','route25','route25b','route25train','route5','route6','route6b','route6c','vermilionrival','vermilionguard','vermilion']);
 function gbaBuildExtra(id){
     const out=document.createElement('canvas');out.width=720;out.height=600;const o=out.getContext('2d');
     const nat=document.createElement('canvas');nat.width=192;nat.height=160;const b=nat.getContext('2d');b.imageSmoothingEnabled=false;

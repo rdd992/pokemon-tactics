@@ -700,3 +700,9 @@ html:has(#titleOverlay:not([hidden])),body:has(#titleOverlay:not([hidden])){over
  .heroLogo .hl3{margin-top:6px;max-width:100%;padding:7px 12px;font-size:9px;letter-spacing:.12em;line-height:1.35;text-align:center;justify-content:center;border-radius:14px}
  .heroFoot{bottom:7px;padding:0 14px;font-size:8.5px;line-height:1.3}
 }
+
+/* v742: durante la escena de combate (cinemática) se oculta la Tierra del tablero lunar para que no aparezca duplicada */
+body:has(#cinematic:not([hidden])) .lunarEarth{display:none!important}
+
+/* v743: botón de velocidad más pequeño para no tapar el título del movimiento */
+.cinSpeed{top:6px;right:6px;padding:4px 9px;font-size:11px}
