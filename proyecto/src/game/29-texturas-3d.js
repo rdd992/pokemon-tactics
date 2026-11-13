@@ -624,6 +624,7 @@ function r3build(){
   const fx=6.5,fz=4.5,F=new T.Group();F.position.set(fx,0,fz);F.scale.setScalar(1.55);g.add(F);
   const warm=(c,k)=>{const m=new T.MeshBasicMaterial({color:c,toneMapped:false});m.color.multiplyScalar(k);return m};const stoneC=['#d6a878','#c2925f','#e0b88a'];for(let i=0;i<9;i++){const a=i/9*Math.PI*2,s=new T.Mesh(new T.IcosahedronGeometry(.1+.02*(i%3),0),warm(stoneC[i%3],1.6));s.position.set(Math.cos(a)*.34,.07,Math.sin(a)*.34);s.scale.set(1.15,.75,1);s.rotation.y=i;s.castShadow=true;F.add(s)}
   for(let i=0;i<4;i++){const l=new T.Mesh(new T.CylinderGeometry(.045,.05,.5,6),warm(i%2?'#8a5a30':'#6e4524',1.7));l.rotation.z=Math.PI/2;l.rotation.y=i*Math.PI/4+.3;l.position.y=.1+(i%2)*.05;F.add(l)}
+  if(campNight()){
   const fm=(c,o)=>{const m=new T.MeshBasicMaterial({color:c,transparent:true,opacity:o,toneMapped:false,depthWrite:false});m.color.multiplyScalar(2.6);return m};
   const flames=[[.2,.62,'#e8531a',.9,0],[.15,.5,'#ff9a2a',.95,1.7],[.1,.38,'#ffe27a',.95,3.1]].map(([r,h,c,o,ph])=>{const m=new T.Mesh(new T.ConeGeometry(r,h,7),fm(c,o));m.position.y=.12+h/2;m.userData={ph,h};F.add(m);return m});
   const gc=document.createElement('canvas');gc.width=gc.height=64;{const q=gc.getContext('2d'),gr=q.createRadialGradient(32,32,2,32,32,32);gr.addColorStop(0,'rgba(255,170,70,.85)');gr.addColorStop(.35,'rgba(255,120,40,.38)');gr.addColorStop(1,'rgba(255,100,30,0)');q.fillStyle=gr;q.fillRect(0,0,64,64)}
@@ -633,6 +634,9 @@ function r3build(){
   const eg=new T.BufferGeometry();eg.setAttribute('position',new T.BufferAttribute(ep,3));
   const embers=new T.Points(eg,new T.PointsMaterial({color:0xffb347,size:.07,transparent:true,opacity:.9,depthWrite:false,toneMapped:false}));embers.frustumCulled=false;F.add(embers);
   R3.anim.fire={flames,glow,embers,ed,ep}}
+  else{const ash=new T.Mesh(new T.CircleGeometry(.24,12),new T.MeshBasicMaterial({color:0x2a2420,transparent:true,opacity:.85}));ash.rotation.x=-Math.PI/2;ash.position.y=.03;F.add(ash);for(const l of F.children)if(l.geometry&&l.geometry.type==='CylinderGeometry')l.material=warm('#3b2c22',1)} // de día la fogata está apagada: cenizas y troncos quemados
+ }
+
  // luz y fondo del escenario
  R3.hemi.color.setHex(th.hemi[0]);R3.hemi.groundColor.setHex(th.hemi[1]);R3.hemi.intensity=th.hemiI;R3.sun.color.setHex(th.sun);R3.sun.intensity=th.sunI;
  {{const bgc=pxaBackdrop(th,false);R3.wrap.style.background='url('+bgc.toDataURL()+') center/100% 100%';R3.wrap.style.imageRendering='pixelated'}}
