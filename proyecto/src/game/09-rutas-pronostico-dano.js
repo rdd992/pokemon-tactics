@@ -94,6 +94,7 @@ function showForecast(u,m,targets){
 }
 function updateTileHint(){
  hideForecast();
+    if(window.__campOn&&hovered&&hovered.x===6&&hovered.y===1){$('tileHint').textContent='🌑 Una grieta de luz pálida · toca para entrar';return}
     if(!hovered||(!usingKeyboard&&!mouseOnBoard)||phase!=='player'||locked){$('tileHint').textContent='';return}
     let u=occupied(hovered.x,hovered.y),t=terrain(hovered.x,hovered.y);
     // v0.22: apuntar Poké Balls usa el mismo reconocimiento de blanco que un ataque.
@@ -354,7 +355,7 @@ function updateUI(){updateMoveInfo();updateMoneyUI();dexTrack();$('openDex').sty
       else if(ce.kind==='practice')who='🥋 Entrenamiento de gimnasio';
       else if(ce.fish)who='🎣 Pesca';
       else who='🌿 Pokémon salvajes';
-      const html='<span class="diLoc">'+esc(cd.icon+' '+String(cd.name||'').toUpperCase())+' · KANTO</span><span class="diWho">'+who+'</span>'+(foes.length?'<span class="diFoes">'+foes.join(' · ')+'</span>':'');
+      const html='<span class="diLoc">'+esc(cd.icon+' '+String(cd.name||'').toUpperCase())+(ce.id==='lunar'?'':' · KANTO')+'</span><span class="diWho">'+who+'</span>'+(foes.length?'<span class="diFoes">'+foes.join(' · ')+'</span>':'');
       if(di._h!==html||!di.querySelector('.diLoc')){di._h=html;di.innerHTML=html}di.classList.add('duel')}}}catch(e){}
     $('selection').textContent=focus?base[focus.id].name:'Sin selección';
     $('enemyInfo').classList.toggle('hide',!inspectedEnemy);

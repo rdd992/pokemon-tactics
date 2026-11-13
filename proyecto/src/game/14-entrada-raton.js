@@ -22,6 +22,7 @@ canvas.addEventListener('click',ev=>{
         hovered=p;
         keyboardCursor={...p};
         updateTileHint();
+        if(window.__campOn&&p.x===6&&p.y===1&&typeof openLunarPrompt==='function'){openLunarPrompt();return} // grieta de luz del campamento
         // Un clic sobre la unidad selecciona su rango. El siguiente confirma el destino.
         selectCell(p.x,p.y)
     }

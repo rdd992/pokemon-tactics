@@ -69,7 +69,7 @@ function beginCampaignEncounter0(id,kind){
  if(optional){
    if(!DEVU&&!stageCleared.has('viridian'))return;
    if(!DEVU&&kind==='wild'&&!optionalCleared.has('route22'))return;
- }else if(!DEVU&&kind!=='main'&&!stageCleared.has(id)){
+ }else if(!DEVU&&id!=='lunar'&&kind!=='main'&&!stageCleared.has(id)){
    log('🔒 Primero debes superar el desafío principal de '+CAMPAIGN[id].name+' para desbloquear su entrenamiento.');return;
  }
  if(kind==='main'&&id==='viridian'){
@@ -90,7 +90,8 @@ function beginCampaignEncounter0(id,kind){
  const originalParty=units.filter(u=>u.side==='player');
  const deployed=originalParty.map((old,i)=>{const q=restoreUnit(unitSnapshot(old),'player');const nb=id==='nugget'||id==='nuggetrocket'||id==='route25'||id==='route25b',nbw=id==='nugget'&&kind==='wild';q.x=(id==='route22'?[5,6,7,8]:nbw?[3,4,5,6]:nb?[4,5,6,7]:id==='route2'?[9,10,9,10]:[1,1,2,2])[i];q.y=(id==='route22'?[9,9,9,9]:nb?[8,8,8,8]:id==='route2'?[5,5,6,6]:[6,7,8,6])[i];q.moved=false;q.acted=false;q.counterUsed=false;q.origin=null;return q});
  let enemies;
- if(kind==='main'&&id==='pallet')enemies=[{id:starterChoice===1?4:starterChoice===4?7:starterChoice===7?1:7,level:5}];
+ if(id==='lunar'){const av=Math.round(originalParty.reduce((s,u)=>s+u.level,0)/Math.max(1,originalParty.length)),L=Math.max(5,Math.min(60,av||5));enemies=[{id:725,level:L},{id:443,level:L}]} // ???: siempre Litten y Gabite, al nivel medio de tu equipo
+ else if(kind==='main'&&id==='pallet')enemies=[{id:starterChoice===1?4:starterChoice===4?7:starterChoice===7?1:7,level:5}];
  else if(kind==='main'&&id==='route22')enemies=[{id:16,level:9},{id:starterChoice===1?4:starterChoice===4?7:starterChoice===7?1:7,level:9}];
  else if(kind==='main'&&id==='route1')enemies=[{id:16,level:3}];
  else if(kind==='main'&&id==='route2in')enemies=originalParty.length>=2?[{id:19,level:4},{id:10,level:5}]:[{id:19,level:4}];
@@ -114,7 +115,7 @@ function beginCampaignEncounter0(id,kind){
   enemies=enemies.slice(0,want);
   for(let tries=0;enemies.length<want&&tries<40;tries++){const pick=pickWild(data.wild);if(enemies.some(e=>e.id===pick.id)&&new Set(data.wild.map(w=>w.id)).size>enemies.length&&tries<30)continue;enemies.push(pick)}
  }
- const locations=id==='route2'?[[1,3],[2,4],[1,5],[2,6]]:id==='forestdoug'?[[9,2],[10,3],[9,4],[10,4]]:id==='forestexit'?[[9,2],[10,2],[9,3],[10,3]]:id==='route3'?[[8,5],[9,5],[8,6],[9,6]]:id==='route3b'?[[6,2],[7,2],[8,2],[7,3]]:id==='mtmoonj'?[[7,2],[8,2],[8,3],[7,3]]:id==='mtmoon'?[[7,1],[8,1],[7,2],[8,2]]:id==='ceruleanrival'?[[6,1],[7,1],[6,2],[7,2]]:id==='route5'?[[8,3],[9,4],[8,5],[9,5]]:id==='route6'?[[8,2],[9,3],[8,4],[9,4]]:id==='vermilionrival'?[[5,5],[6,5],[7,5],[8,5]]:id==='vermilionguard'?[[4,3],[7,3],[5,3],[6,3]]:id==='vermilion'?[[5,1],[6,1],[5,3],[6,3]]:id==='route22'?[[6,2],[7,2],[5,2],[8,2]]:id==='cerulean'?[[5,1],[6,1],[5,2],[6,2]]:id==='ceruleanguard'?[[4,3],[7,3],[5,3],[6,3]]:(id==='route25'||id==='route25b')?[[4,3],[5,3],[6,3],[5,2]]:id==='nugget'?(kind==='wild'?[[3,2],[4,2],[5,2],[4,3]]:[[5,2],[6,2],[5,3],[6,3]]):id==='nuggetrocket'?[[5,1],[6,1],[5,2],[6,2]]:id==='route4'?[[8,3],[9,4],[8,5],[9,5]]:id==='mtmoonc'?[[7,1],[8,1],[7,2],[8,2]]:[[9,1],[10,2],[9,3],[10,3]];
+ const locations=id==='route2'?[[1,3],[2,4],[1,5],[2,6]]:id==='forestdoug'?[[9,2],[10,3],[9,4],[10,4]]:id==='forestexit'?[[9,2],[10,2],[9,3],[10,3]]:id==='route3'?[[8,5],[9,5],[8,6],[9,6]]:id==='route3b'?[[6,2],[7,2],[8,2],[7,3]]:id==='mtmoonj'?[[7,2],[8,2],[8,3],[7,3]]:id==='mtmoon'?[[7,1],[8,1],[7,2],[8,2]]:id==='ceruleanrival'?[[6,1],[7,1],[6,2],[7,2]]:id==='route5'?[[8,3],[9,4],[8,5],[9,5]]:id==='route6'?[[8,2],[9,3],[8,4],[9,4]]:id==='vermilionrival'?[[5,5],[6,5],[7,5],[8,5]]:id==='vermilionguard'?[[4,3],[7,3],[5,3],[6,3]]:id==='vermilion'?[[5,1],[6,1],[5,3],[6,3]]:id==='route22'?[[6,2],[7,2],[5,2],[8,2]]:id==='cerulean'?[[5,1],[6,1],[5,2],[6,2]]:id==='ceruleanguard'?[[4,3],[7,3],[5,3],[6,3]]:(id==='route25'||id==='route25b')?[[4,3],[5,3],[6,3],[5,2]]:id==='nugget'?(kind==='wild'?[[3,2],[4,2],[5,2],[4,3]]:[[5,2],[6,2],[5,3],[6,3]]):id==='nuggetrocket'?[[5,1],[6,1],[5,2],[6,2]]:id==='route4'?[[8,3],[9,4],[8,5],[9,5]]:id==='mtmoonc'?[[7,1],[8,1],[7,2],[8,2]]:id==='lunar'?[[9,2],[10,5]]:[[9,1],[10,2],[9,3],[10,3]];
  const actualWild=(kind==='wild'||(kind==='main'&&data.mainKind==='wild'));
  const foes=enemies.map((e,i)=>unit(e.id,'enemy',locations[i][0],locations[i][1],e.level,e.moves||movesForLevel(e.id,e.level),actualWild?rollIVs():null));
  if(kind!=='main'||data.mainKind==='wild')for(const e of enemies)fetchCaptureRate(e.id);

@@ -6,3 +6,4 @@ window.__T.openActions=()=>{selected=units.find(u=>u.side==='player');phase='pla
 window.__T.R3=()=>R3;
 window.__T.enterCamp=()=>{phase='win';currentEncounter=null;enterCamp()};
 window.__T.beginEnemy=()=>beginEnemy();window.__T.phase=()=>phase;
+window.__T.openLunarPrompt=()=>openLunarPrompt();window.__T.setLevels=n=>{for(const u of units)if(u.side==='player')u.level=n};

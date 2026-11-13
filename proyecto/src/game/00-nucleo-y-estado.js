@@ -61,6 +61,8 @@ rage:{name:'Furia',type:'normal',power:20,category:'physical',acc:100,pp:20,shap
 razor:{name:'Hoja Afilada',type:'grass',power:55,category:'special',acc:95,pp:25,shape:'line',range:3,detail:'Línea hasta 3 casillas'},
 scary:{name:'Cara Susto',type:'normal',power:0,category:'status',acc:90,pp:10,shape:'point',range:2,effect:'slow',detail:'Reduce movilidad enemiga'},
 flame:{name:'Lanzallamas',type:'fire',power:95,category:'special',acc:100,pp:15,shape:'line',range:3,effect:'burn10',detail:'Línea hasta 3 casillas'},
+dragonrage:{name:'Furia Dragón',type:'dragon',power:40,category:'special',acc:100,pp:10,shape:'point',range:2,detail:'Hasta 2 casillas'},
+dragonclaw:{name:'Garra Dragón',type:'dragon',power:80,category:'special',acc:100,pp:15,shape:'melee',range:1,detail:'Ataque a una casilla'},
 slash:{name:'Cuchillada',type:'normal',power:70,category:'physical',acc:100,pp:20,shape:'melee',range:1,detail:'Ataque físico a una casilla'},
 wing:{name:'Ataque Ala',type:'flying',power:60,category:'physical',acc:100,pp:35,shape:'melee',range:1,detail:'Ataque de contacto'}
 };

@@ -109,6 +109,8 @@ const CAMPAIGN={
  '............','..X..X......','....X.......','..X....X....','............','....X....X..','..X.........','......X.....','..X.........','............'],wild:[{id:21,w:35,min:6,max:8},{id:16,w:30,min:6,max:7},{id:29,w:8,min:6,max:7},{id:32,w:8,min:6,max:7},{id:39,w:9,min:3,max:7},{id:56,w:10,min:7,max:7}],main:'Joven Ben · Ruta 3',mainKind:'trainer',team:[{id:19,level:10},{id:23,level:10},{id:21,level:10}]},
  route3b:{recommended:[11,14],name:'Ruta 3 · Sendero',icon:'⛰️',desc:'Otra entrenadora vigila el paso hacia el Monte Moon.',terrain:[
  '............','..X..X......','....X.......','..X....X....','............','....X....X..','..X.........','......X.....','..X.........','............'],wild:[],main:'Chica Robin · Jigglypuff Nv. 14',mainKind:'trainer',team:[{id:39,level:14}]},
+ lunar:{recommended:[10,30],name:'???',icon:'🌑',desc:'Un lugar que no figura en ningún mapa.',terrain:[
+ 'XXXXXXXXXXXX','XX........XX','X..X....X..X','X..........X','X...XX.....X','X..........X','X.....X....X','X..........X','XX.......X.X','XXXXXXXXXXXX'],wild:[{id:725,w:50,min:5,max:60},{id:443,w:50,min:5,max:60}],main:'???',mainKind:'wild'},
  camp:{recommended:[11,14],name:'Campamento',icon:'⛺',desc:'Zona de descanso del equipo.',terrain:[
  '............','..X..X......','....X.......','..X....X....','............','....X....X..','..X.........','......X.....','..X.........','............'],wild:[],main:'',mainKind:'trainer',team:[]},
  mtmoonj:{recommended:[11,13],name:'Monte Moon',icon:'🌙',desc:'La cueva que cruza la montaña. Está llena de Zubat, Geodude y Paras, y de entrenadores que cuidan sus túneles. Con suerte, verás un Clefairy.',terrain:[
@@ -161,7 +163,7 @@ let stageId='route1',stageUnlocked=0,stageCleared=new Set(),campaignViewed=0,cur
 
 const BALLS={pokeball:{name:'Poké Ball',icon:'🔴',bonus:1},greatball:{name:'Super Ball',icon:'🔵',bonus:1.5},ultraball:{name:'Ultra Ball',icon:'🟡',bonus:2}};
 // Offline species values, mirrored from the Pokédex; verified at runtime with PokéAPI species.capture_rate when online.
-const CAPTURE_RATES={60:255,61:120,129:255,130:45,98:225,54:190,79:190,66:180,43:255,69:255,63:200,138:45,140:45,88:190,81:190,100:190,27:255,24:90,28:90,30:120,33:120,42:90,47:75,57:75,110:60,117:75,119:60,120:225,121:60,118:225,116:225,90:190,1:45,4:45,7:45,10:255,11:120,13:255,14:120,16:255,19:255,21:255,23:255,25:190,29:235,32:235,35:150,39:170,41:255,46:190,56:190,74:255,95:45,109:190};
+const CAPTURE_RATES={725:45,443:45,60:255,61:120,129:255,130:45,98:225,54:190,79:190,66:180,43:255,69:255,63:200,138:45,140:45,88:190,81:190,100:190,27:255,24:90,28:90,30:120,33:120,42:90,47:75,57:75,110:60,117:75,119:60,120:225,121:60,118:225,116:225,90:190,1:45,4:45,7:45,10:255,11:120,13:255,14:120,16:255,19:255,21:255,23:255,25:190,29:235,32:235,35:150,39:170,41:255,46:190,56:190,74:255,95:45,109:190};
 const captureRateCache={...CAPTURE_RATES};const captureFetchInFlight=new Set();
 function fetchCaptureRate(id){
  if(captureFetchInFlight.has(id))return;
@@ -279,6 +281,7 @@ FRLG_VIS.route25b=FRLG_VIS.route25;
 Object.assign(FRLG_VIS,{"nuggettrain":["WWWTTTT~~DDD","WWWTTTT~~DDD","WWWTTTT~~DDD","WWWTTTT~~DDD","WWWTTTT~~DDD","WWWTTTT~~DDD","WWWTTTT~~DDD","WWWTTTT~~DDD","WWWTTTT~~DDD","WWWTTTT~~DDD"],"nugget":["TT~~DDDD.WWW","TT~~DDDD.WWW","TT~~DDDD...f","TT~~DDDD...f","TT~~DDDD...f","TT~~DDDD...f","TT~~DDDD...f","TT~~DDDD...f","TT~~DDDD...f","TT~~DDDD...f"]});
 FRLG_VIS.nuggetrocket=FRLG_VIS.nugget;
 Object.assign(FRLG_VIS,{"cerulean":["WWWWWWWWWWWW","W~~~~..~~~~W","W~~~~..~~~~W","W~~......~~W","W~~~~..~~~~W","W~~~~..~~~~W","W..........W","W..........W","W..~~~~~~..W","WW~~~~~~~~WW"],"ceruleanguard":["WWWWWWWWWWWW","W~~~~..~~~~W","W~~~~..~~~~W","W~~......~~W","W~~~~..~~~~W","W~~~~..~~~~W","W..........W","W..........W","W..~~~~~~..W","WW~~~~~~~~WW"]});
+Object.assign(FRLG_VIS,{"lunar":["rrrrrrrrrrrr","rr........rr","r..r....r..r","r..........r","r...rr.....r","r..........r","r.....r....r","r..........r","rr.......r.r","rrrrrrrrrrrr"]});
 Object.assign(FRLG_VIS,{"route22":["pppppppppptt","pppppppppptt","WWWW......tt","WWWWll..lltt","WWWWTTTTTTtt","WWWWTTTTTTtt","WWWWTTTTTTtt","WWWWTTTTTTtt","WWWWTTTTTTtt","WWWW........"]});
 const FRLG_BLOCK=new Set('tlrsfhFWBMkPCvwR');
 function visKey(id){return id==='route3'&&currentEncounter&&currentEncounter.kind==='wild'&&currentEncounter.id==='route3'?'route3t':id}
@@ -286,4 +289,4 @@ Object.assign(FRLG_VIS,{"route5":["tttttppttttt","t..TTpp..TTt","t..TTpp..TTt","
 const _pondBak={};function pondFix(id){const k=visKey(id);for(const b in _pondBak){if(b!==k||!(currentEncounter&&currentEncounter.fish)){FRLG_VIS[b]=_pondBak[b];delete _pondBak[b]}}const v=FRLG_VIS[k];if(!v||!(currentEncounter&&currentEncounter.fish)||_pondBak[k]||v.join('').includes('~'))return;const ok=(x,y)=>x>=0&&y>=0&&x<W&&y<H&&'.pTo'.includes(v[y][x]);let best=null;for(const [w,h] of [[4,3],[3,3],[3,2]]){for(let x=W-w;x>=3&&!best;x--)for(let y=2;y<=6&&!best;y++){let g=true;for(let a=0;a<w&&g;a++)for(let c=0;c<h&&g;c++)if(!ok(x+a,y+c))g=false;if(g)best={x,y,w,h}}if(best)break}if(!best)return;_pondBak[k]=v;FRLG_VIS[k]=v.map((r,y)=>[...r].map((c,x)=>x>=best.x&&x<best.x+best.w&&y>=best.y&&y<best.y+best.h?'~':c).join(''))}
 function frlgTerrain(id){pondFix(id);const v=FRLG_VIS[visKey(id)];if(!v)return null;return v.map(row=>[...row].map(c=>FRLG_BLOCK.has(c)?'X':c==='F'?'F':c==='~'?'~':'.').join(''))}
 function frlgChar(id,x,y){const v=FRLG_VIS[visKey(id)];return v&&v[y]?(v[y][x]||'.'):null}
-function setupTerrain(which){stageId=(which==='nugget'&&currentEncounter&&currentEncounter.kind==='wild')?'nuggettrain':(which==='route25'&&currentEncounter&&currentEncounter.kind==='wild')?'route25train':CAMPAIGN[which]?which:'route1';map=frlgTerrain(stageId)||[...CAMPAIGN[stageId].terrain];$('locationLabel').textContent=CAMPAIGN[stageId].icon+' '+CAMPAIGN[stageId].name.toUpperCase()+' · KANTO'}
+function setupTerrain(which){stageId=(which==='nugget'&&currentEncounter&&currentEncounter.kind==='wild')?'nuggettrain':(which==='route25'&&currentEncounter&&currentEncounter.kind==='wild')?'route25train':CAMPAIGN[which]?which:'route1';map=frlgTerrain(stageId)||[...CAMPAIGN[stageId].terrain];$('locationLabel').textContent=CAMPAIGN[stageId].icon+' '+CAMPAIGN[stageId].name.toUpperCase()+(stageId==='lunar'?'':' · KANTO')}

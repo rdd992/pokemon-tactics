@@ -1,5 +1,7 @@
 // Especies encontrables en las primeras rutas de Kanto, con estadísticas base de Gen III.
 Object.assign(base,{
+725:{name:'Litten',types:['fire'],stats:[45,65,40,60,40,70],emoji:'🐈‍⬛',move:4},
+443:{name:'Gible',types:['dragon','ground'],stats:[58,70,45,40,45,42],emoji:'🦈',move:4},
 19:{name:'Rattata',types:['normal'],stats:[30,56,35,25,35,72],emoji:'🐭',move:5},
 10:{name:'Caterpie',types:['bug'],stats:[45,30,35,20,20,45],emoji:'🐛',move:3},
 13:{name:'Weedle',types:['bug','poison'],stats:[40,35,30,20,20,50],emoji:'🐛',move:3},
@@ -159,6 +161,8 @@ function useEvoStone(u){
 // Tabla local FireRed / LeafGreen para los Pokémon del primer arco (incluye cada nivel inicial).
 // Cada fila corresponde a un aprendizaje por nivel. No hay ataques adelantados por comodidad.
 const learnsets={
+ 725:[[1,'scratch'],[1,'ember'],[1,'growl'],[4,'leer'],[7,'bite'],[16,'slash'],[28,'flame']],
+ 443:[[1,'tackle'],[3,'sand'],[7,'dragonrage'],[23,'slash'],[28,'dragonclaw'],[34,'rock']],
  25:[[1,'growl'],[1,'shock'],[6,'tailwhip'],[8,'wave'],[11,'quick'],[15,'doubleteam'],[20,'slam'],[26,'bolt']],
  4:[[1,'growl'],[1,'scratch'],[7,'ember'],[13,'metalclaw'],[19,'smoke'],[25,'scary'],[31,'flame'],[37,'slash']],
  1:[[1,'tackle'],[4,'growl'],[7,'seed'],[10,'vine'],[15,'powderpoison'],[15,'powdersleep'],[20,'razor']],
@@ -277,5 +281,5 @@ Object.assign(moveDB.agility,{effect:'speedUp',detail:'Aumenta mucho la velocida
 Object.assign(moveDB.rage,{detail:'Cuerpo a cuerpo · si lo golpean, sube su Ataque'});
 Object.assign(moveDB.ragemove,{detail:'Ataque adyacente · si lo golpean, sube su Ataque'});
 const chart={normal:{rock:.5,ghost:0,steel:.5},fire:{fire:.5,water:.5,grass:2,ice:2,bug:2,rock:.5,dragon:.5,steel:2},water:{fire:2,water:.5,grass:.5,ground:2,rock:2,dragon:.5},electric:{water:2,electric:.5,grass:.5,ground:0,flying:2,dragon:.5},grass:{fire:.5,water:2,grass:.5,poison:.5,ground:2,flying:.5,bug:.5,rock:2,dragon:.5,steel:.5},ice:{fire:.5,water:.5,grass:2,ice:.5,ground:2,flying:2,dragon:2,steel:.5},fighting:{normal:2,ice:2,poison:.5,flying:.5,psychic:.5,bug:.5,rock:2,ghost:0,dark:2,steel:2,fairy:.5},poison:{grass:2,poison:.5,ground:.5,rock:.5,ghost:.5,steel:0,fairy:2},ground:{fire:2,electric:2,grass:.5,poison:2,flying:0,bug:.5,rock:2,steel:2},flying:{electric:.5,grass:2,fighting:2,bug:2,rock:.5,steel:.5},psychic:{fighting:2,poison:2,psychic:.5,dark:0,steel:.5},bug:{fire:.5,grass:2,fighting:.5,poison:.5,flying:.5,psychic:2,ghost:.5,dark:2,steel:.5,fairy:.5},rock:{fire:2,ice:2,fighting:.5,ground:.5,flying:2,bug:2,steel:.5},ghost:{normal:0,psychic:2,ghost:2,dark:.5},dragon:{dragon:2,steel:.5,fairy:0},dark:{fighting:.5,psychic:2,ghost:2,dark:.5,fairy:.5},steel:{fire:.5,water:.5,electric:.5,ice:2,rock:2,steel:.5,fairy:2},fairy:{fire:.5,fighting:2,poison:.5,dragon:2,dark:2,steel:.5}};
-const TYPE_EMOJI={normal:'⚪',fire:'🔥',water:'💧',grass:'🌿',electric:'⚡',flying:'🕊️',ground:'🟤',rock:'🪨',poison:'☠️',bug:'🐛',fighting:'🥊',psychic:'🔮',ghost:'👻',dark:'🌑',steel:'⚙️'};
-const typeColors={electric:'#e3bf59',fire:'#e37f55',grass:'#7bba77',water:'#75b1d9',normal:'#a7aba4',flying:'#93a9d0',ground:'#c4a36d',rock:'#a79a78',poison:'#ae8ccc'};
+const TYPE_EMOJI={dragon:'🐉',normal:'⚪',fire:'🔥',water:'💧',grass:'🌿',electric:'⚡',flying:'🕊️',ground:'🟤',rock:'🪨',poison:'☠️',bug:'🐛',fighting:'🥊',psychic:'🔮',ghost:'👻',dark:'🌑',steel:'⚙️'};
+const typeColors={dragon:'#7a6fd1',electric:'#e3bf59',fire:'#e37f55',grass:'#7bba77',water:'#75b1d9',normal:'#a7aba4',flying:'#93a9d0',ground:'#c4a36d',rock:'#a79a78',poison:'#ae8ccc'};

@@ -138,7 +138,7 @@ function showVictory(){
           isStory?(isBrock?'¡Brock ha sido derrotado! Obtienes la primera medalla de Kanto: la Medalla Roca. ¡Ahora puedes llevar un cuarto Pokémon al tablero (Equipo → Desplegar)! Se abrió el camino a la Ruta 3, rumbo a Ciudad Celeste.':isMisty?'¡Misty ha sido derrotada! Obtienes la segunda medalla de Kanto: la Medalla Cascada. El camino sigue: visita a Bill en la Ruta 25 y luego baja por la Ruta 5 hacia Ciudad Carmín.':isSurge?'¡El Teniente Surge ha sido derrotado! Obtienes la tercera medalla de Kanto: la Medalla Trueno. Por ahora el viaje termina aquí; puedes regresar a entrenar y capturar.':optional?'¡Venciste a tu rival en Ruta 22! Ya puedes entrenar y capturar Pokémon salvajes en esta ruta.':'¡Desafío completado! Se desbloqueó el entrenamiento de esta zona y la siguiente ubicación.'):'¡Encuentro de entrenamiento completado! Puedes volver al mapa para elegir otro destino.',
           isBrock?'🏅 🪨 ✨':isMisty?'🏅 💧 ✨':isSurge?'🏅 ⚡ ✨':what.icon+' 🏆',[
              {text:'🗺️ VOLVER AL MAPA',fn:()=>showCampaign()},
-             {text:'ETAPA SIGUIENTE',fn:goNext,disabled:!nextAvailable,hint:!nextAvailable?'El siguiente capítulo todavía no está disponible.':''},
+             ...(stageId==='lunar'?[]:[{text:'ETAPA SIGUIENTE',fn:goNext,disabled:!nextAvailable,hint:!nextAvailable?'El siguiente capítulo todavía no está disponible.':''}]),
              ...((isStory&&trainerLocked(stageId))?[]:[{text:'REPETIR',fn:retryCampaignEncounter}]),
              {text:'🐾 EDITAR EQUIPO',fn:()=>{$('modal').hidden=true;openManager('team')}}
           ]);
