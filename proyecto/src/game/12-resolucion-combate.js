@@ -12,7 +12,7 @@ async function perform(u,index,x,y){
     if(m.shape!=='self'&&!targets.length){
         if(u.side==='player')log('✋ No hay enemigos en la zona seleccionada.');return;
     }
-    playSfx(m.category==='status'?'status':'attack');locked=true;mp.pp--;syncAttackBack(); // oculta «Volver»/aviso de objetivo en cuanto empieza la acción
+    playSfx(m.category==='status'?'status':'attack');locked=true;mp.pp--;syncAttackBack();$('tileHint').textContent='';try{hideForecast()}catch(e){} // oculta «Volver», aviso y barra de objetivo en cuanto empieza la acción
     let lines=[],events=[],hitCount=0,appliedStatuses=[];
     for(const v of targets){
         const before=v.hp;

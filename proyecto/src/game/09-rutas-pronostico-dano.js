@@ -225,6 +225,7 @@ function updateMoveInfo(){
 // El aviso «selecciona objetivo» baja justo debajo de la ficha para no taparla
 function placePrompt(){const p=$('attackPrompt'),c=$('moveInfoCard');if(!p)return;
     const coarse=matchMedia('(pointer:coarse)').matches,lb=$('locationLabel');
+    if(c&&lb&&lb.offsetHeight)c.style.top=(lb.offsetTop+lb.offsetHeight+6)+'px'; // la ficha del movimiento va bajo la etiqueta de lugar/rival
     if(c&&!c.hidden&&!p.hidden){p.style.top=(c.offsetTop+c.offsetHeight+6)+'px';p.style.left='';p.style.transform='';return}
     if(!coarse&&lb&&lb.offsetHeight&&!p.hidden){p.style.top=(lb.offsetTop+lb.offsetHeight+6)+'px';p.style.left='12px';p.style.transform='none';return} // PC: columna izquierda bajo la etiqueta del lugar, sin tapar nada
     p.style.top='';p.style.left='';p.style.transform=''}
