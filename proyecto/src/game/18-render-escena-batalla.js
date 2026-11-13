@@ -160,9 +160,9 @@ function fxTeeth(cx,baseY,tipY,count,gap,color){
 }
 const fxKeyCache=new WeakMap();
 function fxMoveKey(m){if(fxKeyCache.has(m))return fxKeyCache.get(m);const k=Object.keys(moveDB).find(key=>moveDB[key]===m)||'';fxKeyCache.set(m,k);return k}
-const FX_PROJECTILE={leechlife:'leech',twineedle:'needle2',pinmissile:'needle2',confusion:'psy',psybeam:'psybeam',ember:'ember',flame:'flamethrower',bubble:'bubbles',water:'watergun',shock:'shock',bolt:'bolt',razor:'razorleaf',vine:'vine',
+const FX_PROJECTILE={leechlife:'leech',twineedle:'needle2',pinmissile:'needle2',confusion:'psy',psybeam:'psybeam',ember:'ember',flame:'flamethrower',dragonrage:'dragonflame',bubble:'bubbles',water:'watergun',shock:'shock',bolt:'bolt',razor:'razorleaf',vine:'vine',
  rock:'rockthrow',rocktomb:'rocktomb',gust:'gust',poisonsting:'needle',smog:'smog',stringshot:'thread',swift:'stars',quick:'streak',seed:'seeds'};
-const FX_MELEE={scratch:'claw',slash:'slash',metalclaw:'steelclaw',karate:'chop',lowkick:'kick',bite:'fang',bugbite:'fangGreen',wing:'wing',peck:'beak',tackle:'ram',pound:'fist',doubleslap:'slap',astonish:'boo',bind:'coil',wrap:'coil',furyattack:'beak',pursuit:'ram',rage:'fist'};
+const FX_MELEE={scratch:'claw',slash:'slash',metalclaw:'steelclaw',karate:'chop',lowkick:'kick',bite:'fang',bugbite:'fangGreen',wing:'wing',peck:'beak',tackle:'ram',pound:'fist',doubleslap:'slap',astonish:'boo',bind:'coil',wrap:'coil',furyattack:'beak',pursuit:'ram',rage:'fist',dragonclaw:'claw'};
 function fxPlan(ev){
  const m=ev.move,key=fxMoveKey(m),type=m.type;
  let proj=FX_PROJECTILE[key]||null;const hit=FX_MELEE[key]||'punch';
@@ -180,6 +180,7 @@ function fxDrawProjectile(plan,t,crit,sx,sy,ex,ey,f){
  sg.save();sg.globalAlpha=f>1?Math.max(0,1-(f-1)/.45):1;
  switch(plan.proj){
   case 'ember':{const [bx,by]=at(f,Math.sin(t/70)*3);blit('flame',bx,by,crit?18:10,Math.floor(t/90)%2===0,false);break}
+  case 'dragonflame':{const dp={r:'#4a1f8c',o:'#8a4fe0',y:'#c99bff',w:'#f3e6ff'};for(let i=0;i<12;i++){const g=f*(i+1)/12,[bx,by]=at(g,Math.sin(t/60+i)*(6+i*.7));blit('flame',bx,by,Math.max(3,Math.round((2.5+i*.32)*big)),(i+Math.floor(t/70))%2===0,false,dp)}break}
   case 'flamethrower':for(let i=0;i<12;i++){const g=f*(i+1)/12,[bx,by]=at(g,Math.sin(t/60+i)*(6+i*.7));blit('flame',bx,by,Math.max(3,Math.round((2.5+i*.32)*big)),(i+Math.floor(t/70))%2===0,false)}break;
   case 'bubbles':for(let i=0;i<6;i++){const g=f-i*.08;if(g<0)continue;const [bx,by]=at(g,Math.sin(t/110+i*1.7)*14);blit('bubble',bx,by,Math.round((i%2?3:4)*big),false,false)}break;
   case 'watergun':for(let i=0;i<11;i++){const g=f-i*.04;if(g<0)continue;const [bx,by]=at(g,Math.sin(t/70+i)*3);blit('drop',bx,by,Math.round(4*big),false,false)}break;
@@ -393,6 +394,7 @@ function fxDrawImpact(plan,delta,dur,crit,ex,ey){
  else if(!bigStar&&k<.4&&plan.key!=='lowkick')blit('star',ex,ey,3,false,false);
  const n=crit?14:9;
  switch(plan.type){
+  case 'dragon':for(let i=0;i<3;i++)blit('flame',ex+(i-1)*24,ey+10-k*46-(i%2)*10,Math.round(3*big),i%2===0,false,{r:'#4a1f8c',o:'#8a4fe0',y:'#c99bff',w:'#f3e6ff'});break;
   case 'fire':for(let i=0;i<3;i++)blit('flame',ex+(i-1)*24,ey+10-k*46-(i%2)*10,Math.round(3*big),i%2===0,false);break;
   case 'water':for(let i=0;i<n;i++){const a=Math.PI+i/(n-1)*Math.PI;blit('drop',ex+Math.cos(a)*k*60*big,ey+Math.sin(a)*k*60*big+k*k*55,2,false,false)}break;
   case 'electric':for(let i=0;i<6;i++){const a=i*1.05+.4,r=(34+10*(i%2))*big*Math.min(1,k*3);fxBolt(ex,ey,ex+Math.cos(a)*r,ey+Math.sin(a)*r,delta,3,8,i+2)}break;
